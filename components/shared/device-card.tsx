@@ -17,7 +17,20 @@ interface DeviceCardProps {
 
 export function DeviceCard({ title, description, icon, onClick }: DeviceCardProps) {
   return (
-    <Card onClick={onClick}>
+    <Card 
+      onClick={onClick}
+      className="
+        cursor-pointer 
+        flex flex-col items-start gap-3 
+        p-6 rounded-2xl 
+        shadow-md 
+        transition 
+        duration-300 
+        hover:shadow-lg 
+        hover:scale-105 
+        hover:bg-muted/40
+        active:scale-95
+      ">
       {icon}
       <div className="flex flex-col">
         <CardTitle>{title}</CardTitle>
