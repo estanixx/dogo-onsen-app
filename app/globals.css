@@ -6,7 +6,7 @@
 
 
 :root {
-  --background: oklch(0.9370 0 0);
+  --background: #171b23;
   --foreground: oklch(0.2170 0.0362 249.8191);
   --card: oklch(0.2805 0.0308 252.7138);
   --card-foreground: oklch(0.9370 0 0);
@@ -61,7 +61,7 @@
 }
 
 .dark {
-  --background: oklch(0.2170 0.0362 249.8191);
+  --background: #171b23;
   --foreground: oklch(0.9370 0 0);
   --card: oklch(0.2805 0.0308 252.7138);
   --card-foreground: oklch(0.9370 0 0);
@@ -183,5 +183,26 @@ body {
   }
   body {
     @apply bg-background text-foreground;
+  }
+
+  /* Custom Dogo Onsen color variables */
+  :root {
+    --gold: #e0b36a;
+    --gold-light: #f2d09c;
+    --gold-dark: #c49548;
+    --vermillion: #dd4b39;
+    --vermillion-light: #e87464;
+    --vermillion-dark: #b23326;
+    --jade: #3aa394;
+    --jade-light: #4ecfbd;
+    --jade-dark: #2a7d71;
+    --indigo: #3f4971;
+    --indigo-light: #5b698f;
+    --indigo-dark: #2d3450;
+    --dark: #171b23;
+    --dark-light: #1e2432;
+    --dark-darker: #12161c;
+    --smoke: #e5e5e5;
+    --beige: #f5f2eb;
   }
 }
