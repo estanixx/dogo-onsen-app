@@ -29,7 +29,7 @@ export function DeviceCard({ title, description, icon, onClick }: DeviceCardProp
         hover:shadow-lg 
         hover:scale-105 
         hover:bg-muted/40
-        active:scale-95
+        active:scale-96
       ">
       {icon}
       <div className="flex flex-col">
