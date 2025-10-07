@@ -103,7 +103,7 @@ export function DogoPage({ children, className }: DogoPageProps) {
 // Header component with logo and title
 export function DogoHeader({ title, subtitle, className }: DogoHeaderProps) {
   return (
-    <div className={cn("mb-16 text-center relative", className)}>
+    <div className={cn("my-4 text-center relative", className)}>
       {/* Title decorative line */}
       <div className="absolute -top-8 left-1/2 -translate-x-1/2 w-24 h-[2px] bg-gradient-to-r from-transparent via-[var(--gold)]/50 to-transparent" />
       
@@ -140,7 +140,7 @@ export function DogoHeader({ title, subtitle, className }: DogoHeaderProps) {
 // Content section wrapper
 export function DogoSection({ children, className }: DogoSectionProps) {
   return (
-    <section className={cn("w-full max-w-md mx-auto", className)}>
+    <section className={cn("w-full mx-auto", className)}>
       {children}
     </section>
   )
@@ -166,7 +166,7 @@ export function DogoButton({ children, className, ...props }: React.ComponentPro
   return (
     <button
       className={cn(
-        "w-full bg-gradient-to-r from-[var(--gold)]/80 to-[var(--gold)]/60 hover:from-[var(--gold)] hover:to-[var(--gold)]/80 text-[var(--dark)] font-medium py-3 px-6 text-lg rounded-md transition-all shadow-lg",
+        "cursor-pointer w-full bg-gradient-to-r from-[var(--gold)]/80 to-[var(--gold)]/60 hover:from-[var(--gold)] hover:to-[var(--gold)]/80 text-[var(--dark)] font-medium py-3 px-6 text-lg rounded-md transition-all shadow-lg",
         className
       )}
       {...props}

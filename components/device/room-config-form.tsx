@@ -16,7 +16,7 @@ export function RoomConfigForm({ onSubmit }: RoomConfigFormProps) {
   }
 
   return (
-    <div className="w-full max-w-md">
+    <div className="w-full max-w-md mx-auto">
       <DogoCard className="p-6">
         <p className="text-white/70 text-center mb-6">
           Ingresa el identificador de la habitación para configurar este dispositivo

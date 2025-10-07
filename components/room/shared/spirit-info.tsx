@@ -1,46 +1,26 @@
+
 import { Spirit, SpiritType, VenueAccount } from "@/lib/types";
 import Image from "next/image";
-import { useEffect, useState } from "react";
 
 interface SpiritInfoProps {
-  spiritId: string;
+  account: VenueAccount;
 }
+
 
 /**
  * Displays spirit information in the room sidebar
  * Shows spirit details, type, balance and remaining time
  */
-export function SpiritInfo({ spiritId }: SpiritInfoProps) {
-  const [spirit, setSpirit] = useState<Spirit | null>(null);
-  const [spiritType, setSpiritType] = useState<SpiritType | null>(null);
-  const [account, setAccount] = useState<VenueAccount | null>(null);
-
-  // TODO: Fetch spirit data from API
-  useEffect(() => {
-    // Placeholder for API calls
-    const fetchSpiritData = async () => {
-      try {
-        // const spiritData = await fetchSpirit(spiritId);
-        // const typeData = await fetchSpiritType(spiritData.typeId);
-        // const accountData = await fetchVenueAccount(spiritData.accountId);
-        // setSpirit(spiritData);
-        // setSpiritType(typeData);
-        // setAccount(accountData);
-      } catch (error) {
-        console.error('Error fetching spirit data:', error);
-      }
-    };
-
-    fetchSpiritData();
-  }, [spiritId]);
-
+export function SpiritInfo({ account }: SpiritInfoProps) {
+  const spirit: Spirit = account.spirit;
+  const spiritType: SpiritType = spirit.type;
   if (!spirit || !spiritType || !account) {
     return (
-      <div className="animate-pulse">
-        <div className="rounded-full bg-indigo-800 h-24 w-24 mb-4"/>
-        <div className="h-4 bg-indigo-800 rounded w-3/4 mb-2"/>
-        <div className="h-4 bg-indigo-800 rounded w-1/2 mb-4"/>
-        <div className="h-4 bg-indigo-800 rounded w-2/3"/>
+      <div className="animate-pulse w-full">
+        <div className="rounded-full bg-white/30 h-24 w-24 mb-4"/>
+        <div className="h-4 bg-white/30 rounded w-3/4 mb-2"/>
+        <div className="h-4 bg-white/30 rounded w-1/2 mb-4"/>
+        <div className="h-4 bg-white/30 rounded w-2/3"/>
       </div>
     );
   }
@@ -49,7 +29,7 @@ export function SpiritInfo({ spiritId }: SpiritInfoProps) {
   const daysRemaining = Math.ceil(timeRemaining / (1000 * 60 * 60 * 24));
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 w-full">
       {/* Spirit Image and Name */}
       <div className="text-center">
         {spirit.image ? (

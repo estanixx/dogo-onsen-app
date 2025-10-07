@@ -14,6 +14,7 @@ export interface Spirit {
   id: string;
   name: string;
   typeId: string;
+  type: SpiritType;
   accountId?: string;
   eiltBalance: number;
   individualRecord: string;
@@ -26,9 +27,18 @@ export interface Spirit {
 export interface VenueAccount {
   id: string;
   spiritId: string;
+  spirit: Spirit;
   venueId: string;
   startTime: Date;
   endTime: Date;
+}
+
+/**
+ * Private Venue - Represents a private venue from Dogo Onsen
+ */
+export interface PrivateVenue {
+  id: string;
+  state: boolean;
 }
 
 /**
@@ -38,7 +48,7 @@ export interface Service {
   id: string;
   name: string;
   eiltRate: number;
-  image?: string;
+  image: string;
 }
 
 /**
@@ -90,4 +100,12 @@ export interface Item {
   id: string;
   name: string;
   image?: string;
+}
+
+
+// Local helper type used by the mock API
+// TODO: Modify this (?).
+export interface PrivateVenue {
+    id: string;
+    state: boolean;
 }

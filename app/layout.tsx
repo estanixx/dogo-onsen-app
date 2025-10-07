@@ -24,7 +24,9 @@ export default function RootLayout({
 }) {
   return (
     <html lang="es" className={`${inter.variable} ${notoSerifJP.variable}`}>
-      <body>{children}</body>
+      <body>
+        {children}
+      </body>
     </html>
   )
 }
