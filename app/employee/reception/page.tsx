@@ -1,7 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { getAvailablePrivateVenues } from "@/lib/api";
+import { DogoSection } from "@/components/shared/dogo-ui";
 
 export default function CheckInPage() {
   const [id, setId] = useState("");
@@ -17,11 +18,19 @@ export default function CheckInPage() {
   >([]);
 
   // Load venues
-  useState(() => {
+  useEffect(() => {
+    let isMounted = true;
+
     getAvailablePrivateVenues().then((data) => {
-      setVenues(data.filter((v) => v.state === true));
+      if (!isMounted) {
+        setVenues(data.filter((v) => v.state === true));
+      }
     });
-  });
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
 
   // Form validation
   const handleSubmit = (e: React.FormEvent) => {
@@ -49,11 +58,12 @@ export default function CheckInPage() {
   };
 
   return (
-    <div className="flex h-[calc(100vh-4rem)] bg-dark text-gray-300">
+    <DogoSection className="border-2 border-white rounded-lg object-cover flex w-full text-white">
+      
       {/* Form Sidebar */}
-      <aside className="w-96 bg-dark-light p-6 shadow-md border-r border-gold/10">
+      <aside className="w-72 p-6 flex flex-col items-center justify-between">
         <h2 className="text-2xl font-serif text-gold mb-6 tracking-wider">
-          Registro de Check-in
+          Check-in / Registro
         </h2>
 
         <form onSubmit={handleSubmit} className="flex flex-col gap-5">
@@ -153,9 +163,10 @@ export default function CheckInPage() {
       </aside>
 
       {/* Zona principal */}
-      <main className="flex-1 flex items-center justify-center text-smoke/60 font-serif italic">
+      <main className="flex-1 overflow-y-auto p-6">
         Próximamente: vista general del check-in 🏯
       </main>
-    </div>
+      
+    </DogoSection>
   );
 }

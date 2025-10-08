@@ -1,5 +1,6 @@
 import { CardLink } from '@/components/shared/card-link';
-import { MdCalendarMonth, MdPool } from 'react-icons/md';
+import { CardModal } from '@/components/room/wallet/wallet-card';
+import { MdCalendarMonth, MdPool, MdAccountBalanceWallet} from 'react-icons/md';
 
 /**
  * Main page for a specific room identified by its ID.
@@ -23,6 +24,15 @@ export default async function RoomPage({ params }: { params: { id: string } }) {
         title="Reservations"
         description="View and manage your reservations."
         icon={<MdCalendarMonth className='size-6 text-primary'/>}
+      />
+
+      {/* Wallet modal */}
+      <CardModal
+        title="Billetera"
+        description="Agrega saldo a tu cuenta."
+        icon={<MdAccountBalanceWallet className="size-6 text-primary" />}
+        modalTitle="Billetera"
+        modalDescription="Administra tu saldo y realiza recargas seguras."
       />
     </div>
   );

@@ -15,9 +15,11 @@ export default function Navbar(){
     return (
         <nav className="w-full h-16 bg-gray-900 rounded-t-lg font-serif uppercase flex items-center justify-between px-6 text-white sticky top-0 z-50">
         {/* Logo */}
-        <div className="flex items-center space-x-3">
-            <DogoIcon className="fill-primary w-10 h-10" />
-            <h1 className="tracking-[3px] text-2xl text-primary">Dogo Onsen</h1>
+        <div>
+            <Link href={"/"} className="flex justify-center items-center space-x-3">
+                <DogoIcon className="fill-primary w-10 h-10" />
+                <h1 className="tracking-[3px] text-2xl text-primary">Dogo Onsen</h1>
+            </Link>
         </div>
 
         {/* Enlaces de navegación */}
