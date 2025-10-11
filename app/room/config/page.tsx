@@ -27,15 +27,16 @@ export default function RoomConfig() {
 
   return (
     <DogoPage>
-      <SyncDeviceConfig config={{ type: "room" }} />
-      
-      <DogoHeader 
-        title="Configuración de Habitación"
-      />
-
-      <DogoSection>
-        <RoomConfigForm onSubmit={configureRoom} />
-      </DogoSection>
+      <div className="div w-full h-screen flex flex-col items-center justify-center">
+        <SyncDeviceConfig config={{ type: "room" }} />
+        
+        <DogoHeader
+          title="Configuración de Habitación"
+        />
+        <DogoSection>
+          <RoomConfigForm onSubmit={configureRoom} />
+        </DogoSection>
+      </div>
     </DogoPage>
   )
 }

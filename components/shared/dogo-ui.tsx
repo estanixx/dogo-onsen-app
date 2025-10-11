@@ -25,7 +25,7 @@ export interface DogoSectionProps {
 export function DogoPage({ children, className }: DogoPageProps) {
   return (
     <main className={cn(
-      "min-h-screen relative flex flex-col items-center justify-center p-4 overflow-hidden",
+      "h-screen w-full relative overflow-hidden",
       className
     )}>
       {/* Background elements */}
@@ -93,7 +93,7 @@ export function DogoPage({ children, className }: DogoPageProps) {
       </div>
       
       {/* Content */}
-      <div className="relative z-10 w-full max-w-7xl flex flex-col items-center">
+      <div className="relative z-10 w-full flex flex-col items-center">
         {children}
       </div>
     </main>

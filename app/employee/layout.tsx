@@ -8,11 +8,9 @@ export default function EmployeeLayout({
 }) {
   return (
     <>
-      <div>
-        <Navbar />
-      </div>
       <DogoPage> 
-        <div className="mt-5 px-3">{children}</div>
+        <Navbar />
+        <div className="mt-26 px-3">{children}</div>
       </DogoPage>
     </>
   );

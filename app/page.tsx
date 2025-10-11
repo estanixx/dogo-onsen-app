@@ -26,6 +26,8 @@ export default function Home() {
 
   return (
     <DogoPage>
+      <div className="div w-full h-screen flex flex-col items-center justify-center">
+
       <SyncDeviceConfig config={{ type: "room" }} />
       
       <DogoHeader 
@@ -36,6 +38,7 @@ export default function Home() {
       <DogoSection>
         <DeviceSelector onSelect={configureDevice} />
       </DogoSection>
+      </div>
     </DogoPage>
   )
 }

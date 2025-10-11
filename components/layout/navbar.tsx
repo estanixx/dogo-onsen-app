@@ -2,6 +2,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import DogoIcon from "../shared/dogo-icon";
+import { H4, P } from "../shared/typography";
 
 export default function Navbar(){
     const pathname = usePathname();
@@ -13,10 +14,10 @@ export default function Navbar(){
     ];
 
     return (
-        <nav className="w-full h-16 bg-gray-900 rounded-t-lg font-serif uppercase flex items-center justify-between px-6 text-white sticky top-0 z-50">
+        <nav className="w-full h-16 border-white border-b-1 !bg-transparent rounded-t-lg font-serif uppercase flex items-center justify-between px-6 text-white sticky top-0 z-50">
         {/* Logo */}
         <div>
-            <Link href={"/"} className="flex justify-center items-center space-x-3">
+            <Link href={"/employee"} className="flex justify-center items-center space-x-3">
                 <DogoIcon className="fill-primary w-10 h-10" />
                 <h1 className="tracking-[3px] text-2xl text-primary">Dogo Onsen</h1>
             </Link>
@@ -28,20 +29,20 @@ export default function Navbar(){
             <Link
                 key={link.href}
                 href={link.href}
-                className={`transition-all duration-150 pb-1 ${
+                className={`transition-all duration-150 ${
                 pathname === link.href
                     ? "text-primary border-b-2 border-primary"
                     : "hover:text-primary"
                 }`}
             >
-                {link.name}
+                <P>{link.name}</P>
             </Link>
             ))}
         </div>
 
         {/* User */}
         <div className="flex items-center space-x-3">
-            <h1>Espacio para usuario</h1>
+            <H4>Espacio para usuario</H4>
         </div>
         </nav>
     );
