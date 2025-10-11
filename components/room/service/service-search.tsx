@@ -31,10 +31,10 @@ export default function ServiceSearch({ initialQuery }: ServiceSearchProps) {
         name="q"
         value={value}
         onChange={(e) => setValue(e.target.value)}
-        placeholder="Search services..."
+        placeholder="Busca servicios..."
       />
 
-      <Button type="submit">Search</Button>
+      <Button type="submit">Buscar</Button>
     </form>
   )
 }

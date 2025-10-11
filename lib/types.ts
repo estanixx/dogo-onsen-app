@@ -49,6 +49,8 @@ export interface Service {
   name: string;
   eiltRate: number;
   image: string;
+  description: string;
+  rating: number;
 }
 
 /**

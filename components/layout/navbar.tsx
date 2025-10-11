@@ -22,7 +22,7 @@ export default function Navbar(){
             </Link>
         </div>
 
-        {/* Enlaces de navegación */}
+        {/* Navigation links */}
         <div className="flex items-center space-x-10 text-sm">
             {links.map((link) => (
             <Link
@@ -39,7 +39,7 @@ export default function Navbar(){
             ))}
         </div>
 
-        {/* Usuario */}
+        {/* User */}
         <div className="flex items-center space-x-3">
             <h1>Espacio para usuario</h1>
         </div>

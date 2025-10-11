@@ -12,25 +12,33 @@ export async function getAvailableServices(query?: string): Promise<Service[]> {
         {
             eiltRate: 50,
             id: "1",
-            name: "Relaxing massage",
+            name: "Masage relajante",
+            description: "Un masaje relajante para relajarse y descansar.",
+            rating: 4.8,
             image: "https://media.istockphoto.com/id/1357320952/es/foto/primer-plano-de-un-hombre-recibiendo-masaje.jpg?s=612x612&w=0&k=20&c=CfWa3f91Ylq3u69hezJrOczxSpphtTl1xnHUvNe1pXA=",
         },
         {
             eiltRate: 80,
             id: "2",
-            name: "Facial treatment",
+            name: "Tratamiento facial",
+            description: "Un tratamiento facial rejuvenecedor para tener una piel brillante.",
+            rating: 4.6,
             image: "https://leonardmedispa.com/wp-content/uploads/2017/03/facial-86487979-1.jpg",
         },
         {
             eiltRate: 999,
             id: "3",
-            name: "Exorcism",
+            name: "Exorcismo",
+            description: "Una sesión de exorcismo para una limpieza espiritual.",
+            rating: 4.2,
             image: "https://www.sublimehorror.com/wp-content/uploads/2019/03/medieval-representations-of-exorcism-in-art.jpg",
         },
         {
             eiltRate: 2900,
             id: "4",
-            name: "Witchcraft session",
+            name: "Sesión de brujería",
+            description: "Una sesión mística de brujería para necesidades especiales.",
+            rating: 4.9,
             image: "https://media.cnn.com/api/v1/images/stellar/prod/211030185915-05-witchcraft-taschen-witch-symbolism-art.jpg?q=w_1110,c_fill",
         },
     ];
@@ -87,7 +95,7 @@ export async function getCurrentVenueAcount(venueId: string): Promise<VenueAccou
 export async function getSpirit(spiritId: string): Promise<Spirit | null> {
     return {
         id: spiritId,
-        name: "Agent 47",
+        name: "Agente 47",
         typeId: "1",
         type: await getSpiritType("1") as SpiritType,
         accountId: "1",
@@ -97,6 +105,10 @@ export async function getSpirit(spiritId: string): Promise<Spirit | null> {
     };
 }
 
+
+/**
+ * Function to get spirit type details by ID
+ */
 export async function getSpiritType(typeId: string): Promise<SpiritType | null> {
     return {
         id: typeId,
@@ -104,3 +116,10 @@ export async function getSpiritType(typeId: string): Promise<SpiritType | null> 
         dangerScore: 90,
     };
 }
+
+export async function getAvailableTimeSlots(serviceId: string, date: Date): Promise<string[]> {
+    // Simulate fetching from server
+    await wait(500);
+    return ['09:00 AM', '10:00 AM', '11:00 AM', '01:00 PM', '03:00 PM', '05:00 PM'];
+}
+

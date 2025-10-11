@@ -1,3 +1,4 @@
+import { Toaster } from "@/components/ui/sonner"
 import "./globals.css"
 import { Inter, Noto_Serif_JP } from "next/font/google"
 
@@ -24,8 +25,9 @@ export default function RootLayout({
 }) {
   return (
     <html lang="es" className={`${inter.variable} ${notoSerifJP.variable}`}>
-      <body>
+      <body className="font-base">
         {children}
+        <Toaster />
       </body>
     </html>
   )

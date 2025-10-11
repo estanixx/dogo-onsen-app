@@ -14,15 +14,15 @@ export default async function RoomPage({ params }: { params: { id: string } }) {
     <div className="grid grid-cols-2 gap-4">
       <CardLink
         href={`${base}/services`}
-        title="Services"
-        description="Look at our wide variety of services for you to enjoy."
+        title="Servicios"
+        description="Mira nuetra amplia variedad de servicios para tu disfrute."
         icon={<MdPool className='size-6 text-primary'/>}
       />
 
       <CardLink
         href={`${base}/reservations`}
-        title="Reservations"
-        description="View and manage your reservations."
+        title="Reservaciones"
+        description="Visualiza y administra tus reservaciones."
         icon={<MdCalendarMonth className='size-6 text-primary'/>}
       />
 

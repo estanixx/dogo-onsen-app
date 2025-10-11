@@ -48,7 +48,7 @@ export function CardModal({
 
       <DialogContent
         className="
-          max-w-md rounded-2xl border shadow-lg
+          max-w-md rounded-2xl border
           border-[var(--gold)]
           bg-[var(--dark-light)]
           text-[var(--smoke)]

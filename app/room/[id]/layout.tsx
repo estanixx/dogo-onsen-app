@@ -22,7 +22,7 @@ export default async function RoomLayout({ children, params }: RoomLayoutProps) 
   const account = (await getCurrentVenueAcount(roomId)) as VenueAccount;
   return (
     <DogoPage>
-      <DogoHeader title={`Room #${roomId}`} />
+      <DogoHeader title={`Habitación #${roomId}`} />
       <DogoSection className="border-2 border-white rounded-lg object-cover flex w-full text-white">
         {/* Left sidebar with spirit info */}
         <aside className="w-72 p-6 flex flex-col items-center justify-between">

@@ -111,6 +111,7 @@
   --shadow-lg: 0 0.25rem 0.5rem 0 hsl(0 0% 0% / 0.30), 0 4px 6px -1px hsl(0 0% 0% / 0.30);
   --shadow-xl: 0 0.25rem 0.5rem 0 hsl(0 0% 0% / 0.30), 0 8px 10px -1px hsl(0 0% 0% / 0.30);
   --shadow-2xl: 0 0.25rem 0.5rem 0 hsl(0 0% 0% / 0.75);
+
 }
 
 @theme inline {
@@ -171,12 +172,20 @@
   --tracking-wide: calc(var(--tracking-normal) + 0.025em);
   --tracking-wider: calc(var(--tracking-normal) + 0.05em);
   --tracking-widest: calc(var(--tracking-normal) + 0.1em);
+  --font-titles: 'Noto Serif', serif;
+  --font-base: 'Inter', sans-serif;
 }
 
 body {
   letter-spacing: var(--tracking-normal);
+  font-family: var(--font-base);
 }
-
+.font-base {
+  font-family: var(--font-base) !important;
+}
+.font-titles {
+  font-family: var(--font-titles) !important;
+}
 @layer base {
   * {
     @apply border-border outline-ring/50;

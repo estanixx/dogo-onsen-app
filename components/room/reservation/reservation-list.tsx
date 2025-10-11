@@ -47,9 +47,9 @@ export function ReservationList({ accountId }: ReservationListProps) {
   if (reservations.length === 0) {
     return (
       <div className="text-center py-12">
-        <h3 className="text-lg font-medium text-gray-900">No reservations yet</h3>
+        <h3 className="text-lg font-medium text-gray-900">Sin reservaciones</h3>
         <p className="mt-2 text-sm text-gray-600">
-          Your booked services will appear here
+          Tus servicios agendados aparecerán aquí
         </p>
       </div>
     );
@@ -63,7 +63,7 @@ export function ReservationList({ accountId }: ReservationListProps) {
       {/* Active Reservations */}
       {activeReservations.length > 0 && (
         <section>
-          <h2 className="text-xl font-medium text-gray-900 mb-4">Active Reservations</h2>
+          <h2 className="text-xl font-medium text-gray-900 mb-4">Reservaciones Activas</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {activeReservations.map((reservation) => (
               <ReservationCard
@@ -84,7 +84,7 @@ export function ReservationList({ accountId }: ReservationListProps) {
       {/* Past Reservations */}
       {pastReservations.length > 0 && (
         <section>
-          <h2 className="text-xl font-medium text-gray-900 mb-4">Past Reservations</h2>
+          <h2 className="text-xl font-medium text-gray-900 mb-4">Reservaciones Pasadas</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {pastReservations.map((reservation) => (
               <ReservationCard

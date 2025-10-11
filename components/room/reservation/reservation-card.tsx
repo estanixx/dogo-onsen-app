@@ -77,7 +77,7 @@ export function ReservationCard({ reservation, onRedeem, onRate }: ReservationCa
             className="w-full"
             variant={canRedeem ? "default" : "secondary"}
           >
-            {canRedeem ? "Redeem Now" : "Not Yet Available"}
+            {canRedeem ? "Reclama ahora" : "Aún no disponible"}
           </Button>
         ) : !rating ? (
           <Button
@@ -85,11 +85,11 @@ export function ReservationCard({ reservation, onRedeem, onRate }: ReservationCa
             variant="outline"
             className="w-full"
           >
-            Rate Service
+            Calificar Servicio
           </Button>
         ) : (
           <p className="text-sm text-gray-500 text-center w-full">
-            Service completed
+            Servicio completado
           </p>
         )}
       </CardFooter>

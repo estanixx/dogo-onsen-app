@@ -51,7 +51,7 @@ export function SpiritInfo({ account }: SpiritInfoProps) {
 
       {/* Spirit Type */}
       <div>
-        <p className="text-sm text-indigo-200">Spirit Type</p>
+        <p className="text-sm text-indigo-200">Tipo de Espíritu</p>
         <p className="font-medium">{spiritType.name}</p>
       </div>
 
@@ -63,8 +63,8 @@ export function SpiritInfo({ account }: SpiritInfoProps) {
 
       {/* Time Remaining */}
       <div>
-        <p className="text-sm text-indigo-200">Time Remaining</p>
-        <p className="font-medium">{daysRemaining} days</p>
+        <p className="text-sm text-indigo-200">Tiempo restante</p>
+        <p className="font-medium">{daysRemaining} días</p>
       </div>
     </div>
   );
