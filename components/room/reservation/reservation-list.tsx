@@ -1,3 +1,5 @@
+"use client";
+
 import { Reservation, Service } from "@/lib/types";
 import { ReservationCard } from "./reservation-card";
 import { useEffect, useState } from "react";

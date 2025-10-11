@@ -8,8 +8,6 @@ import {
   DialogHeader,
   DialogTitle,
   DialogDescription,
-  DialogFooter,
-  DialogClose,
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { CardButton } from '@/components/shared/card-button';
@@ -84,7 +82,7 @@ export function CardModal({
           <div className="flex flex-col gap-2">
             <label
               htmlFor="amount"
-              className="text-sm uppercase tracking-wider text-[var(--smoke)]"
+              className="text-sm font-bold tracking-wider text-[var(--smoke)]"
             >
               Monto a recargar
             </label>
@@ -104,16 +102,17 @@ export function CardModal({
                 bg-[var(--dark)] border-[var(--gold-dark)]
                 placeholder:text-[color:var(--gold-light)]/50
                 focus:outline-none focus:border-[var(--gold-light)]
+                [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none
               "
             />
           </div>
 
-          <div className="flex justify-end">
+          <div className="flex justify-end gap-4">
             <Button
               type="submit"
               disabled={isSuccess}
               className={`
-                font-semibold uppercase tracking-wide transition-colors
+                font-semibold tracking-wide transition-colors
                 ${
                   isSuccess
                     ? 'bg-green-500 text-white hover:bg-green-400'
@@ -125,20 +124,6 @@ export function CardModal({
             </Button>
           </div>
         </form>
-
-        <DialogFooter className="flex justify-end">
-            <DialogClose asChild>
-                <Button
-                variant="outline"
-                className="
-                    border-[var(--gold-dark)] text-[var(--gold)]
-                    hover:bg-[var(--gold-dark)]/10 transition-colors
-                "
-                >
-                Cerrar
-                </Button>
-            </DialogClose>
-        </DialogFooter>
       </DialogContent>
     </Dialog>
   );
