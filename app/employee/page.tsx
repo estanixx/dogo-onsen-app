@@ -5,5 +5,5 @@ export default function EmployeePage(){
                 Employee Page
             </div>
         </>
-    )
+    );
 }

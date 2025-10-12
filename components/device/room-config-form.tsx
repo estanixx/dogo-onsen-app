@@ -1,7 +1,7 @@
-"use client"
+"use client";
 
-import { DogoCard, DogoButton } from "@/components/shared/dogo-ui"
-import { Input } from "@/components/ui/input"
+import { DogoCard, DogoButton } from "@/components/shared/dogo-ui";
+import { Input } from "@/components/ui/input";
 
 interface RoomConfigFormProps {
   onSubmit: (roomId: string) => Promise<void>
@@ -9,10 +9,11 @@ interface RoomConfigFormProps {
 
 export function RoomConfigForm({ onSubmit }: RoomConfigFormProps) {
   async function handleSubmit(formData: FormData) {
-    const roomId = formData.get("roomId")?.toString()
-    if (!roomId) return
-    
-    await onSubmit(roomId)
+    const roomId = formData.get("roomId")?.toString();
+    if (!roomId) {
+      return;
+    }
+    await onSubmit(roomId);
   }
 
   return (
@@ -45,5 +46,5 @@ export function RoomConfigForm({ onSubmit }: RoomConfigFormProps) {
       {/* Decorative elements */}
       <div className="h-1 w-32 mx-auto bg-gradient-to-r from-transparent via-gold/20 to-transparent mt-8" />
     </div>
-  )
+  );
 }

@@ -48,7 +48,7 @@ export default function ServiceBookConfirm({ service, open, setOpen, account }: 
     toast.success(`Reservación confirmada: ${service.name} - ${format(date, 'PPP')} ${time}`, { duration: 4000 });
     setDate(new Date());
     setTime(null);
-    setAvailableTimeSlots(null)
+    setAvailableTimeSlots(null);
   };
   const onDateSelect = (selectedDate: Date | undefined) => {
     if (selectedDate) {

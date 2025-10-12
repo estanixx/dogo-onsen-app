@@ -8,9 +8,9 @@ import DogoIcon from '@/components/shared/dogo-icon';
 
 interface RoomLayoutProps {
   children: ReactNode;
-  params: {
+  params: Promise<{
     id: string;
-  };
+  }>;
 }
 
 /**

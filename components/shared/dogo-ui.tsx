@@ -1,8 +1,8 @@
-"use client"
+"use client";
 
-import { cn } from "@/lib/utils"
-import DogoIcon from "./dogo-icon"
-import React, { ReactNode } from "react"
+import { cn } from "@/lib/utils";
+import DogoIcon from "./dogo-icon";
+import React, { ReactNode } from "react";
 
 // Types
 export interface DogoPageProps {
@@ -26,7 +26,7 @@ export function DogoPage({ children, className }: DogoPageProps) {
   return (
     <main className={cn(
       "h-screen w-full relative overflow-hidden",
-      className
+      className,
     )}>
       {/* Background elements */}
       <div className="absolute inset-0">
@@ -42,7 +42,7 @@ export function DogoPage({ children, className }: DogoPageProps) {
               radial-gradient(circle at 50% 50%, rgba(255,255,255,0.1) 0%, transparent 8%)
             `,
             backgroundSize: '60px 60px, 60px 60px',
-            backgroundPosition: '0 0, 30px 30px'
+            backgroundPosition: '0 0, 30px 30px',
           }}
         />
         
@@ -97,7 +97,7 @@ export function DogoPage({ children, className }: DogoPageProps) {
         {children}
       </div>
     </main>
-  )
+  );
 }
 
 // Header component with logo and title
@@ -134,7 +134,7 @@ export function DogoHeader({ title, subtitle, className }: DogoHeaderProps) {
         </p>
       )}
     </div>
-  )
+  );
 }
 
 // Content section wrapper
@@ -143,7 +143,7 @@ export function DogoSection({ children, className }: DogoSectionProps) {
     <section className={cn("w-full mx-auto", className)}>
       {children}
     </section>
-  )
+  );
 }
 
 // Card with consistent styling
@@ -152,13 +152,13 @@ export function DogoCard({ children, className, ...props }: React.ComponentProps
     <div 
       className={cn(
         "bg-gradient-to-br from-[var(--dark-light)] to-[var(--dark)] border border-white/10 rounded-xl p-6 shadow-xl backdrop-blur-sm",
-        className
+        className,
       )}
       {...props}
     >
       {children}
     </div>
-  )
+  );
 }
 
 // Button with primary styling
@@ -167,11 +167,11 @@ export function DogoButton({ children, className, ...props }: React.ComponentPro
     <button
       className={cn(
         "cursor-pointer w-full bg-gradient-to-r from-[var(--gold)]/80 to-[var(--gold)]/60 hover:from-[var(--gold)] hover:to-[var(--gold)]/80 text-[var(--dark)] font-medium py-3 px-6 text-lg rounded-md transition-all shadow-lg",
-        className
+        className,
       )}
       {...props}
     >
       {children}
     </button>
-  )
+  );
 }

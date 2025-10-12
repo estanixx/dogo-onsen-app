@@ -1,7 +1,7 @@
-"use client"
+"use client";
 
-import { Building2, BedDouble } from "lucide-react"
-import { CardButton } from "../shared/card-button"
+import { Building2, BedDouble } from "lucide-react";
+import { CardButton } from "../shared/card-button";
 
 interface DeviceSelectorProps {
   onSelect: (type: "employee" | "room") => Promise<void>
@@ -25,5 +25,5 @@ export function DeviceSelector({ onSelect }: DeviceSelectorProps) {
         onClick={() => onSelect("room")}
       />
     </div>
-  )
+  );
 }

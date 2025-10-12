@@ -1,8 +1,8 @@
-import { DeviceSelector } from "@/components/device/device-selector"
-import { SyncDeviceConfig } from "@/components/device/device-config"
-import { DogoPage, DogoHeader, DogoSection } from "@/components/shared/dogo-ui"
-import { cookies } from "next/headers"
-import { redirect } from "next/navigation"
+import { DeviceSelector } from "@/components/device/device-selector";
+import { SyncDeviceConfig } from "@/components/device/device-config";
+import { DogoPage, DogoHeader, DogoSection } from "@/components/shared/dogo-ui";
+import { cookies } from "next/headers";
+import { redirect } from "next/navigation";
 
 /**
  * Homepage component for device type selection
@@ -10,17 +10,17 @@ import { redirect } from "next/navigation"
  */
 export default function Home() {
   async function configureDevice(type: "employee" | "room") {
-    "use server"
+    "use server";
     
     // Save configuration in cookies (for middleware)
-    const cookieStore = await cookies()
-    cookieStore.set("dogo-device-config", JSON.stringify({ type }))
+    const cookieStore = await cookies();
+    cookieStore.set("dogo-device-config", JSON.stringify({ type }));
     
     // Redirect based on device type
     if (type === "employee") {
-      redirect("/employee")
+      redirect("/employee");
     } else {
-      redirect("/room/config")
+      redirect("/room/config");
     }
   }
 
@@ -40,5 +40,5 @@ export default function Home() {
       </DogoSection>
       </div>
     </DogoPage>
-  )
+  );
 }

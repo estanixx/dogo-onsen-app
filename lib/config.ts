@@ -47,7 +47,7 @@ export const clearDeviceConfig = () => {
  */
 export const isDeviceConfigured = (): boolean => {
   const config = getDeviceConfig();
-  if (!config) return false;
+  if (!config) {return false;};
   
   // For room devices, both type and roomId must be set
   if (config.type === 'room') {

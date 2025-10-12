@@ -3,6 +3,7 @@ import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card"
 import { Button } from "@/components/ui/button";
 import { CalendarDays, Clock } from "lucide-react";
 import { formatRelative } from "date-fns";
+import Image from "next/image";
 
 interface ReservationCardProps {
   reservation: Reservation & { service: Service };
@@ -23,7 +24,8 @@ export function ReservationCard({ reservation, onRedeem, onRate }: ReservationCa
       {/* Service Image */}
       {service.image && (
         <div className="relative h-40 w-full">
-          <img
+          <Image
+            fill={true}
             src={service.image}
             alt={service.name}
             className="object-cover w-full h-full"
@@ -63,7 +65,7 @@ export function ReservationCard({ reservation, onRedeem, onRate }: ReservationCa
           <div className="flex items-center text-sm text-gray-500">
             <Clock className="mr-2 h-4 w-4" />
             <span>{`${new Date(startTime).toLocaleTimeString()} - ${new Date(
-              endTime
+              endTime,
             ).toLocaleTimeString()}`}</span>
           </div>
         </div>

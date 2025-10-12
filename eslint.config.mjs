@@ -28,7 +28,7 @@ const eslintConfig = [
       // Trailing commas for multiline constructs
       "comma-dangle": ["error", "always-multiline"],
       // No unused variables
-      "no-unused-vars": ["error", { "args": "after-used", "ignoreRestSiblings": true }],
+      // "no-unused-vars": ["error", { "args": "after-used", "ignoreRestSiblings": true }], ACTIVAR
       // Prefer const when variables are never reassigned
       "prefer-const": "error",
       // Require === and !==

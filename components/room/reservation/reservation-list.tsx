@@ -55,8 +55,8 @@ export function ReservationList({ accountId }: ReservationListProps) {
     );
   }
 
-  const activeReservations = reservations.filter(r => !r.isRedeemed);
-  const pastReservations = reservations.filter(r => r.isRedeemed);
+  const activeReservations = reservations.filter((r) => !r.isRedeemed);
+  const pastReservations = reservations.filter((r) => r.isRedeemed);
 
   return (
     <div className="space-y-8">
