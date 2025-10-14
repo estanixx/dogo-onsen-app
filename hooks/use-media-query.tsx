@@ -6,7 +6,9 @@ export function useMediaQuery(query: string) {
   const [matches, setMatches] = useState(false);
 
   useEffect(() => {
-    if (typeof window === 'undefined') return;
+    if (typeof window === 'undefined') {
+      return;
+    }
     const m = window.matchMedia(query);
     const handler = () => setMatches(m.matches);
     handler();

@@ -45,7 +45,7 @@ export default function SpiritSelect({ id, setId }: SpiritSelectProps) {
               Ingrese el número de identificación para buscar o crear un registro.
             </DialogDescription>
           </DialogHeader>
-          <SpiritForm id={id} setId={setId} setOpen={setOpen}/>
+          <SpiritForm id={id} setId={setId} setOpen={setOpen} />
         </DialogContent>
       </Dialog>
     );
@@ -61,7 +61,7 @@ export default function SpiritSelect({ id, setId }: SpiritSelectProps) {
             Ingrese el número de identificación para buscar o crear un registro.
           </DrawerDescription>
         </DrawerHeader>
-        <SpiritForm id={id} setId={setId} setOpen={setOpen}/>
+        <SpiritForm id={id} setId={setId} setOpen={setOpen} />
         <DrawerFooter>
           <DrawerClose asChild>
             <Button variant="outline">Cerrar</Button>

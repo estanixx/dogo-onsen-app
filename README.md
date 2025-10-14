@@ -41,7 +41,7 @@ Follow these rules to keep the codebase consistent and maintainable:
 
 - Prettier is recommended as the formatter (see VS Code settings). Configure project-wide rules using a `.prettierrc` if you want stable team defaults.
 - ESLint is configured in the project — run `npm run lint`.
- 
+
 Prettier is configured in the project via `.prettierrc`. Use these npm scripts:
 
 - `npm run format` — format all source files with Prettier
@@ -62,4 +62,3 @@ If you use VS Code, enable format-on-save and set Prettier as your default forma
 2. Add types to `lib/types.ts` when they are shared across features.
 3. If the component needs browser APIs, add `"use client"` at the top and keep the component focused on interactivity only.
 4. Add small Storybook story or a test page where useful.
-

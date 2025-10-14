@@ -22,7 +22,6 @@ export interface Spirit {
   active?: boolean;
 }
 
-
 /**
  * Venue Account - Represents a spirit's stay/visit at the Dogo Onsen
  */
@@ -120,10 +119,9 @@ export interface Item {
   image?: string;
 }
 
-
 // Local helper type used by the mock API
 // TODO: Modify this (?).
 export interface PrivateVenue {
-    id: string;
-    state: boolean;
+  id: string;
+  state: boolean;
 }

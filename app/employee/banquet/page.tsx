@@ -1,7 +1,7 @@
-"use client";
+'use client';
 
-import { DogoSection } from "@/components/shared/dogo-ui";
-import BanquetLayout from "@/components/employee/banquet/banquet-layout";
+import { DogoSection } from '@/components/shared/dogo-ui';
+import BanquetLayout from '@/components/employee/banquet/banquet-layout';
 
 export default function FeastPage() {
   return (

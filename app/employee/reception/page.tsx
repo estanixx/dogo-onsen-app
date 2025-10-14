@@ -12,15 +12,20 @@ export default function CheckInPage() {
 
       {/* Main area */}
       <main className="overflow-y-auto p-6 col-span-2 ">
-        <Tabs defaultValue="checkin" className="w-full" >
-          <TabsList className='w-1/2'>
-            <TabsTrigger value="checkin" className='text-white'>Registro</TabsTrigger>
-            <TabsTrigger value="spirits" className='text-white'>Espíritus</TabsTrigger>
+        <Tabs defaultValue="checkin" className="w-full">
+          <TabsList className="w-1/2">
+            <TabsTrigger value="checkin" className="text-white">
+              Registro
+            </TabsTrigger>
+            <TabsTrigger value="spirits" className="text-white">
+              Espíritus
+            </TabsTrigger>
           </TabsList>
           <TabsContent value="checkin">Próximamente: vista general del check-in 🏯</TabsContent>
-          <TabsContent value="spirits"><SpiritGrid /></TabsContent>
+          <TabsContent value="spirits">
+            <SpiritGrid />
+          </TabsContent>
         </Tabs>
-        
       </main>
     </DogoSection>
   );

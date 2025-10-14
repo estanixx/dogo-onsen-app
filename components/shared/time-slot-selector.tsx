@@ -9,7 +9,6 @@ export default function TimeSlotSelector({
   onSelect,
   availableTimeSlots: timeSlots,
 }: TimeSlotSelectorProps) {
-
   return (
     <ToggleGroup type="single" className="p-4 grid grid-cols-2 gap-2">
       {timeSlots.map((time) => (

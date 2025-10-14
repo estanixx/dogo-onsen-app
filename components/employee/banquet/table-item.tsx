@@ -12,7 +12,7 @@ export default function TableItem({ table }: TableSelectorProps) {
       <Card
         className={cn(
           'flex items-center justify-center bg-gray-900 border border-gray-600 rounded-2xl p-10 shadow-lg transition h-52 relative',
-          table.state ? 'opacity-100' : 'opacity-50 grayscale'
+          table.state ? 'opacity-100' : 'opacity-50 grayscale',
         )}
       >
         {/* Table (center rectangle) */}
@@ -42,7 +42,7 @@ export default function TableItem({ table }: TableSelectorProps) {
                 'w-7 h-7 rounded-md border flex items-center justify-center text-xs font-bold transition-all',
                 colorClass,
                 positions[seat.seatNumber],
-                'data-[state=on]:bg-primary data-[state=on]:text-black'
+                'data-[state=on]:bg-primary data-[state=on]:text-black',
               )}
               disabled={isOccupied}
             >

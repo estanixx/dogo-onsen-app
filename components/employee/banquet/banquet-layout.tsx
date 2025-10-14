@@ -3,10 +3,8 @@
 import React, { useEffect, useState } from 'react';
 import { getBanquetTables } from '@/lib/api';
 import { BanquetTable } from '@/lib/types';
-import { Card } from '@/components/ui/card';
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
 import { Button } from '@/components/ui/button';
-import { cn } from '@/lib/utils';
 import TableItem from './table-item';
 
 export default function BanquetLayout() {
@@ -24,7 +22,9 @@ export default function BanquetLayout() {
   // Future seat submission handler (empty for now)
   const handleSeatSubmit = async () => {
     try {
-      if (!selectedSeat) return;
+      if (!selectedSeat) {
+        return;
+      }
       console.log(`Seat submitted: ${selectedSeat}`);
     } catch (error) {
       console.error('Error submitting seat:', error);

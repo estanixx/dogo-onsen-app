@@ -95,9 +95,7 @@ export default function SpiritForm({ id, setId, setOpen }: SpiritSelectProps) {
           </div>
         </div>
 
-        {spirit && (
-          <SpiritCard spirit={spirit} />
-        )}
+        {spirit && <SpiritCard spirit={spirit} />}
 
         {creating && (
           <form onSubmit={form.handleSubmit(onSubmit)} className="p-4 border rounded-md space-y-2">
@@ -170,7 +168,11 @@ export default function SpiritForm({ id, setId, setOpen }: SpiritSelectProps) {
           </form>
         )}
       </div>
-      {spirit && <Button variant="outline" onClick={() => setOpen(false)}>Seleccionar</Button>}
+      {spirit && (
+        <Button variant="outline" onClick={() => setOpen(false)}>
+          Seleccionar
+        </Button>
+      )}
     </Form>
   );
 }

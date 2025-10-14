@@ -1,8 +1,8 @@
-"use client";
+'use client';
 
-import { Reservation, Service } from "@/lib/types";
-import { ReservationCard } from "./reservation-card";
-import { useEffect, useState } from "react";
+import { Reservation, Service } from '@/lib/types';
+import { ReservationCard } from './reservation-card';
+import { useEffect, useState } from 'react';
 
 interface ReservationListProps {
   accountId: string;
@@ -37,7 +37,7 @@ export function ReservationList({ accountId }: ReservationListProps) {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {[1, 2, 3].map((n) => (
           <div key={n} className="animate-pulse">
-            <div className="h-48 bg-gray-200 rounded-lg"/>
+            <div className="h-48 bg-gray-200 rounded-lg" />
           </div>
         ))}
       </div>
@@ -48,15 +48,13 @@ export function ReservationList({ accountId }: ReservationListProps) {
     return (
       <div className="text-center py-12">
         <h3 className="text-lg font-medium text-gray-900">Sin reservaciones</h3>
-        <p className="mt-2 text-sm text-gray-600">
-          Tus servicios agendados aparecerán aquí
-        </p>
+        <p className="mt-2 text-sm text-gray-600">Tus servicios agendados aparecerán aquí</p>
       </div>
     );
   }
 
-  const activeReservations = reservations.filter(r => !r.isRedeemed);
-  const pastReservations = reservations.filter(r => r.isRedeemed);
+  const activeReservations = reservations.filter((r) => !r.isRedeemed);
+  const pastReservations = reservations.filter((r) => r.isRedeemed);
 
   return (
     <div className="space-y-8">

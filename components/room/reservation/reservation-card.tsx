@@ -1,8 +1,9 @@
-import { Reservation, Service } from "@/lib/types";
-import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { CalendarDays, Clock } from "lucide-react";
-import { formatRelative } from "date-fns";
+import { Reservation, Service } from '@/lib/types';
+import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { CalendarDays, Clock } from 'lucide-react';
+import { formatRelative } from 'date-fns';
+import Image from 'next/image';
 
 interface ReservationCardProps {
   reservation: Reservation & { service: Service };
@@ -16,14 +17,16 @@ interface ReservationCardProps {
  */
 export function ReservationCard({ reservation, onRedeem, onRate }: ReservationCardProps) {
   const { service, startTime, endTime, isRedeemed, rating } = reservation;
-  const canRedeem = !isRedeemed && new Date(startTime) <= new Date() && new Date(endTime) >= new Date();
+  const canRedeem =
+    !isRedeemed && new Date(startTime) <= new Date() && new Date(endTime) >= new Date();
 
   return (
     <Card className="overflow-hidden bg-white">
       {/* Service Image */}
       {service.image && (
         <div className="relative h-40 w-full">
-          <img
+          <Image
+            fill={true}
             src={service.image}
             alt={service.name}
             className="object-cover w-full h-full"
@@ -42,9 +45,7 @@ export function ReservationCard({ reservation, onRedeem, onRate }: ReservationCa
               {[...Array(5)].map((_, i) => (
                 <span
                   key={i}
-                  className={`text-lg ${
-                    i < rating ? "text-yellow-400" : "text-gray-300"
-                  }`}
+                  className={`text-lg ${i < rating ? 'text-yellow-400' : 'text-gray-300'}`}
                 >
                   ★
                 </span>
@@ -63,7 +64,7 @@ export function ReservationCard({ reservation, onRedeem, onRate }: ReservationCa
           <div className="flex items-center text-sm text-gray-500">
             <Clock className="mr-2 h-4 w-4" />
             <span>{`${new Date(startTime).toLocaleTimeString()} - ${new Date(
-              endTime
+              endTime,
             ).toLocaleTimeString()}`}</span>
           </div>
         </div>
@@ -75,22 +76,16 @@ export function ReservationCard({ reservation, onRedeem, onRate }: ReservationCa
             onClick={onRedeem}
             disabled={!canRedeem}
             className="w-full"
-            variant={canRedeem ? "default" : "secondary"}
+            variant={canRedeem ? 'default' : 'secondary'}
           >
-            {canRedeem ? "Reclama ahora" : "Aún no disponible"}
+            {canRedeem ? 'Reclama ahora' : 'Aún no disponible'}
           </Button>
         ) : !rating ? (
-          <Button
-            onClick={() => onRate(0)}
-            variant="outline"
-            className="w-full"
-          >
+          <Button onClick={() => onRate(0)} variant="outline" className="w-full">
             Calificar Servicio
           </Button>
         ) : (
-          <p className="text-sm text-gray-500 text-center w-full">
-            Servicio completado
-          </p>
+          <p className="text-sm text-gray-500 text-center w-full">Servicio completado</p>
         )}
       </CardFooter>
     </Card>

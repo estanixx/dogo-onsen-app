@@ -8,9 +8,9 @@ import DogoIcon from '@/components/shared/dogo-icon';
 
 interface RoomLayoutProps {
   children: ReactNode;
-  params: {
+  params: Promise<{
     id: string;
-  };
+  }>;
 }
 
 /**
@@ -28,7 +28,10 @@ export default async function RoomLayout({ children, params }: RoomLayoutProps) 
           {/* Left sidebar with spirit info */}
           <aside className="w-72 p-6 flex flex-col items-center justify-between">
             <SpiritInfo account={account} />
-            <Link href={`/room/${roomId}`} className="flex gap-2 items-center font-bold font-base absolute top-2 left-2 shadow-[0px_0px_4px_rgba(255,255,255,0.6)] px-4 rounded-lg">
+            <Link
+              href={`/room/${roomId}`}
+              className="flex gap-2 items-center font-bold font-base absolute top-2 left-2 shadow-[0px_0px_4px_rgba(255,255,255,0.6)] px-4 rounded-lg"
+            >
               <DogoIcon className="fill-white size-10" /> Inicio
             </Link>
           </aside>

@@ -56,9 +56,7 @@ export function CardModal({
         "
       >
         <DialogHeader>
-          <DialogTitle
-            className="font-serif text-2xl tracking-wide text-[var(--gold)]"
-          >
+          <DialogTitle className="font-serif text-2xl tracking-wide text-[var(--gold)]">
             {modalTitle || title}
           </DialogTitle>
 
@@ -94,9 +92,7 @@ export function CardModal({
               placeholder="Ej. 50"
               value={amount}
               onChange={(e) => setAmount(e.target.value)}
-              onInput={(e) =>
-                (e.currentTarget as HTMLInputElement).setCustomValidity('')
-              }
+              onInput={(e) => (e.currentTarget as HTMLInputElement).setCustomValidity('')}
               className="
                 px-3 py-2 rounded-md border text-[var(--smoke)]
                 bg-[var(--dark)] border-[var(--gold-dark)]

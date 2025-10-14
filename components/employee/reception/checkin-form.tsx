@@ -147,7 +147,9 @@ export default function CheckInForm({ initialValues }: { initialValues?: Partial
                 mode="single"
                 selected={checkin}
                 onSelect={(d) => {
-                  if (d) setCheckin(d);
+                  if (d) {
+                    setCheckin(d);
+                  }
                   setCheckinOpen(false);
                 }}
               />
@@ -186,7 +188,9 @@ export default function CheckInForm({ initialValues }: { initialValues?: Partial
                 mode="single"
                 selected={checkout}
                 onSelect={(d) => {
-                  if (d) setCheckout(d);
+                  if (d) {
+                    setCheckout(d);
+                  }
                   setCheckoutOpen(false);
                 }}
               />

@@ -28,13 +28,13 @@ const eslintConfig = [
       // Trailing commas for multiline constructs
       "comma-dangle": ["error", "always-multiline"],
       // No unused variables
-      "no-unused-vars": ["error", { "args": "after-used", "ignoreRestSiblings": true }],
+      // "no-unused-vars": ["error", { "args": "after-used", "ignoreRestSiblings": true }], ACTIVAR
       // Prefer const when variables are never reassigned
       "prefer-const": "error",
       // Require === and !==
       eqeqeq: ["error", "always"],
       // Require braces for all control statements
-      curly: "error",
+      curly: ["error", "all"],
       // Discourage console.log in production code (warn instead)
       "no-console": ["warn", { allow: ["warn", "error"] }],
       // Always require parens for arrow functions

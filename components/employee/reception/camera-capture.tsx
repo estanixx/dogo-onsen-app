@@ -19,20 +19,26 @@ export default function CameraCapture({ onCapture }: { onCapture: (dataUrl: stri
     try {
       const s = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user' } });
       setStream(s);
-      if (videoRef.current) videoRef.current.srcObject = s;
+      if (videoRef.current) {
+        videoRef.current.srcObject = s;
+      }
     } catch (e) {
       console.error(e);
     }
   };
 
   const take = () => {
-    if (!videoRef.current || !canvasRef.current) return;
+    if (!videoRef.current || !canvasRef.current) {
+      return;
+    }
     const video = videoRef.current;
     const canvas = canvasRef.current;
     canvas.width = video.videoWidth;
     canvas.height = video.videoHeight;
     const ctx = canvas.getContext('2d');
-    if (!ctx) return;
+    if (!ctx) {
+      return;
+    }
     ctx.drawImage(video, 0, 0);
     const dataUrl = canvas.toDataURL('image/png');
     onCapture(dataUrl);
@@ -49,9 +55,8 @@ export default function CameraCapture({ onCapture }: { onCapture: (dataUrl: stri
         </Button>
       </div>
       <div className="mx-auto">
-        
-          <video ref={videoRef} autoPlay playsInline className={clsx('bg-black')} />
-          <canvas ref={canvasRef} className="hidden w-1/2 aspect-square" />
+        <video ref={videoRef} autoPlay playsInline className={clsx('bg-black')} />
+        <canvas ref={canvasRef} className="hidden w-1/2 aspect-square" />
       </div>
     </div>
   );

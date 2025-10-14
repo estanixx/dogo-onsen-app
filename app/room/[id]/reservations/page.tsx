@@ -1,4 +1,4 @@
-import { ReservationList } from "@/components/room/reservation/reservation-list";
+import { ReservationList } from '@/components/room/reservation/reservation-list';
 
 interface ReservationsPageProps {
   params: {

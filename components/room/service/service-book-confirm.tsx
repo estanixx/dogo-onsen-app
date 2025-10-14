@@ -44,16 +44,21 @@ export default function ServiceBookConfirm({ service, open, setOpen, account }: 
 
   const handleConfirm = async () => {
     // TODO: call server action to create reservation
-    try{
+    try {
       const reservation = await bookService(service.id, account.id, date, time as string);
       setOpen(false);
-      toast.success(`Reservación confirmada: ${service.name} - ${format(date, 'PPP')} ${time}`, { duration: 4000 });
-    }catch{
-      toast.error(`Error al confirmar la reservación: ${service.name} - ${format(date, 'PPP')} ${time}`, { duration: 4000 });
+      toast.success(`Reservación confirmada: ${service.name} - ${format(date, 'PPP')} ${time}`, {
+        duration: 4000,
+      });
+    } catch {
+      toast.error(
+        `Error al confirmar la reservación: ${service.name} - ${format(date, 'PPP')} ${time}`,
+        { duration: 4000 },
+      );
     }
     setDate(new Date());
     setTime(null);
-    setAvailableTimeSlots(null)
+    setAvailableTimeSlots(null);
   };
   const onDateSelect = (selectedDate: Date | undefined) => {
     if (selectedDate) {
@@ -65,9 +70,13 @@ export default function ServiceBookConfirm({ service, open, setOpen, account }: 
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogContent className="text-white">
         <DialogHeader>
-          <DialogTitle asChild><H2>{service.name}</H2></DialogTitle>
+          <DialogTitle asChild>
+            <H2>{service.name}</H2>
+          </DialogTitle>
           <DialogDescription asChild>
-            <P>Precio: <strong>{service.eiltRate} EILT</strong></P>
+            <P>
+              Precio: <strong>{service.eiltRate} EILT</strong>
+            </P>
           </DialogDescription>
         </DialogHeader>
 

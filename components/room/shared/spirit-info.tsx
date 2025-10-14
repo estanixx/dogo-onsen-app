@@ -1,11 +1,9 @@
-
-import { Spirit, SpiritType, VenueAccount } from "@/lib/types";
-import Image from "next/image";
+import { Spirit, SpiritType, VenueAccount } from '@/lib/types';
+import Image from 'next/image';
 
 interface SpiritInfoProps {
   account: VenueAccount;
 }
-
 
 /**
  * Displays spirit information in the room sidebar
@@ -17,10 +15,10 @@ export function SpiritInfo({ account }: SpiritInfoProps) {
   if (!spirit || !spiritType || !account) {
     return (
       <div className="animate-pulse w-full">
-        <div className="rounded-full bg-white/30 h-24 w-24 mb-4"/>
-        <div className="h-4 bg-white/30 rounded w-3/4 mb-2"/>
-        <div className="h-4 bg-white/30 rounded w-1/2 mb-4"/>
-        <div className="h-4 bg-white/30 rounded w-2/3"/>
+        <div className="rounded-full bg-white/30 h-24 w-24 mb-4" />
+        <div className="h-4 bg-white/30 rounded w-3/4 mb-2" />
+        <div className="h-4 bg-white/30 rounded w-1/2 mb-4" />
+        <div className="h-4 bg-white/30 rounded w-2/3" />
       </div>
     );
   }

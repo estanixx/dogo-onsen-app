@@ -1,22 +1,22 @@
-"use client";
+'use client';
 
-import Link from "next/link";
-import { usePathname } from "next/navigation";
-import { useState } from "react";
-import { Menu, X } from "lucide-react"; // Shadcn icons
-import DogoIcon from "../shared/dogo-icon";
-import { H4, P } from "../shared/typography";
-import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
+import { useState } from 'react';
+import { Menu, X } from 'lucide-react'; // Shadcn icons
+import DogoIcon from '../shared/dogo-icon';
+import { H4, P } from '../shared/typography';
+import { Button } from '@/components/ui/button';
+import { cn } from '@/lib/utils';
 
 export default function Navbar() {
   const pathname = usePathname();
   const [menuOpen, setMenuOpen] = useState(false);
 
   const links = [
-    { name: "Dashboard", href: "/employee" },
-    { name: "Recepción", href: "/employee/reception" },
-    { name: "Banquete", href: "/employee/banquet" },
+    { name: 'Dashboard', href: '/employee' },
+    { name: 'Recepción', href: '/employee/reception' },
+    { name: 'Banquete', href: '/employee/banquet' },
   ];
 
   return (
@@ -38,8 +38,8 @@ export default function Navbar() {
             key={link.href}
             href={link.href}
             className={cn(
-              "transition-all duration-150 border-b-2 border-transparent hover:text-primary hover:border-primary/40",
-              pathname === link.href && "text-primary border-primary"
+              'transition-all duration-150 border-b-2 border-transparent hover:text-primary hover:border-primary/40',
+              pathname === link.href && 'text-primary border-primary',
             )}
           >
             <P className="text-sm sm:text-base">{link.name}</P>
@@ -73,10 +73,10 @@ export default function Navbar() {
               href={link.href}
               onClick={() => setMenuOpen(false)}
               className={cn(
-                "transition-all duration-150 text-lg",
+                'transition-all duration-150 text-lg',
                 pathname === link.href
-                  ? "text-primary border-b-2 border-primary"
-                  : "hover:text-primary"
+                  ? 'text-primary border-b-2 border-primary'
+                  : 'hover:text-primary',
               )}
             >
               {link.name}
