@@ -24,12 +24,12 @@ export default async function RoomLayout({ children, params }: RoomLayoutProps) 
     <DogoPage>
       <div className="w-2/3">
         <DogoHeader title={`Habitación #${roomId}`} />
-        <DogoSection className="border-2 border-white rounded-lg object-cover flex w-full text-white">
+        <DogoSection className="border-2 border-white rounded-lg object-cover flex w-full text-white relative pt-8">
           {/* Left sidebar with spirit info */}
           <aside className="w-72 p-6 flex flex-col items-center justify-between">
             <SpiritInfo account={account} />
-            <Link href={`/room/${roomId}`} className="flex justify-center items-center">
-              <DogoIcon className="fill-white size-12" />
+            <Link href={`/room/${roomId}`} className="flex gap-2 items-center font-bold font-base absolute top-2 left-2 shadow-[0px_0px_4px_rgba(255,255,255,0.6)] px-4 rounded-lg">
+              <DogoIcon className="fill-white size-10" /> Inicio
             </Link>
           </aside>
           {/* Main content area */}

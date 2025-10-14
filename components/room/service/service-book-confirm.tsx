@@ -16,9 +16,9 @@ import { Button } from '@/components/ui/button';
 import { format } from 'date-fns';
 import TimeSlotSelector from '@/components/shared/time-slot-selector';
 import { Calendar } from '@/components/ui/calendar';
-import { getAvailableTimeSlots } from '@/lib/api';
-import { H2, H4, P } from '@/components/shared/typography';
 import { LoadingBox } from '@/components/shared/loading';
+import { bookService, getAvailableTimeSlots } from '@/lib/api';
+import { H2, H4, P } from '@/components/shared/typography';
 import { toast } from 'sonner';
 
 interface Props {
@@ -42,10 +42,15 @@ export default function ServiceBookConfirm({ service, open, setOpen, account }: 
 
   const canConfirm = !!date && !!time;
 
-  const handleConfirm = () => {
+  const handleConfirm = async () => {
     // TODO: call server action to create reservation
-    setOpen(false);
-    toast.success(`Reservación confirmada: ${service.name} - ${format(date, 'PPP')} ${time}`, { duration: 4000 });
+    try{
+      const reservation = await bookService(service.id, account.id, date, time as string);
+      setOpen(false);
+      toast.success(`Reservación confirmada: ${service.name} - ${format(date, 'PPP')} ${time}`, { duration: 4000 });
+    }catch{
+      toast.error(`Error al confirmar la reservación: ${service.name} - ${format(date, 'PPP')} ${time}`, { duration: 4000 });
+    }
     setDate(new Date());
     setTime(null);
     setAvailableTimeSlots(null)

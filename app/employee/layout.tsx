@@ -10,7 +10,7 @@ export default function EmployeeLayout({
     <>
       <DogoPage> 
         <Navbar />
-        <div className="mt-26 px-3">{children}</div>
+        <div className="mt-26 px-3 w-full lg:w-3/4">{children}</div>
       </DogoPage>
     </>
   );

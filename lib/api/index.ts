@@ -1,4 +1,4 @@
-import { PrivateVenue, Service, Spirit, SpiritType, VenueAccount } from "../types";
+import { PrivateVenue, Reservation, Service, Spirit, SpiritType, VenueAccount, BanquetTable, BanquetSeat } from "../types";
 import { wait } from "../utils";
 
 
@@ -12,6 +12,14 @@ export async function getAvailableServices(query?: string): Promise<Service[]> {
         {
             eiltRate: 50,
             id: "1",
+            name: "Banquete",
+            description: "Un banquete donde podrás disfrutar de deliciosos platillos.",
+            rating: 4.7,
+            image: "https://media.istockphoto.com/id/495329828/es/foto/tostado-casero-del-d%C3%ADa-de-acci%C3%B3n-de-gracias-de-turqu%C3%ADa.jpg?s=612x612&w=0&k=20&c=5JwMBcNXS4lIDWp5a5ojJDEf-f-xraaIIXLQl_Vu2to=",
+        },
+        {
+            eiltRate: 50,
+            id: "2",
             name: "Masage relajante",
             description: "Un masaje relajante para relajarse y descansar.",
             rating: 4.8,
@@ -19,7 +27,7 @@ export async function getAvailableServices(query?: string): Promise<Service[]> {
         },
         {
             eiltRate: 80,
-            id: "2",
+            id: "3",
             name: "Tratamiento facial",
             description: "Un tratamiento facial rejuvenecedor para tener una piel brillante.",
             rating: 4.6,
@@ -27,7 +35,7 @@ export async function getAvailableServices(query?: string): Promise<Service[]> {
         },
         {
             eiltRate: 999,
-            id: "3",
+            id: "4",
             name: "Exorcismo",
             description: "Una sesión de exorcismo para una limpieza espiritual.",
             rating: 4.2,
@@ -35,7 +43,7 @@ export async function getAvailableServices(query?: string): Promise<Service[]> {
         },
         {
             eiltRate: 2900,
-            id: "4",
+            id: "5",
             name: "Sesión de brujería",
             description: "Una sesión mística de brujería para necesidades especiales.",
             rating: 4.9,
@@ -49,7 +57,7 @@ export async function getAvailableServices(query?: string): Promise<Service[]> {
     return all.filter((s) => s.name.toLowerCase().includes(q));
 }
 
-export async function getAvailablePrivateVenues(): Promise<PrivateVenue[]> {
+export async function getAvailablePrivateVenues(startTime: Date, endTime: Date): Promise<PrivateVenue[]> {
     return [
         {
             id: "1",
@@ -95,7 +103,7 @@ export async function getCurrentVenueAcount(venueId: string): Promise<VenueAccou
 export async function getSpirit(spiritId: string): Promise<Spirit | null> {
     return {
         id: spiritId,
-        name: "Agente 47",
+        name: "Agente " + spiritId,
         typeId: "1",
         type: await getSpiritType("1") as SpiritType,
         accountId: "1",
@@ -117,9 +125,165 @@ export async function getSpiritType(typeId: string): Promise<SpiritType | null> 
     };
 }
 
+export async function getAllSpiritTypes(): Promise<SpiritType[]> {
+    return [
+        {
+            id: "1",
+            name: "Agente Secreto",
+            dangerScore: 90,
+        },
+        {
+            id: "2",
+            name: "Fantasma amigable",
+            dangerScore: 10,
+        },
+        {
+            id: "3",
+            name: "Espíritu travieso",
+            dangerScore: 50,
+        },
+        {
+            id: "4",
+            name: "Alma en pena",
+            dangerScore: 70,
+        },
+    ];
+}
+
+/**
+ * Function to get available time slots for a service on a specific date
+ */
 export async function getAvailableTimeSlots(serviceId: string, date: Date): Promise<string[]> {
     // Simulate fetching from server
     await wait(500);
     return ['09:00 AM', '10:00 AM', '11:00 AM', '01:00 PM', '03:00 PM', '05:00 PM'];
 }
 
+/**
+ * Function to book a service for a venue account at a specific date and time
+ */
+export async function bookService(serviceId: string, accountId: string, date: Date, time: string): Promise<Reservation> {
+    // Simulate booking a service
+    await wait(500);
+    return {
+        id: "1",
+        serviceId,
+        accountId,
+        startTime: date,
+        endTime: new Date(date.getTime() + 60 * 60 * 1000), // 1 hour later
+        isRedeemed: false,
+    };
+}
+
+export async function createSpirit(id:string, name: string, typeId: string, image?: string): Promise<Spirit> {
+    // Simulate creating a new spirit
+    await wait(500);
+    return {
+        id,
+        name,
+        typeId,
+        type: await getSpiritType(typeId) as SpiritType,
+        eiltBalance: 0,
+        individualRecord: new Date().toISOString(),
+        image,
+    };
+}
+
+export async function getBanquetTables(): Promise<BanquetTable[]> {
+    return [
+        {
+            id: "1",
+            capacity: 6,
+            availableSeats: [
+                { reservationId: "2", tableId: "1", seatNumber: "1", rationsConsumed: 0 },
+                { reservationId: "", tableId: "1", seatNumber: "2", rationsConsumed: 0 },
+                { reservationId: "", tableId: "1", seatNumber: "3", rationsConsumed: 0 },
+                { reservationId: "", tableId: "1", seatNumber: "4", rationsConsumed: 0 },
+                { reservationId: "", tableId: "1", seatNumber: "5", rationsConsumed: 0 },
+                { reservationId: "", tableId: "1", seatNumber: "6", rationsConsumed: 0 },
+            ],
+            occupiants: [],
+            state: true,
+        },
+        {
+            id: "2",
+            capacity: 6,
+            availableSeats: [
+                { reservationId: "", tableId: "2", seatNumber: "1", rationsConsumed: 0 },
+                { reservationId: "", tableId: "2", seatNumber: "2", rationsConsumed: 0 },
+                { reservationId: "", tableId: "2", seatNumber: "3", rationsConsumed: 0 },
+                { reservationId: "", tableId: "2", seatNumber: "4", rationsConsumed: 0 },
+                { reservationId: "", tableId: "2", seatNumber: "5", rationsConsumed: 0 },
+                { reservationId: "", tableId: "2", seatNumber: "6", rationsConsumed: 0 },
+            ],
+            occupiants: [],
+            state: true,
+        },
+        {
+            id: "3",
+            capacity: 6,
+            availableSeats: [
+                { reservationId: "", tableId: "3", seatNumber: "1", rationsConsumed: 0 },
+                { reservationId: "", tableId: "3", seatNumber: "2", rationsConsumed: 0 },
+                { reservationId: "", tableId: "3", seatNumber: "3", rationsConsumed: 0 },
+                { reservationId: "", tableId: "3", seatNumber: "4", rationsConsumed: 0 },
+                { reservationId: "", tableId: "3", seatNumber: "5", rationsConsumed: 0 },
+                { reservationId: "", tableId: "3", seatNumber: "6", rationsConsumed: 0 },
+            ],
+            occupiants: [],
+            state: true,
+        },
+        {
+            id: "4",
+            capacity: 6,
+            availableSeats: [
+                { reservationId: "", tableId: "4", seatNumber: "1", rationsConsumed: 0 },
+                { reservationId: "", tableId: "4", seatNumber: "2", rationsConsumed: 0 },
+                { reservationId: "", tableId: "4", seatNumber: "3", rationsConsumed: 0 },
+                { reservationId: "", tableId: "4", seatNumber: "4", rationsConsumed: 0 },
+                { reservationId: "", tableId: "4", seatNumber: "5", rationsConsumed: 0 },
+                { reservationId: "", tableId: "4", seatNumber: "6", rationsConsumed: 0 },
+            ],
+            occupiants: [],
+            state: true,
+        },
+        {
+            id: "5",
+            capacity: 6,
+            availableSeats: [
+                { reservationId: "", tableId: "5", seatNumber: "1", rationsConsumed: 0 },
+                { reservationId: "", tableId: "5", seatNumber: "2", rationsConsumed: 0 },
+                { reservationId: "", tableId: "5", seatNumber: "3", rationsConsumed: 0 },
+                { reservationId: "", tableId: "5", seatNumber: "4", rationsConsumed: 0 },
+                { reservationId: "", tableId: "5", seatNumber: "5", rationsConsumed: 0 },
+                { reservationId: "", tableId: "5", seatNumber: "6", rationsConsumed: 0 },
+            ],
+            occupiants: [],
+            state: true,
+        },
+        {
+            id: "6",
+            capacity: 6,
+            availableSeats: [
+                { reservationId: "", tableId: "6", seatNumber: "1", rationsConsumed: 0 },
+                { reservationId: "", tableId: "6", seatNumber: "2", rationsConsumed: 0 },
+                { reservationId: "", tableId: "6", seatNumber: "3", rationsConsumed: 0 },
+                { reservationId: "", tableId: "6", seatNumber: "4", rationsConsumed: 0 },
+                { reservationId: "", tableId: "6", seatNumber: "5", rationsConsumed: 0 },
+                { reservationId: "", tableId: "6", seatNumber: "6", rationsConsumed: 0 },
+            ],
+            occupiants: [],
+            state: true,
+        }
+    ]
+}
+
+
+/**
+ * Function to get all the registered spirits
+ */
+export async function getAllSpirits(): Promise<Spirit[]> {
+    await wait(500);
+    const spirits = await Promise.all(Array.from({ length: 20 }, (_, i) => getSpirit((i + 1).toString())));
+    return spirits.filter((s): s is Spirit => s !== null);
+}

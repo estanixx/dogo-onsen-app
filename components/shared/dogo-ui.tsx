@@ -25,7 +25,7 @@ export interface DogoSectionProps {
 export function DogoPage({ children, className }: DogoPageProps) {
   return (
     <main className={cn(
-      "h-screen w-full relative overflow-hidden",
+      "min-h-screen w-full relative overflow-y-auto",
       className
     )}>
       {/* Background elements */}
@@ -140,7 +140,7 @@ export function DogoHeader({ title, subtitle, className }: DogoHeaderProps) {
 // Content section wrapper
 export function DogoSection({ children, className }: DogoSectionProps) {
   return (
-    <section className={cn("w-full mx-auto", className)}>
+    <section className={cn("w-full mx-auto mb-5", className)}>
       {children}
     </section>
   )

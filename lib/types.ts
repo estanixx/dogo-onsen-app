@@ -19,7 +19,9 @@ export interface Spirit {
   eiltBalance: number;
   individualRecord: string;
   image?: string;
+  active?: boolean;
 }
+
 
 /**
  * Venue Account - Represents a spirit's stay/visit at the Dogo Onsen
@@ -61,8 +63,8 @@ export interface Reservation {
   accountId: string;
   startTime: Date;
   endTime: Date;
-  seatId: string;
-  serviceId: string;
+  seatId?: string;
+  serviceId?: string;
   isRedeemed: boolean;
   rating?: number;
 }
@@ -78,11 +80,25 @@ export interface Deposit {
 }
 
 /**
+ * BanquetTable - Represents individual tables at banquet
+ */
+
+export interface BanquetTable {
+  id: string;
+  capacity: 6;
+  availableSeats: BanquetSeat[];
+  occupiants: Spirit[];
+  state: boolean;
+}
+
+/**
  * BanquetSeat - Represents individual seats at banquet tables
  */
 export interface BanquetSeat {
+  reservationId?: string;
   tableId: string;
   seatNumber: number;
+  rationsConsumed: number;
 }
 
 /**
