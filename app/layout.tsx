@@ -1,6 +1,7 @@
 import { Toaster } from '@/components/ui/sonner';
 import './globals.css';
 import { Inter, Noto_Serif_JP } from 'next/font/google';
+import { ReservationProvider } from '@/app/context/reservation-context'; // 👈 import del provider
 
 const inter = Inter({
   subsets: ['latin'],
@@ -22,8 +23,11 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="es" className={`${inter.variable} ${notoSerifJP.variable}`}>
       <body className="overflow-y-auto font-base">
-        {children}
-        <Toaster />
+        {/* 👇 Aquí envolvemos toda la app */}
+        <ReservationProvider>
+          {children}
+          <Toaster />
+        </ReservationProvider>
       </body>
     </html>
   );
