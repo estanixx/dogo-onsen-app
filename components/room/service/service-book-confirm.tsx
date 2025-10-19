@@ -47,7 +47,9 @@ export default function ServiceBookConfirm({ service, open, setOpen, account }: 
 
   /** ✅ Confirmar reserva y agregarla al contexto */
   const handleConfirm = async () => {
-    if (!time) return;
+    if (!time) {
+      return;
+    }
     setLoading(true);
     try {
       const reservation = await bookService(service.id, account.id, date, time);

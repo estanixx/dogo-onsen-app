@@ -145,7 +145,7 @@ export default function SpiritForm({ id, setId, setOpen }: SpiritSelectProps) {
               )}
               {imagePreview && (
                 // plain img is fine for preview
-                <img
+                <Image
                   src={imagePreview}
                   alt="preview"
                   className="w-32 h-32 object-cover rounded-md mt-2"

@@ -19,7 +19,9 @@ export function ReservationProvider({ children }: { children: React.ReactNode })
   // Cargar desde localStorage al montar
   useEffect(() => {
     const stored = localStorage.getItem('reservations');
-    if (stored) setReservations(JSON.parse(stored));
+    if (stored) {
+      setReservations(JSON.parse(stored));
+    }
   }, []);
 
   // Guardar cambios en localStorage
@@ -61,6 +63,8 @@ export function ReservationProvider({ children }: { children: React.ReactNode })
 
 export function useReservations() {
   const ctx = useContext(ReservationContext);
-  if (!ctx) throw new Error('useReservations must be used within a ReservationProvider');
+  if (!ctx) {
+    throw new Error('useReservations must be used within a ReservationProvider');
+  }
   return ctx;
 }
