@@ -22,7 +22,10 @@ export function ReservationCard({ reservation, onRemove }: ReservationCardProps)
   return (
     <Card
       className="overflow-hidden bg-white border border-gray-200 shadow-md hover:shadow-lg transition-shadow"
-      style={{ background: 'linear-gradient(180deg, var(--card), var(--dark))', color: 'var(--card-foreground)' }}
+      style={{
+        background: 'linear-gradient(180deg, var(--card), var(--dark))',
+        color: 'var(--card-foreground)',
+      }}
     >
       {/* Imagen del servicio */}
       {service.image && (

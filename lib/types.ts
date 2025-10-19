@@ -125,3 +125,26 @@ export interface PrivateVenue {
   id: string;
   state: boolean;
 }
+
+/**
+ * Inventory Item - Represents items in the inventory system
+ */
+export interface InventoryItem {
+  id: string;
+  name: string;
+  quantity: number;
+  unit: string;
+}
+
+/**
+ * Inventory Order - Represents an order for inventory items
+ */
+export interface InventoryOrder {
+  id: string;
+  items: {
+    productId: string;
+    quantity: number;
+  }[];
+  status: 'pending' | 'delivered';
+  createdAt: string;
+}

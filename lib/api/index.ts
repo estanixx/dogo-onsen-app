@@ -7,6 +7,8 @@ import {
   VenueAccount,
   BanquetTable,
   BanquetSeat,
+  InventoryItem,
+  InventoryOrder,
 } from '../types';
 import { wait } from '../utils';
 
@@ -313,4 +315,64 @@ export async function getAllSpirits(): Promise<Spirit[]> {
     Array.from({ length: 20 }, (_, i) => getSpirit((i + 1).toString())),
   );
   return spirits.filter((s): s is Spirit => s !== null);
+}
+
+// Mock data for inventory
+const mockInventoryItems: InventoryItem[] = [
+  { id: '1', name: 'Toallas', quantity: 45, unit: 'unidades' },
+  { id: '2', name: 'Sales de baño', quantity: 15, unit: 'kg' },
+  { id: '3', name: 'Jabón líquido', quantity: 8, unit: 'litros' },
+  { id: '4', name: 'Incienso', quantity: 30, unit: 'paquetes' },
+  { id: '5', name: 'Velas aromáticas', quantity: 25, unit: 'unidades' },
+  { id: '6', name: 'Té verde', quantity: 5, unit: 'kg' },
+];
+
+/**
+ * Function to get all inventory items
+ */
+export async function getInventoryItems(): Promise<InventoryItem[]> {
+  // Simulate API call
+  await wait(1000);
+  return mockInventoryItems;
+}
+
+/**
+ * Function to create a new inventory order
+ */
+export async function createInventoryOrder(
+  items: { productId: string; quantity: number }[],
+): Promise<InventoryOrder> {
+  // Simulate API call
+  await wait(1500);
+
+  // In a real app, this would send data to the backend
+  // For now, we just return a mock response
+  return {
+    id: Math.random().toString(36).substring(2, 9),
+    items,
+    status: 'pending',
+    createdAt: new Date().toISOString(),
+  };
+}
+
+/**
+ * Function to update inventory quantities
+ */
+export async function updateInventoryQuantity(
+  itemId: string,
+  newQuantity: number,
+): Promise<InventoryItem> {
+  // Simulate API call
+  await wait(800);
+
+  // Find the item in our mock data
+  const itemIndex = mockInventoryItems.findIndex((item) => item.id === itemId);
+  if (itemIndex === -1) {
+    throw new Error('Item not found');
+  }
+
+  // Update the quantity
+  mockInventoryItems[itemIndex].quantity = newQuantity;
+
+  return mockInventoryItems[itemIndex];
 }
