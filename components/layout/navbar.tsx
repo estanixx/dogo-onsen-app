@@ -5,9 +5,10 @@ import { usePathname } from 'next/navigation';
 import { useState } from 'react';
 import { Menu, X } from 'lucide-react'; // Shadcn icons
 import DogoIcon from '../shared/dogo-icon';
-import { H4, P } from '../shared/typography';
+import { P } from '../shared/typography';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
+import { EmployeeLogin } from '../employee/auth/employee-login';
 
 export default function Navbar() {
   const pathname = usePathname();
@@ -51,7 +52,7 @@ export default function Navbar() {
       {/* User + Menu */}
       <div className="flex items-center space-x-3">
         <div className="hidden md:block">
-          <H4>Usuario</H4>
+          <EmployeeLogin />
         </div>
 
         {/* Mobile Menu Button */}
@@ -85,7 +86,7 @@ export default function Navbar() {
           ))}
 
           <div className="mt-3">
-            <H4>Usuario</H4>
+            <EmployeeLogin />
           </div>
         </div>
       )}

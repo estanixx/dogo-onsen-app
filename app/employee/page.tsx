@@ -1,7 +1,9 @@
+import { AuthRequired } from '@/components/employee/auth/auth-required';
+
 export default function EmployeePage() {
   return (
-    <>
-      <div>Employee Page</div>
-    </>
+    <AuthRequired>
+      <div className="text-white">Employee Dashboard Content</div>
+    </AuthRequired>
   );
 }

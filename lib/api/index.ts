@@ -6,7 +6,6 @@ import {
   SpiritType,
   VenueAccount,
   BanquetTable,
-  BanquetSeat,
   InventoryItem,
   InventoryOrder,
 } from '../types';
@@ -375,4 +374,67 @@ export async function updateInventoryQuantity(
   mockInventoryItems[itemIndex].quantity = newQuantity;
 
   return mockInventoryItems[itemIndex];
+}
+
+// Mock employee data
+const mockEmployees = [
+  {
+    id: '1',
+    username: 'admin',
+    name: 'Admin',
+    pin: '1234',
+    role: 'admin',
+  },
+  {
+    id: '2',
+    username: 'reception',
+    name: 'Reception',
+    pin: '5678',
+    role: 'reception',
+  },
+];
+/**
+ * Function to register a new employee (dummy, in-memory)
+ */
+export async function registerEmployee({
+  username,
+  name,
+  pin,
+  role,
+}: {
+  username: string;
+  name: string;
+  pin: string;
+  role?: string;
+}) {
+  await wait(500);
+  if (mockEmployees.some((emp) => emp.username === username)) {
+    throw new Error('El usuario ya existe');
+  }
+  const newEmployee = {
+    id: (mockEmployees.length + 1).toString(),
+    username,
+    name,
+    pin,
+    role: role || 'employee',
+  };
+  mockEmployees.push(newEmployee);
+  // Don't send pin back
+  const { pin: _, ...employeeData } = newEmployee;
+  return employeeData;
+}
+
+/**
+ * Function to authenticate an employee by username and PIN
+ */
+export async function authenticateEmployee(username: string, pin: string) {
+  await wait(500);
+  const employee = mockEmployees.find((emp) => emp.username === username && emp.pin === pin);
+  if (!employee) {
+    return null;
+  }
+
+  // Don't send the PIN and username in the response
+  const { pin: _, username: __, ...employeeData } = employee;
+  return employeeData;
 }
