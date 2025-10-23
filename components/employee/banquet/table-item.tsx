@@ -1,12 +1,23 @@
+'use client';
+
 import { Card } from '@/components/ui/card';
 import { ToggleGroupItem } from '@/components/ui/toggle-group';
 import { BanquetTable } from '@/lib/types';
 import { cn } from '@/lib/utils';
+import { useBanquet } from '@/app/context/banquet-context';
 
 interface TableSelectorProps {
   table: BanquetTable;
+  selectedDate: Date;
+  selectedTime: string | null;
 }
-export default function TableItem({ table }: TableSelectorProps) {
+
+export default function TableItem({ table, selectedDate, selectedTime }: TableSelectorProps) {
+  const { reservations } = useBanquet();
+
+  // Convert the selected date to YYYY-MM-DD
+  const dateString = selectedDate?.toISOString().split('T')[0];
+
   return (
     <div className="relative">
       <Card
@@ -22,8 +33,20 @@ export default function TableItem({ table }: TableSelectorProps) {
 
         {/* Seats — 6 total */}
         {table.availableSeats.map((seat) => {
-          const isOccupied = seat.reservationId !== '';
-          const colorClass = isOccupied ? 'bg-destructive text-black' : 'bg-secondary text-black';
+          // Check if seat is already reserved (for this date & time)
+          const isReserved = reservations.some(
+            (r) =>
+              r.tableId === table.id.toString() &&
+              r.seatNumber === seat.seatNumber &&
+              r.date === dateString &&
+              r.time === selectedTime,
+          );
+
+          const isOccupied = seat.reservationId !== '' || isReserved;
+
+          const colorClass = isOccupied
+            ? 'bg-destructive text-black'
+            : 'bg-secondary text-black';
 
           const positions: Record<number, string> = {
             1: 'absolute top-4 left-6',
@@ -44,7 +67,7 @@ export default function TableItem({ table }: TableSelectorProps) {
                 positions[seat.seatNumber],
                 'data-[state=on]:bg-primary data-[state=on]:text-black',
               )}
-              disabled={isOccupied}
+              disabled={isOccupied || !selectedTime}
             >
               {seat.seatNumber}
             </ToggleGroupItem>

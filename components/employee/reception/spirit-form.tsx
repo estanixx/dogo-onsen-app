@@ -4,7 +4,7 @@ import * as React from 'react';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
-import { getSpirit, getAllSpiritTypes, createSpirit } from '@/lib/api';
+import { getAllSpiritTypes, createSpirit } from '@/lib/api';
 import { Spirit, SpiritType } from '@/lib/types';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
