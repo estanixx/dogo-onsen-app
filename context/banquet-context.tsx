@@ -1,7 +1,6 @@
 'use client';
 
 import React, { createContext, useContext, useEffect, useState, ReactNode } from 'react';
-import { toast } from 'sonner';
 
 export type BanquetReservation = {
   id: string;
@@ -55,13 +54,11 @@ export function BanquetProvider({ children }: { children: ReactNode }) {
   const createReservation = (data: Omit<BanquetReservation, 'id'>): BanquetReservation => {
     const newReservation: BanquetReservation = { ...data, id: crypto.randomUUID() };
     setReservations((prev) => [...prev, newReservation]);
-    toast.success(`Reserva creada: Mesa ${data.tableId}, asiento ${data.seatNumber}`);
     return newReservation;
   };
 
   const deleteReservation = (id: string) => {
     setReservations((prev) => prev.filter((r) => r.id !== id));
-    toast.success('Reserva eliminada');
   };
 
   const getReservationsByDate = (date: string) => {

@@ -88,7 +88,7 @@ export function ServiceDialog({ service, account }: ServiceDialogProps) {
                 Banquete
               </DialogTitle>
             </VisuallyHidden>
-            <BanquetLayout />
+            <BanquetLayout service = {service} account={account} />
           </DialogContent>
         </Dialog>
       ) : (
