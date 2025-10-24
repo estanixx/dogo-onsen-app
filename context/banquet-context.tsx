@@ -36,7 +36,7 @@ export function BanquetProvider({ children }: { children: ReactNode }) {
       const stored = localStorage.getItem('banquet-reservations');
       if (stored) {
         setReservations(JSON.parse(stored));
-    }
+      }
     } catch (error) {
       console.error('Error loading saved reservations:', error);
     }

@@ -15,7 +15,7 @@ export default async function RoomPage({ params }: { params: { id: string } }) {
       <CardLink
         href={`${base}/services`}
         title="Servicios"
-        description="Mira nuetra amplia variedad de servicios para tu disfrute."
+        description="Mira nuestra amplia variedad de servicios para tu disfrute."
         icon={<MdPool className="size-6 text-primary" />}
       />
 

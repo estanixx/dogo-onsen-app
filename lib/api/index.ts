@@ -29,7 +29,7 @@ export async function getAvailableServices(query?: string): Promise<Service[]> {
     {
       eiltRate: 50,
       id: '2',
-      name: 'Masage relajante',
+      name: 'Masaje relajante',
       description: 'Un masaje relajante para relajarse y descansar.',
       rating: 4.8,
       image:
@@ -237,11 +237,24 @@ export async function getBanquetReservationsForDate(date: string) {
   return banquetReservations.filter((r) => r.date === date);
 }
 
-export async function createBanquetReservation({ tableId, seatNumber, date, time, accountId }: { tableId: string; seatNumber: number; date: string; time: string; accountId?: string }) {
+export async function createBanquetReservation({
+  tableId,
+  seatNumber,
+  date,
+  time,
+  accountId,
+}: {
+  tableId: string;
+  seatNumber: number;
+  date: string;
+  time: string;
+  accountId?: string;
+}) {
   await wait(300);
   // check if seat is already reserved for that date/time
   const exists = banquetReservations.some(
-    (r) => r.tableId === tableId && r.seatNumber === seatNumber && r.date === date && r.time === time,
+    (r) =>
+      r.tableId === tableId && r.seatNumber === seatNumber && r.date === date && r.time === time,
   );
   if (exists) {
     throw new Error('Seat already reserved for that slot');

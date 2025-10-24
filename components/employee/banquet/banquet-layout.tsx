@@ -1,7 +1,12 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import { getBanquetTables, getAvailableTimeSlots, bookService, getCurrentVenueAcount } from '@/lib/api';
+import {
+  getBanquetTables,
+  getAvailableTimeSlots,
+  bookService,
+  getCurrentVenueAcount,
+} from '@/lib/api';
 import { BanquetTable, Service, Reservation, VenueAccount } from '@/lib/types';
 import { ToggleGroup } from '@/components/ui/toggle-group';
 import { Button } from '@/components/ui/button';
@@ -21,7 +26,7 @@ interface BanquetLayoutProps {
   venueId?: string;
 }
 
-export default function BanquetLayout({ account, service, venueId}: BanquetLayoutProps) {
+export default function BanquetLayout({ account, service, venueId }: BanquetLayoutProps) {
   const [tables, setTables] = useState<BanquetTable[]>([]);
   const [selectedSeat, setSelectedSeat] = useState<string | null>(null);
   const [date, setDate] = useState<Date | null>(null);
@@ -85,11 +90,10 @@ export default function BanquetLayout({ account, service, venueId}: BanquetLayou
       let reservation;
       if (!venueAccount && account) {
         reservation = await bookService('1', account.id, date, time);
-      }
-      else if (venueAccount) {
+      } else if (venueAccount) {
         reservation = await bookService('1', venueAccount.id, date, time);
       }
-      const fullReservation = { ...reservation, service } as Reservation & { service: Service };;
+      const fullReservation = { ...reservation, service } as Reservation & { service: Service };
 
       // Save in banquet context
       createReservation({
@@ -102,7 +106,9 @@ export default function BanquetLayout({ account, service, venueId}: BanquetLayou
       // Also register in general reservation context
       addReservation(fullReservation);
 
-      toast.success(`Reserva confirmada para el asiento ${seatNumber} (${format(date, 'PPP')} ${time})`);
+      toast.success(
+        `Reserva confirmada para el asiento ${seatNumber} (${format(date, 'PPP')} ${time})`,
+      );
       setSelectedSeat(null);
       setTime(null);
     } catch (e) {
@@ -195,7 +201,11 @@ export default function BanquetLayout({ account, service, venueId}: BanquetLayou
 
           {/* Confirm button */}
           <div className="flex justify-center mt-6">
-            <Button onClick={handleSeatSubmit} disabled={!canConfirm} className="px-8 py-2 bg-primary hover:bg-primary/90">
+            <Button
+              onClick={handleSeatSubmit}
+              disabled={!canConfirm}
+              className="px-8 py-2 bg-primary hover:bg-primary/90"
+            >
               {submitting ? 'Confirmando...' : 'Confirmar reserva'}
             </Button>
           </div>

@@ -84,11 +84,9 @@ export function ServiceDialog({ service, account }: ServiceDialogProps) {
         <Dialog open={confirmDialogOpen} onOpenChange={setConfirmDialogOpen}>
           <DialogContent className="max-w-none sm:max-w-[90vw] h-[90vh] overflow-y-auto bg-[var(--background)] text-white border border-[var(--gold)]/30 shadow-xl rounded-2xl">
             <VisuallyHidden>
-              <DialogTitle>
-                Banquete
-              </DialogTitle>
+              <DialogTitle>Banquete</DialogTitle>
             </VisuallyHidden>
-            <BanquetLayout service = {service} account={account} />
+            <BanquetLayout service={service} account={account} />
           </DialogContent>
         </Dialog>
       ) : (
