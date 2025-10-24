@@ -1,8 +1,8 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import { getBanquetTables, getAvailableTimeSlots } from '@/lib/api';
-import { BanquetTable } from '@/lib/types';
+import { getBanquetTables, getAvailableTimeSlots, bookService, getCurrentVenueAcount } from '@/lib/api';
+import { BanquetTable, Service, Reservation, VenueAccount } from '@/lib/types';
 import { ToggleGroup } from '@/components/ui/toggle-group';
 import { Button } from '@/components/ui/button';
 import { Calendar } from '@/components/ui/calendar';
@@ -13,9 +13,15 @@ import TableItem from './table-item';
 import TimeSlotSelector from '@/components/shared/time-slot-selector';
 import { toast } from 'sonner';
 import { useBanquet } from '@/app/context/banquet-context';
+import { useReservations } from '@/app/context/reservation-context';
 
+interface BanquetLayoutProps {
+  account?: VenueAccount;
+  service: Service;
+  venueId?: string;
+}
 
-export default function BanquetLayout() {
+export default function BanquetLayout({ account, service, venueId}: BanquetLayoutProps) {
   const [tables, setTables] = useState<BanquetTable[]>([]);
   const [selectedSeat, setSelectedSeat] = useState<string | null>(null);
   const [date, setDate] = useState<Date | null>(null);
@@ -23,7 +29,9 @@ export default function BanquetLayout() {
   const [availableTimeSlots, setAvailableTimeSlots] = useState<string[] | null>(null);
   const [loadingSlots, setLoadingSlots] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+
   const { createReservation } = useBanquet();
+  const { addReservation } = useReservations();
 
   // Load banquet tables
   useEffect(() => {
@@ -66,11 +74,24 @@ export default function BanquetLayout() {
     if (!selectedSeat || !date || !time) {
       return;
     }
+    let venueAccount;
+    if (venueId && !account) {
+      venueAccount = await getCurrentVenueAcount(venueId);
+    }
+
     setSubmitting(true);
     try {
       const [tableId, seatNumber] = selectedSeat.split('-');
+      let reservation;
+      if (!venueAccount && account) {
+        reservation = await bookService('1', account.id, date, time);
+      }
+      else if (venueAccount) {
+        reservation = await bookService('1', venueAccount.id, date, time);
+      }
+      const fullReservation = { ...reservation, service } as Reservation & { service: Service };;
 
-      // Create the reservation locally
+      // Save in banquet context
       createReservation({
         tableId,
         seatNumber: Number(seatNumber),
@@ -78,16 +99,19 @@ export default function BanquetLayout() {
         time,
       });
 
+      // Also register in general reservation context
+      addReservation(fullReservation);
+
       toast.success(`Reserva confirmada para el asiento ${seatNumber} (${format(date, 'PPP')} ${time})`);
       setSelectedSeat(null);
       setTime(null);
-    } catch (e: unknown) {
+    } catch (e) {
       toast.error('Error al crear la reserva');
+      console.error(e);
     } finally {
       setSubmitting(false);
     }
   };
-
 
   return (
     <div className="w-full space-y-6">
@@ -172,23 +196,18 @@ export default function BanquetLayout() {
 
           {/* Confirm button */}
           <div className="flex justify-center mt-6">
-            <Button
-              onClick={handleSeatSubmit}
-              disabled={!canConfirm}
-              className="px-8 py-2 bg-primary hover:bg-primary/90"
-            >
+            <Button onClick={handleSeatSubmit} disabled={!canConfirm} className="px-8 py-2 bg-primary hover:bg-primary/90">
               {submitting ? 'Confirmando...' : 'Confirmar reserva'}
             </Button>
           </div>
         </>
-        ) : (
-          <div className="flex justify-center items-center mb-4">
-            <h2 className="text-2xl font-serif tracking-wide text-[var(--gold)] border-b-2 border-[var(--gold)]/20 pb-1">
-              Selecciona una fecha y un horario para ver los asientos disponibles.
-            </h2>
-          </div>
-        )
-      }
+      ) : (
+        <div className="flex justify-center items-center mb-4">
+          <h2 className="text-2xl font-serif tracking-wide text-[var(--gold)] border-b-2 border-[var(--gold)]/20 pb-1">
+            Selecciona una fecha y un horario para ver los asientos disponibles.
+          </h2>
+        </div>
+      )}
     </div>
   );
 }

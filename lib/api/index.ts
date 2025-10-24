@@ -71,6 +71,12 @@ export async function getAvailableServices(query?: string): Promise<Service[]> {
   return all.filter((s) => s.name.toLowerCase().includes(q));
 }
 
+export async function getServiceById(id: string): Promise<Service | null> {
+  const services = await getAvailableServices();
+  const service = services.find((s) => s.id === id);
+  return service ?? null;
+}
+
 export async function getAvailablePrivateVenues(
   startTime: Date,
   endTime: Date,
