@@ -13,6 +13,8 @@ import Image from 'next/image';
 import { H2, H4, P } from '@/components/shared/typography';
 import { useState } from 'react';
 import ServiceBookConfirm from './service-book-confirm';
+import BanquetLayout from '@/components/employee/banquet/banquet-layout';
+import { VisuallyHidden } from '@radix-ui/react-visually-hidden';
 
 interface ServiceDialogProps {
   service: Service;
@@ -29,6 +31,9 @@ export function ServiceDialog({ service, account }: ServiceDialogProps) {
     setServiceDialogOpen(false);
     setConfirmDialogOpen(true);
   };
+
+  const isBanquet = service.name.toLowerCase().includes('banquete');
+
   return (
     <>
       <Dialog open={serviceDialogOpen} onOpenChange={setServiceDialogOpen}>
@@ -56,30 +61,44 @@ export function ServiceDialog({ service, account }: ServiceDialogProps) {
           <section className="flex flex-col gap-4 px-6 py-2 -mt-5">
             <div className="flex items-center gap-4">
               <H4 className="font-semibold">Precio:</H4>
-              <P className="">{service.eiltRate ? `${service.eiltRate} EILT` : 'N/A'}</P>
+              <P>{service.eiltRate ? `${service.eiltRate} EILT` : 'N/A'}</P>
             </div>
             <div className="flex items-center gap-4">
               <H4 className="font-semibold">Rating:</H4>
-              <P className="">{service.rating ? `${service.rating} / 5` : 'No ratings'}</P>
+              <P>{service.rating ? `${service.rating} / 5` : 'No ratings'}</P>
             </div>
 
             <button
               className="mt-4 w-full bg-primary text-white py-2 px-4 rounded hover:bg-primary/90 transition"
               type="button"
-              onClick={handleBookService} // Add handler as needed
+              onClick={handleBookService}
             >
               Agendar Servicio
             </button>
           </section>
         </DialogContent>
       </Dialog>
-      {/* Confirm Dialog */}
-      <ServiceBookConfirm
-        service={service}
-        account={account}
-        open={confirmDialogOpen}
-        setOpen={setConfirmDialogOpen}
-      />
+
+      {/* Step 2 — Confirmation Dialog */}
+      {isBanquet ? (
+        <Dialog open={confirmDialogOpen} onOpenChange={setConfirmDialogOpen}>
+          <DialogContent className="max-w-none sm:max-w-[90vw] h-[90vh] overflow-y-auto bg-[var(--background)] text-white border border-[var(--gold)]/30 shadow-xl rounded-2xl">
+            <VisuallyHidden>
+              <DialogTitle>
+                Banquete
+              </DialogTitle>
+            </VisuallyHidden>
+            <BanquetLayout />
+          </DialogContent>
+        </Dialog>
+      ) : (
+        <ServiceBookConfirm
+          service={service}
+          account={account}
+          open={confirmDialogOpen}
+          setOpen={setConfirmDialogOpen}
+        />
+      )}
     </>
   );
 }

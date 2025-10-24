@@ -25,7 +25,7 @@ export default function Navbar() {
     <nav className="w-full border-white border-b bg-transparent rounded-t-lg font-serif uppercase flex items-center justify-between px-6 py-3 text-white sticky top-0 z-50 backdrop-blur-md">
       {/* Logo */}
       <div className="flex items-center space-x-3">
-        <Link href="/employee" className="flex items-center space-x-3">
+        <Link href="/" className="flex items-center space-x-3">
           <DogoIcon className="fill-primary w-8 h-8 sm:w-10 sm:h-10" />
           <h1 className="tracking-[2px] text-xl sm:text-2xl text-primary font-semibold">
             Dogo Onsen

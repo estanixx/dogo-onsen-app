@@ -216,13 +216,44 @@ export async function createSpirit(
   };
 }
 
+// In-memory reservations for banquet seats
+const banquetReservations: {
+  id: string;
+  tableId: string;
+  seatNumber: number;
+  date: string; // ISO date
+  time: string; // HH:MM
+  accountId?: string;
+}[] = [];
+
+export async function getBanquetReservationsForDate(date: string) {
+  await wait(200);
+  return banquetReservations.filter((r) => r.date === date);
+}
+
+export async function createBanquetReservation({ tableId, seatNumber, date, time, accountId }: { tableId: string; seatNumber: number; date: string; time: string; accountId?: string }) {
+  await wait(300);
+  // check if seat is already reserved for that date/time
+  const exists = banquetReservations.some(
+    (r) => r.tableId === tableId && r.seatNumber === seatNumber && r.date === date && r.time === time,
+  );
+  if (exists) {
+    throw new Error('Seat already reserved for that slot');
+  }
+
+  const id = Math.random().toString(36).slice(2, 9);
+  const reservation = { id, tableId, seatNumber, date, time, accountId };
+  banquetReservations.push(reservation);
+  return reservation;
+}
+
 export async function getBanquetTables(): Promise<BanquetTable[]> {
   return [
     {
       id: '1',
       capacity: 6,
       availableSeats: [
-        { reservationId: '2', tableId: '1', seatNumber: 1, rationsConsumed: 0 },
+        { reservationId: '', tableId: '1', seatNumber: 1, rationsConsumed: 0 },
         { reservationId: '', tableId: '1', seatNumber: 2, rationsConsumed: 0 },
         { reservationId: '', tableId: '1', seatNumber: 3, rationsConsumed: 0 },
         { reservationId: '', tableId: '1', seatNumber: 4, rationsConsumed: 0 },
@@ -420,7 +451,7 @@ export async function registerEmployee({
   };
   mockEmployees.push(newEmployee);
   // Don't send pin back
-  const { pin: _, ...employeeData } = newEmployee;
+  const { pin: _, username: __, ...employeeData } = newEmployee;
   return employeeData;
 }
 

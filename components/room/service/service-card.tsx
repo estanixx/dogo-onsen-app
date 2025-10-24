@@ -69,7 +69,7 @@ export function ServiceCard({ service, onSelect }: ServiceCardProps) {
                 fontWeight: 600,
               }}
             >
-              View
+              Ver
             </P>
           </div>
         </div>

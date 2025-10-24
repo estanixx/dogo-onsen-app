@@ -59,7 +59,7 @@ export default function CheckInForm({ initialValues }: { initialValues?: Partial
     return () => {
       isMounted = false;
     };
-  }, []);
+  });
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();

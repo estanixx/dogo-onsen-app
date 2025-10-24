@@ -62,8 +62,11 @@ export function EmployeeProvider({ children }: { children: React.ReactNode }) {
       setIsAuthenticated(true);
       localStorage.setItem('employee-data', JSON.stringify(employeeData));
       return { ok: true };
-    } catch (e: any) {
-      return { ok: false, error: e.message };
+    } catch (e: unknown) {
+      if (e instanceof Error) {
+        return { ok: false, error: e.message };
+      }
+      return { ok: false, error: 'An unknown error occurred' };
     }
   };
 
