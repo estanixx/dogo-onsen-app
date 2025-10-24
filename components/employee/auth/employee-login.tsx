@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { useEmployee } from '@/app/context/employee-context';
+import { useEmployee } from '@/context/employee-context';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';

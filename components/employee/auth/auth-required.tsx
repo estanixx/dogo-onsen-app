@@ -1,6 +1,6 @@
 'use client';
 
-import { useEmployee } from '@/app/context/employee-context';
+import { useEmployee } from '@/context/employee-context';
 import { H2, P } from '@/components/shared/typography';
 
 export function AuthRequired({ children }: { children: React.ReactNode }) {

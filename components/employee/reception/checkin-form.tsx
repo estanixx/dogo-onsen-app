@@ -31,6 +31,7 @@ export default function CheckInForm({ initialValues }: { initialValues?: Partial
   const [checkout, setCheckout] = useState(initialValues?.checkout ?? new Date());
   const [room, setRoom] = useState(initialValues?.venueId ?? '');
   const [pin, setPin] = useState<string | null>(null);
+  const [isMounted, setIsMounted] = useState(false);
 
   // Get available venues
   const [venues, setVenues] = useState<{ id: string; state: boolean }[]>([]);
@@ -40,8 +41,7 @@ export default function CheckInForm({ initialValues }: { initialValues?: Partial
   const [checkoutOpen, setCheckoutOpen] = useState(false);
 
   useEffect(() => {
-    let isMounted = true;
-
+    setIsMounted(true);
     (async () => {
       try {
         const data = await getAvailablePrivateVenues(checkin, checkout);
@@ -57,9 +57,9 @@ export default function CheckInForm({ initialValues }: { initialValues?: Partial
     })();
 
     return () => {
-      isMounted = false;
+      setIsMounted(false);
     };
-  });
+  }, [checkin, checkout]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();

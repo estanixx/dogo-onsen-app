@@ -12,8 +12,7 @@ import { format } from 'date-fns';
 import TableItem from './table-item';
 import TimeSlotSelector from '@/components/shared/time-slot-selector';
 import { toast } from 'sonner';
-import { useBanquet } from '@/app/context/banquet-context';
-
+import { useBanquet } from '@/context/banquet-context';
 
 export default function BanquetLayout() {
   const [tables, setTables] = useState<BanquetTable[]>([]);
@@ -78,7 +77,9 @@ export default function BanquetLayout() {
         time,
       });
 
-      toast.success(`Reserva confirmada para el asiento ${seatNumber} (${format(date, 'PPP')} ${time})`);
+      toast.success(
+        `Reserva confirmada para el asiento ${seatNumber} (${format(date, 'PPP')} ${time})`,
+      );
       setSelectedSeat(null);
       setTime(null);
     } catch (e: unknown) {
@@ -88,10 +89,8 @@ export default function BanquetLayout() {
     }
   };
 
-
   return (
     <div className="w-full space-y-6">
-
       {/* Date & time selection */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pl-6">
         {/* Date */}
@@ -138,11 +137,11 @@ export default function BanquetLayout() {
           )}
         </div>
       </div>
-      
+
       {date && time ? (
         <>
           {/* Table grid */}
-          
+
           <div className="flex justify-between items-center mb-4 ml-6">
             <h2 className="text-2xl font-serif tracking-wide text-[var(--gold)] border-b-2 border-[var(--gold)]/20 pb-1">
               Selección de Silla
@@ -181,14 +180,13 @@ export default function BanquetLayout() {
             </Button>
           </div>
         </>
-        ) : (
-          <div className="flex justify-center items-center mb-4">
-            <h2 className="text-2xl font-serif tracking-wide text-[var(--gold)] border-b-2 border-[var(--gold)]/20 pb-1">
-              Selecciona una fecha y un horario para ver los asientos disponibles.
-            </h2>
-          </div>
-        )
-      }
+      ) : (
+        <div className="flex justify-center items-center mb-4">
+          <h2 className="text-2xl font-serif tracking-wide text-[var(--gold)] border-b-2 border-[var(--gold)]/20 pb-1">
+            Selecciona una fecha y un horario para ver los asientos disponibles.
+          </h2>
+        </div>
+      )}
     </div>
   );
 }

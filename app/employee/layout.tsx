@@ -1,6 +1,6 @@
 import Navbar from '@/components/layout/navbar';
 import { DogoPage } from '@/components/shared/dogo-ui';
-import { EmployeeProvider } from '@/app/context/employee-context';
+import { EmployeeProvider } from '@/context/employee-context';
 
 export default function EmployeeLayout({ children }: { children: React.ReactNode }) {
   return (

@@ -2,8 +2,8 @@
 
 import React from 'react';
 import { Toaster } from 'sonner';
-import { BanquetProvider } from '@/app/context/banquet-context';
-import { ReservationProvider } from '@/app/context/reservation-context';
+import { BanquetProvider } from '@/context/banquet-context';
+import { ReservationProvider } from '@/context/reservation-context';
 
 export default function Providers({ children }: { children: React.ReactNode }) {
   return (

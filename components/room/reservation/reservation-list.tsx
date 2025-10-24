@@ -1,7 +1,7 @@
 'use client';
 
 import { ReservationCard } from './reservation-card';
-import { useReservations } from '@/app/context/reservation-context';
+import { useReservations } from '@/context/reservation-context';
 import { Button } from '@/components/ui/button';
 
 interface ReservationListProps {

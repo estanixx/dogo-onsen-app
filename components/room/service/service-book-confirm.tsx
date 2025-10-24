@@ -18,7 +18,7 @@ import { LoadingBox } from '@/components/shared/loading';
 import { bookService, getAvailableTimeSlots } from '@/lib/api';
 import { H2, H4, P } from '@/components/shared/typography';
 import { toast } from 'sonner';
-import { useReservations } from '@/app/context/reservation-context'; // ✅ Importa el contexto
+import { useReservations } from '@/context/reservation-context'; // ✅ Importa el contexto
 
 interface Props {
   service: Service;

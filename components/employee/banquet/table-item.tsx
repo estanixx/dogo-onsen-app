@@ -4,7 +4,7 @@ import { Card } from '@/components/ui/card';
 import { ToggleGroupItem } from '@/components/ui/toggle-group';
 import { BanquetTable } from '@/lib/types';
 import { cn } from '@/lib/utils';
-import { useBanquet } from '@/app/context/banquet-context';
+import { useBanquet } from '@/context/banquet-context';
 
 interface TableSelectorProps {
   table: BanquetTable;
@@ -44,9 +44,7 @@ export default function TableItem({ table, selectedDate, selectedTime }: TableSe
 
           const isOccupied = seat.reservationId !== '' || isReserved;
 
-          const colorClass = isOccupied
-            ? 'bg-destructive text-black'
-            : 'bg-secondary text-black';
+          const colorClass = isOccupied ? 'bg-destructive text-black' : 'bg-secondary text-black';
 
           const positions: Record<number, string> = {
             1: 'absolute top-4 left-6',
