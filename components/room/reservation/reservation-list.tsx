@@ -30,12 +30,12 @@ export function ReservationList({ accountId }: ReservationListProps) {
           </Button>
         </div>
 
-        {/* Total */}
+        {/* Total of EILT*/}
         <div className="mb-6 text-right text-lg font-semibold text-gold">
           Total: {totalEilt} EILT
         </div>
 
-        {/* Lista */}
+        {/* List of reservations */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {reservations.map((reservation) => (
             <ReservationCard

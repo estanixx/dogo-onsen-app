@@ -22,7 +22,7 @@ export default function FeastPage() {
     setSubmittedId(venueId.trim());
   };
 
-  // 🔹 Load the banquet service (id "1") once
+  // Load the banquet service (id "1") once
   useEffect(() => {
     const loadService = async () => {
       const svc = await getServiceById('1');

@@ -15,7 +15,7 @@ export function DashboardStats() {
             <Home className="text-[#568682]" />
             <p className="text-4xl text-[var(--gold)]">5</p>{' '}
           </div>
-          {/* Número mockeado de habitaciones en limpieza */}
+          {/* Mocked for cleaning rooms data */}
         </div>
 
         <div className="bg-[var(--dark-light)] p-4 rounded-lg">
@@ -39,7 +39,7 @@ export function DashboardStats() {
                   )}
                 </div>
               ))}
-            {/* 6 mesas disponibles (verde con ✔), 2 ocupadas (rojo con ✘). Tambien mockeado */}
+            {/* Mocked data for tables */}
           </div>
         </div>
       </div>

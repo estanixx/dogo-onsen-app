@@ -26,7 +26,7 @@ export default async function RoomPage({ params }: { params: { id: string } }) {
         icon={<MdCalendarMonth className="size-6 text-primary" />}
       />
 
-      {/* Wallet modal */}
+      {/* Modal wallet */}
       <CardModal
         title="Billetera"
         description="Agrega saldo a tu cuenta."

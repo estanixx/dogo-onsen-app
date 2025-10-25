@@ -1,5 +1,7 @@
 'use client';
 
+// AQUÍ TENEMOS QUE USAR CLERK
+
 import { useState } from 'react';
 import { useEmployee } from '@/context/employee-context';
 import { Button } from '@/components/ui/button';

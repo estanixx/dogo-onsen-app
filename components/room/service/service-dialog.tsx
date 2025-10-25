@@ -79,7 +79,7 @@ export function ServiceDialog({ service, account }: ServiceDialogProps) {
         </DialogContent>
       </Dialog>
 
-      {/* Step 2 — Confirmation Dialog */}
+      {/* Confirmation Dialog */}
       {isBanquet ? (
         <Dialog open={confirmDialogOpen} onOpenChange={setConfirmDialogOpen}>
           <DialogContent className="max-w-none sm:max-w-[90vw] h-[90vh] overflow-y-auto bg-[var(--background)] text-white border border-[var(--gold)]/30 shadow-xl rounded-2xl">

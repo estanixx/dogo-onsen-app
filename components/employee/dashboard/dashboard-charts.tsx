@@ -36,7 +36,7 @@ export function DashboardCharts() {
         borderWidth: 1,
       },
     ],
-  }; // Data mockeada para el gráfico de barras
+  }; // Mocked data for charts
 
   const options = {
     responsive: true,
