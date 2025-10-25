@@ -4,7 +4,7 @@ import { DogoSection, DogoHeader } from '@/components/shared/dogo-ui';
 import BanquetLayout from '@/components/employee/banquet/banquet-layout';
 import { AuthRequired } from '@/components/employee/auth/auth-required';
 import { Input } from '@/components/ui/input';
-import { Button } from '@/components/ui/button'; // ✅ fix: import from shadcn/ui/button, not react-day-picker
+import { Button } from '@/components/ui/button';
 import { useEffect, useState } from 'react';
 import { getServiceById } from '@/lib/api';
 import { Service } from '@/lib/types';
