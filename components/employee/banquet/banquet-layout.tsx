@@ -12,7 +12,7 @@ import { ToggleGroup } from '@/components/ui/toggle-group';
 import { Button } from '@/components/ui/button';
 import { Calendar } from '@/components/ui/calendar';
 import { LoadingBox } from '@/components/shared/loading';
-import { P } from '@/components/shared/typography';
+import { H4, P } from '@/components/shared/typography';
 import { format } from 'date-fns';
 import TableItem from './table-item';
 import TimeSlotSelector from '@/components/shared/time-slot-selector';
@@ -37,6 +37,15 @@ export default function BanquetLayout({ account, service, venueId }: BanquetLayo
 
   const { createReservation } = useBanquet();
   const { addReservation } = useReservations();
+
+  const clearSelection = () => {
+    setSelectedSeat(null);
+    setDate(null);
+    setTime(null);
+    setAvailableTimeSlots(null);
+  };
+
+  useEffect(clearSelection, [venueId]);
 
   // Load banquet tables
   useEffect(() => {
@@ -65,7 +74,7 @@ export default function BanquetLayout({ account, service, venueId }: BanquetLayo
     fetchSlots();
   }, [date]);
 
-  const canConfirm = !!selectedSeat && !!date && !!time && !submitting;
+  const canConfirm = !!selectedSeat && !!date && !!time && !submitting && !!venueId;
 
   const onDateSelect = (selectedDate: Date | undefined) => {
     if (selectedDate) {
@@ -116,6 +125,7 @@ export default function BanquetLayout({ account, service, venueId }: BanquetLayo
       console.error(e);
     } finally {
       setSubmitting(false);
+      clearSelection();
     }
   };
 
@@ -136,7 +146,7 @@ export default function BanquetLayout({ account, service, venueId }: BanquetLayo
             selected={date ?? undefined}
             onSelect={onDateSelect}
             hidden={{ before: new Date() }}
-            className="rounded-lg border bg-[var(--card)]"
+            className="rounded-lg border bg-[var(--card)] w-full md:w-1/2"
             modifiersStyles={{
               today: {
                 backgroundColor: 'transparent',
@@ -163,18 +173,20 @@ export default function BanquetLayout({ account, service, venueId }: BanquetLayo
               availableTimeSlots={availableTimeSlots}
             />
           ) : (
-            <P className="text-xs text-muted-foreground mt-1">No hay horarios disponibles</P>
+            <P className="text-xs text-muted-foreground mt-1">
+              No hay horarios disponibles en esa fecha.
+            </P>
           )}
         </div>
       </div>
 
       {date && time ? (
-        <>
+        <div className="relative">
           {/* Table grid */}
 
           <div className="flex justify-between items-center mb-4 ml-6">
             <h2 className="text-2xl font-serif tracking-wide text-[var(--gold)] border-b-2 border-[var(--gold)]/20 pb-1">
-              Selección de Silla
+              Escoger asiento
             </h2>
           </div>
 
@@ -190,7 +202,7 @@ export default function BanquetLayout({ account, service, venueId }: BanquetLayo
           </ToggleGroup>
 
           {/* Seat availability legend */}
-          <div className="w-full flex pl-6 gap-6 mb-4">
+          <div className="absolute bottom-3 right-3 flex pl-6 gap-6 mb-4">
             <span className="bg-secondary text-white font-base font-bold rounded-lg p-1">
               Disponible
             </span>
@@ -209,12 +221,12 @@ export default function BanquetLayout({ account, service, venueId }: BanquetLayo
               {submitting ? 'Confirmando...' : 'Confirmar reserva'}
             </Button>
           </div>
-        </>
+        </div>
       ) : (
         <div className="flex justify-center items-center mb-4">
-          <h2 className="text-2xl font-serif tracking-wide text-[var(--gold)] border-b-2 border-[var(--gold)]/20 pb-1">
+          <H4 className="border-b-2 pb-1 text-primary border-primary">
             Selecciona una fecha y un horario para ver los asientos disponibles.
-          </h2>
+          </H4>
         </div>
       )}
     </div>

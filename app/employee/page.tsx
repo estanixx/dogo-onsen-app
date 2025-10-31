@@ -7,7 +7,7 @@ import { DashboardAlerts } from '@/components/employee/dashboard/dashboard-alert
 export default function EmployeePage() {
   return (
     <AuthRequired>
-      <DogoHeader title="Panel de Control" subtitle="Vista general de operaciones" />
+      <DogoHeader title="Panel de Control" className="-mt-16" />
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <DashboardCharts />
         <DashboardStats />

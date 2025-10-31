@@ -90,14 +90,14 @@ export function InventoryTable({ onAddOrder }: InventoryTableProps) {
                 <TableRow key={item.id}>
                   <TableCell className="font-medium text-white">{item.name}</TableCell>
                   <TableCell
-                    className={`text-white ${item.quantity < 12 ? 'text-red-500 font-bold' : ''}`}
+                    className={`text-white ${item.quantity < 12 ? 'text-destructive font-bold' : ''}`}
                   >
                     {item.quantity}
                   </TableCell>
                   <TableCell className="text-white">{item.unit}</TableCell>
                   <TableCell className="text-white">
                     {item.quantity < 12 ? (
-                      <span className="text-red-500 font-bold">Bajo inventario</span>
+                      <span className="text-destructive font-bold">Bajo inventario</span>
                     ) : (
                       <span className="text-secondary">Suficiente</span>
                     )}

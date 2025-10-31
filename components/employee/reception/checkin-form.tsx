@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState } from 'react';
 import { getAvailablePrivateVenues } from '@/lib/api/index';
 import SpiritSelect from './spirit-select';
 import { Label } from '@/components/ui/label';
@@ -16,6 +16,18 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import { toast } from 'sonner';
+import {
+  Form,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormControl,
+  FormMessage,
+} from '@/components/ui/form';
+import { useForm } from 'react-hook-form';
+import { z } from 'zod';
+import { zodResolver } from '@hookform/resolvers/zod';
 
 export type CheckInResult = {
   venueId: string;
@@ -26,233 +38,218 @@ export type CheckInResult = {
 };
 
 export default function CheckInForm({ initialValues }: { initialValues?: Partial<CheckInResult> }) {
-  const [id, setId] = useState(initialValues?.id ?? '');
-  const [checkin, setCheckin] = useState(initialValues?.checkin ?? new Date());
-  const [checkout, setCheckout] = useState(initialValues?.checkout ?? new Date());
-  const [room, setRoom] = useState(initialValues?.venueId ?? '');
   const [pin, setPin] = useState<string | null>(null);
-  const [isMounted, setIsMounted] = useState(false);
 
   // Get available venues
   const [venues, setVenues] = useState<{ id: string; state: boolean }[]>([]);
   const [isSuccess, setIsSuccess] = useState(false);
-  const checkoutRef = useRef<HTMLInputElement | null>(null);
   const [checkinOpen, setCheckinOpen] = useState(false);
   const [checkoutOpen, setCheckoutOpen] = useState(false);
 
+  const startOfDay = (d = new Date()) => {
+    const x = new Date(d);
+    x.setHours(0, 0, 0, 0);
+    return x;
+  };
+
+  const schema = z
+    .object({
+      id: z.string().min(1, 'Selecciona un espíritu'),
+      room: z.string().min(1, 'Selecciona una habitación'),
+      checkin: z.date().refine((d) => d >= startOfDay(), {
+        message: 'La fecha de entrada debe ser hoy o posterior',
+      }),
+      checkout: z.date(),
+    })
+    .refine((data) => data.checkout > data.checkin, {
+      path: ['checkout'],
+      message: 'La fecha de salida debe ser posterior a la entrada',
+    });
+
+  type FormValues = z.infer<typeof schema>;
+
+  const form = useForm<FormValues>({
+    resolver: zodResolver(schema),
+    defaultValues: {
+      id: initialValues?.id ?? '',
+      room: initialValues?.venueId ?? '',
+      checkin: initialValues?.checkin ?? startOfDay(),
+      checkout: initialValues?.checkout ?? startOfDay(),
+    },
+  });
+
+  const { control, watch, setValue, reset } = form;
+
+  const clearForm = () =>
+    reset({ id: '', room: '', checkin: startOfDay(), checkout: startOfDay() });
+
+  const watchedCheckin = watch('checkin');
+  const watchedCheckout = watch('checkout');
+
   useEffect(() => {
-    setIsMounted(true);
+    let mounted = true;
     (async () => {
       try {
-        const data = await getAvailablePrivateVenues(checkin, checkout);
-        if (isMounted) {
+        if (!watchedCheckin || !watchedCheckout) {
+          return;
+        }
+        const data = await getAvailablePrivateVenues(watchedCheckin, watchedCheckout);
+        if (mounted) {
           setVenues(data.filter((v) => v.state === true));
         }
       } catch (err) {
         console.error('Failed to load venues', err);
-        if (isMounted) {
+        if (mounted) {
           setVenues([]);
         }
       }
     })();
 
     return () => {
-      setIsMounted(false);
+      mounted = false;
     };
-  }, [checkin, checkout]);
+  }, [watchedCheckin, watchedCheckout]);
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-
-    const formEl = e.currentTarget as HTMLFormElement;
-    if (!formEl.checkValidity()) {
-      formEl.reportValidity();
-      return;
-    }
-
-    if (checkin > checkout) {
-      const msg = 'Completa el campo o verifica la fecha.';
-      if (checkoutRef.current) {
-        checkoutRef.current.setCustomValidity(msg);
-        checkoutRef.current.reportValidity();
-      }
-
-      setPin(null);
-      return;
-    }
-
+  const onSubmit = (values: FormValues) => {
     setIsSuccess(true);
-
-    setTimeout(() => setIsSuccess(false), 3000);
 
     // Generate a new PIN. In the future this should be handled by the backend
     const newPin = Math.floor(1000 + Math.random() * 9000).toString();
     setPin(newPin);
 
-    // Clear form (reset to now)
-    setId('');
-    setCheckin(new Date());
-    setCheckout(new Date());
-    setRoom('');
+    toast.success(`Habitación ${values.room} reservada con éxito. \nPIN de seguridad: ${newPin}`, {
+      duration: 20_000,
+    });
+
+    clearForm();
   };
 
   return (
     <aside className="w-full p-6 flex flex-col items-center justify-start [&>div]:w-full">
       <h2 className="font-titles text-3xl font-bold text-[var(--gold)] mb-6 tracking-wider">
-        Registro
+        Check-In: Reservar habitación
       </h2>
-      <div className="flex flex-col gap-2">
-        <Label htmlFor="checkin" className="text-lg text-bold tracking-wide">
-          Seleccionar Espíritu
-        </Label>
-        <SpiritSelect id={id} setId={setId} />
-      </div>
-
-      <form
-        onSubmit={handleSubmit}
-        className="flex flex-col gap-5 w-full"
-        onInvalid={(e) => {
-          const invalidEl = e.target as HTMLInputElement | HTMLSelectElement | null;
-          if (!invalidEl) {
-            return;
-          }
-
-          const message = 'Completa el campo o verificar la fecha.';
-          try {
-            (invalidEl as HTMLInputElement).setCustomValidity(message);
-          } catch (err) {
-            // eslint-disable-next-line no-console
-            console.debug('setCustomValidity failed', err);
-          }
-        }}
-      >
-        {/* Check-in Date */}
-        <div className="flex flex-col gap-2">
-          <Label htmlFor="checkin" className="text-lg text-bold tracking-wide">
-            Fecha de entrada
-          </Label>
-          <Popover open={checkinOpen} onOpenChange={setCheckinOpen}>
-            <PopoverTrigger asChild>
-              <button
-                type="button"
-                id="checkin"
-                className="w-full flex items-center justify-between px-3 py-2 rounded-md bg-dark border border-gold/20 focus:outline-none focus:border-gold-light text-smoke"
-              >
-                {checkin ? checkin.toISOString().split('T')[0] : 'Seleccionar fecha'}
-                <ChevronDownIcon />
-              </button>
-            </PopoverTrigger>
-            <PopoverContent className="w-auto overflow-hidden p-0" align="start">
-              <Calendar
-                mode="single"
-                selected={checkin}
-                onSelect={(d) => {
-                  if (d) {
-                    setCheckin(d);
-                  }
-                  setCheckinOpen(false);
-                }}
-              />
-            </PopoverContent>
-          </Popover>
-          {/* Hidden input to keep native validation/reportValidity working */}
-          <input
-            aria-hidden
-            className="sr-only"
-            type="date"
-            value={checkin.toISOString().split('T')[0]}
-            onChange={(e) => setCheckin(new Date(e.target.value))}
-            onInput={(e) => (e.currentTarget as HTMLInputElement).setCustomValidity('')}
-            required
+      <Form {...form}>
+        <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col gap-5 w-full">
+          <FormField
+            control={control}
+            name="id"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel className="text-lg">Seleccionar Espíritu</FormLabel>
+                <FormControl>
+                  <SpiritSelect id={field.value} setId={(v: string) => field.onChange(v)} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
           />
-        </div>
 
-        {/* Check-out Date */}
-        <div className="flex flex-col gap-2">
-          <Label htmlFor="checkout" className="text-lg text-bold tracking-wide">
-            Fecha de salida
-          </Label>
-          <Popover open={checkoutOpen} onOpenChange={setCheckoutOpen}>
-            <PopoverTrigger asChild>
-              <button
-                type="button"
-                id="checkout"
-                className="w-full flex items-center justify-between px-3 py-2 rounded-md bg-dark border border-gold/20 focus:outline-none focus:border-gold-light text-smoke"
-              >
-                {checkout ? checkout.toISOString().split('T')[0] : 'Seleccionar fecha'}
-                <ChevronDownIcon />
-              </button>
-            </PopoverTrigger>
-            <PopoverContent className="w-auto overflow-hidden p-0" align="start">
-              <Calendar
-                mode="single"
-                selected={checkout}
-                onSelect={(d) => {
-                  if (d) {
-                    setCheckout(d);
-                  }
-                  setCheckoutOpen(false);
-                }}
-              />
-            </PopoverContent>
-          </Popover>
-          {/* Hidden input to preserve validation and allow setCustomValidity/reportValidity */}
-          <input
-            ref={checkoutRef}
-            aria-hidden
-            className="sr-only"
-            type="date"
-            value={checkout.toISOString().split('T')[0]}
-            onChange={(e) => setCheckout(new Date(e.target.value))}
-            onInput={(e) => (e.currentTarget as HTMLInputElement).setCustomValidity('')}
-            required
+          <FormField
+            control={control}
+            name="checkin"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel className="text-lg">Fecha de entrada</FormLabel>
+                <Popover open={checkinOpen} onOpenChange={setCheckinOpen}>
+                  <PopoverTrigger asChild>
+                    <button
+                      type="button"
+                      className="w-full flex items-center justify-between px-3 py-2 rounded-md bg-dark border border-gold/20 focus:outline-none focus:border-gold-light text-smoke"
+                    >
+                      {field.value ? field.value.toISOString().split('T')[0] : 'Seleccionar fecha'}
+                      <ChevronDownIcon />
+                    </button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-auto overflow-hidden p-0" align="start">
+                    <Calendar
+                      mode="single"
+                      selected={field.value}
+                      onSelect={(d) => {
+                        if (d) {
+                          field.onChange(d);
+                        }
+                        setCheckinOpen(false);
+                      }}
+                    />
+                  </PopoverContent>
+                </Popover>
+                <FormMessage />
+              </FormItem>
+            )}
           />
-        </div>
 
-        {/* Available Rooms */}
-        <div className="flex flex-col gap-2">
-          <Label htmlFor="room" className="text-lg text-bold tracking-wide">
-            Habitación
-          </Label>
-          <Select value={room} onValueChange={setRoom} required>
-            <SelectTrigger
-              id="room"
-              className="px-3 py-2 w-full rounded-md bg-dark border border-gold/20 focus:outline-none focus:border-gold-light text-smoke"
-            >
-              <SelectValue placeholder="Selecciona una habitación" />
-            </SelectTrigger>
-            <SelectContent className="bg-[var(--dark)] text-[var(--smoke)]">
-              {venues.map((v) => (
-                <SelectItem key={v.id} value={v.id}>
-                  Habitación {v.id}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
+          <FormField
+            control={control}
+            name="checkout"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel className="text-lg">Fecha de salida</FormLabel>
+                <Popover open={checkoutOpen} onOpenChange={setCheckoutOpen}>
+                  <PopoverTrigger asChild>
+                    <button
+                      type="button"
+                      className="w-full flex items-center justify-between px-3 py-2 rounded-md bg-dark border border-gold/20 focus:outline-none focus:border-gold-light text-smoke"
+                    >
+                      {field.value ? field.value.toISOString().split('T')[0] : 'Seleccionar fecha'}
+                      <ChevronDownIcon />
+                    </button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-auto overflow-hidden p-0" align="start">
+                    <Calendar
+                      mode="single"
+                      selected={field.value}
+                      onSelect={(d) => {
+                        if (d) {
+                          field.onChange(d);
+                        }
+                        setCheckoutOpen(false);
+                      }}
+                    />
+                  </PopoverContent>
+                </Popover>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
 
-        {/* Submittion button */}
-        <Button
-          disabled={isSuccess}
-          type="submit"
-          className={`
-                font-semibold tracking-wide transition-colors
-                ${
-                  isSuccess
-                    ? 'bg-green-500 text-white hover:bg-green-400'
-                    : 'bg-[var(--gold)] text-[var(--dark)] hover:bg-[var(--gold-light)]'
-                }
-              `}
-        >
-          {isSuccess ? 'Espíritu Registrado ✔' : 'Registrar'}
-        </Button>
+          <FormField
+            control={control}
+            name="room"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel className="text-lg">Habitación</FormLabel>
+                <FormControl>
+                  <Select value={field.value} onValueChange={field.onChange}>
+                    <SelectTrigger
+                      id="room"
+                      className="px-3 py-2 w-full rounded-md bg-dark border border-gold/20 focus:outline-none focus:border-gold-light text-smoke"
+                    >
+                      <SelectValue placeholder="Selecciona una habitación" />
+                    </SelectTrigger>
+                    <SelectContent className="bg-[var(--dark)] text-[var(--smoke)]">
+                      {venues.map((v) => (
+                        <SelectItem key={v.id} value={v.id}>
+                          Habitación {v.id}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
 
-        {pin && (
-          <P className="text-gold text-lg font-serif text-center mt-3">
-            PIN generado: <span className="font-bold">{pin}</span>
-          </P>
-        )}
-      </form>
+          <Button
+            disabled={isSuccess}
+            type="submit"
+            className={`font-semibold tracking-wide transition-colors bg-[var(--gold)] text-[var(--dark)] hover:bg-[var(--gold-light)]`}
+          >
+            Reservar
+          </Button>
+        </form>
+      </Form>
     </aside>
   );
 }

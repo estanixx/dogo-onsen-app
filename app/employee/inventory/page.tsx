@@ -12,7 +12,7 @@ export default function InventoryPage() {
   return (
     <AuthRequired>
       <div className="space-y-6">
-        <DogoHeader title="Gestión de Inventario" />
+        <DogoHeader title="Gestión de Inventario" className="-mt-16" />
 
         <div className="flex justify-between items-center">
           <h2 className="text-2xl font-serif tracking-wide text-[var(--gold)] border-b-2 border-[var(--gold)]/20 pb-1">

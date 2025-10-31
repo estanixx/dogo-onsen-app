@@ -8,19 +8,11 @@ import { Button } from '@/components/ui/button';
 import { useEffect, useState } from 'react';
 import { getServiceById } from '@/lib/api';
 import { Service } from '@/lib/types';
+import { H4, P } from '@/components/shared/typography';
 
 export default function FeastPage() {
   const [venueId, setVenueId] = useState('');
-  const [submittedId, setSubmittedId] = useState<string | null>(null);
   const [service, setService] = useState<Service | null>(null);
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!venueId.trim()) {
-      return;
-    }
-    setSubmittedId(venueId.trim());
-  };
 
   // Load the banquet service (id "1") once
   useEffect(() => {
@@ -33,28 +25,24 @@ export default function FeastPage() {
 
   return (
     <AuthRequired>
-      <DogoHeader title="Reserva de Banquete" />
-      <DogoSection className="border-2 border-white rounded-lg object-cover flex w-full text-white p-6">
-        {!submittedId ? (
-          <form
-            onSubmit={handleSubmit}
-            className="flex flex-col sm:flex-row gap-3 items-center w-full justify-center"
-          >
+      <DogoHeader title="Reserva de Banquete" className="-mt-16" />
+      <DogoSection className="border-2 border-white rounded-lg object-cover flex  w-full text-white p-6">
+        <form className="flex flex-col items-center w-full justify-center">
+          <span className="flex gap-3 mb-6">
+            <H4 className="text-center text-muted-foreground">Número de habitación</H4>
             <Input
-              placeholder="Ingrese el ID del venue"
+              placeholder="Ingrese el número de habitación"
               value={venueId}
-              onChange={(e) => setVenueId(e.target.value)}
+              onChange={(e) => setVenueId(e.target.value.trim())}
               className="w-64"
             />
-            <Button type="submit" className="px-4 py-2">
-              Cargar Banquete
-            </Button>
-          </form>
-        ) : service ? (
-          <BanquetLayout venueId={submittedId} service={service} />
-        ) : (
-          <p className="text-center text-muted-foreground">Cargando servicio...</p>
-        )}
+          </span>
+          {service ? (
+            <BanquetLayout venueId={venueId} service={service} />
+          ) : (
+            <P className="text-center text-muted-foreground">Cargando servicio...</P>
+          )}
+        </form>
       </DogoSection>
     </AuthRequired>
   );
