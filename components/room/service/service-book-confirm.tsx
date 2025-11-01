@@ -9,6 +9,7 @@ import {
   DialogFooter,
   DialogHeader,
 } from '@/components/ui/dialog';
+import { ScrollArea } from '@/components/ui/scroll-area';
 import { Service, VenueAccount } from '@/lib/types';
 import { Button } from '@/components/ui/button';
 import { format } from 'date-fns';
@@ -83,75 +84,85 @@ export default function ServiceBookConfirm({ service, open, setOpen, account }: 
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogContent className="text-white bg-[var(--dark)] border border-[var(--border)]">
-        <DialogHeader>
-          <DialogTitle asChild>
-            <H2>{service.name}</H2>
-          </DialogTitle>
-          <DialogDescription asChild>
-            <P>
-              Precio: <strong>{service.eiltRate} EILT</strong>
-            </P>
-          </DialogDescription>
-        </DialogHeader>
-
-        <div className="flex flex-col md:flex-row gap-4">
-          {/* Fecha */}
-          <div className="flex-1">
-            <H4 className="block text-sm mb-1 text-gold">Fecha</H4>
-            <Calendar
-              mode="single"
-              required
-              selected={date}
-              onSelect={onDateSelect}
-              hidden={{
-                before: new Date(),
-                after: account?.endTime,
-              }}
-              className="rounded-lg border bg-[var(--card)]"
-            />
-            {date && (
-              <P className="text-xs text-muted-foreground mt-1">
-                Seleccionado: {format(date, 'PPP')}
+      <DialogContent
+        className="
+        max-w-md rounded-2xl border
+        border-[var(--gold)]
+        bg-[var(--dark-light)]
+        text-[var(--smoke)]
+        shadow-[0_0_25px_var(--gold)]  
+      "
+      >
+        <ScrollArea className="h-full max-h-[90vh]">
+          <DialogHeader>
+            <DialogTitle asChild>
+              <H2>{service.name}</H2>
+            </DialogTitle>
+            <DialogDescription asChild>
+              <P>
+                Precio: <strong>{service.eiltRate} EILT</strong>
               </P>
-            )}
-          </div>
+            </DialogDescription>
+          </DialogHeader>
 
-          {/* Horario */}
-          <div className="flex-1">
-            <H4 className="block text-sm mb-1 text-gold">Horario</H4>
-            {availableTimeSlots && availableTimeSlots.length === 0 ? (
-              <P className="text-xs text-muted-foreground mt-1">No hay horarios disponibles</P>
-            ) : !availableTimeSlots ? (
-              <LoadingBox>Consultando horarios disponibles...</LoadingBox>
-            ) : (
-              <TimeSlotSelector
-                selected={time}
-                onSelect={setTime}
-                availableTimeSlots={availableTimeSlots}
+          <div className="flex flex-col md:flex-row gap-4">
+            {/* Fecha */}
+            <div className="flex-1">
+              <H4 className="block text-sm mb-1 text-[var(--gold)]">Fecha</H4>
+              <Calendar
+                mode="single"
+                required
+                selected={date}
+                onSelect={onDateSelect}
+                hidden={{
+                  before: new Date(),
+                  after: account?.endTime,
+                }}
+                className="rounded-lg border bg-[var(--card)]"
               />
-            )}
-          </div>
-        </div>
+              {date && (
+                <P className="text-xs text-muted-foreground mt-1">
+                  Seleccionado: {format(date, 'PPP')}
+                </P>
+              )}
+            </div>
 
-        <DialogFooter>
-          <div className="flex flex-col gap-2 w-full">
-            <Button
-              variant="outline"
-              onClick={() => setOpen(false)}
-              className="w-full border border-gray-400"
-            >
-              Cancelar
-            </Button>
-            <Button
-              disabled={!canConfirm}
-              onClick={handleConfirm}
-              className="w-full bg-primary hover:bg-primary/90"
-            >
-              {loading ? 'Confirmando...' : 'Confirmar'}
-            </Button>
+            {/* Horario */}
+            <div className="flex-1">
+              <H4 className="block text-sm mb-1 text-[var(--gold)]">Horario</H4>
+              {availableTimeSlots && availableTimeSlots.length === 0 ? (
+                <P className="text-xs text-muted-foreground mt-1">No hay horarios disponibles</P>
+              ) : !availableTimeSlots ? (
+                <LoadingBox>Consultando horarios disponibles...</LoadingBox>
+              ) : (
+                <TimeSlotSelector
+                  selected={time}
+                  onSelect={setTime}
+                  availableTimeSlots={availableTimeSlots}
+                />
+              )}
+            </div>
           </div>
-        </DialogFooter>
+
+          <DialogFooter className="pb-6">
+            <div className="flex flex-col gap-2 w-full">
+              <Button
+                variant="outline"
+                onClick={() => setOpen(false)}
+                className="w-full border border-gray-400"
+              >
+                Cancelar
+              </Button>
+              <Button
+                disabled={!canConfirm}
+                onClick={handleConfirm}
+                className="w-full bg-primary hover:bg-primary/90"
+              >
+                {loading ? 'Confirmando...' : 'Confirmar'}
+              </Button>
+            </div>
+          </DialogFooter>
+        </ScrollArea>
       </DialogContent>
     </Dialog>
   );

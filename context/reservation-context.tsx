@@ -8,6 +8,7 @@ interface ReservationContextType {
   addReservation: (res: Reservation & { service: Service }) => void;
   removeReservation: (id: string) => void;
   clearReservations: () => void;
+  updateReservation: (id: string, updates: Partial<Reservation>) => void;
   totalEilt: number;
 }
 
@@ -31,7 +32,19 @@ export function ReservationProvider({ children }: { children: React.ReactNode })
 
   const addReservation = (res: Reservation & { service: Service }) => {
     setReservations((prev) => {
-      const updated = [...prev, res];
+      // Generar un ID único basado en timestamp y un número aleatorio
+      const uniqueId = `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+
+      const updated = [
+        ...prev,
+        {
+          ...res,
+          id: uniqueId, // Sobreescribir el ID con uno único
+          isRedeemed: false,
+          isRated: false,
+        },
+      ];
+
       localStorage.setItem('reservations', JSON.stringify(updated));
       return updated;
     });
@@ -39,7 +52,20 @@ export function ReservationProvider({ children }: { children: React.ReactNode })
 
   const removeReservation = (id: string) => {
     setReservations((prev) => {
+      console.log('Removing reservation:', id);
+      console.log('Previous reservations:', prev);
+
       const updated = prev.filter((r) => r.id !== id);
+      console.log('Updated reservations:', updated);
+
+      localStorage.setItem('reservations', JSON.stringify(updated));
+      return updated;
+    });
+  };
+
+  const updateReservation = (id: string, updates: Partial<Reservation>) => {
+    setReservations((prev) => {
+      const updated = prev.map((r) => (r.id === id ? { ...r, ...updates } : r));
       localStorage.setItem('reservations', JSON.stringify(updated));
       return updated;
     });
@@ -54,7 +80,14 @@ export function ReservationProvider({ children }: { children: React.ReactNode })
 
   return (
     <ReservationContext.Provider
-      value={{ reservations, addReservation, removeReservation, clearReservations, totalEilt }}
+      value={{
+        reservations,
+        addReservation,
+        removeReservation,
+        clearReservations,
+        updateReservation,
+        totalEilt,
+      }}
     >
       {children}
     </ReservationContext.Provider>

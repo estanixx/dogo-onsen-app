@@ -42,8 +42,8 @@ export function ReservationCard({ reservation, onRemove }: ReservationCardProps)
       <CardHeader>
         <div className="flex justify-between items-start">
           <div>
-            <h3 className="text-lg font-semibold text-gold">{service.name}</h3>
-            <p className="text-sm text-gold-light">{service.eiltRate} EILT</p>
+            <h3 className="text-lg font-semibold text-[var(--gold)]">{service.name}</h3>
+            <p className="text-sm text-[var(--gold)]-light">{service.eiltRate} EILT</p>
           </div>
         </div>
       </CardHeader>
@@ -51,11 +51,11 @@ export function ReservationCard({ reservation, onRemove }: ReservationCardProps)
       <CardContent>
         <div className="space-y-2 text-gray-300">
           <div className="flex items-center text-sm">
-            <CalendarDays className="mr-2 h-4 w-4 text-gold" />
+            <CalendarDays className="mr-2 h-4 w-4 text-[var(--gold)]" />
             <span>{formatRelative(new Date(startTime), new Date())}</span>
           </div>
           <div className="flex items-center text-sm">
-            <Clock className="mr-2 h-4 w-4 text-gold" />
+            <Clock className="mr-2 h-4 w-4 text-[var(--gold)]" />
             <span>{`${new Date(startTime).toLocaleTimeString()} - ${new Date(
               endTime,
             ).toLocaleTimeString()}`}</span>

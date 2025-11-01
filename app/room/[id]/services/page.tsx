@@ -25,7 +25,7 @@ export default async function ServicesPage({ searchParams, params }: ServicesPag
     <div className="space-y-4">
       <ServiceSearch initialQuery={q} />
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 auto-rows-fr">
         {services.map((s) => (
           <ServiceDialog key={s.id} service={s} account={account} />
         ))}

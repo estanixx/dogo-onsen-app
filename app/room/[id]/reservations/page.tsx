@@ -10,15 +10,17 @@ interface ReservationsPageProps {
  * Displays all reservations for the current spirit
  * Shows both active and past reservations
  */
-export default function ReservationsPage({ params }: ReservationsPageProps) {
+export default async function ReservationsPage({ params }: ReservationsPageProps) {
+  const { id } = await params;
+
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-3xl font-serif text-indigo-900 mb-2">Mis Reservaciones</h1>
-        <p className="text-gray-600">Visualiza y administra tus reservaciones.</p>
+        <h1 className="text-3xl font-serif text-[var(--gold)] mb-2">Mis Reservaciones</h1>
+        <p className="text-[#a89f8a] text-sm">Visualiza y administra tus reservaciones.</p>
       </div>
 
-      <ReservationList accountId={params.id} />
+      <ReservationList accountId={id} />
     </div>
   );
 }

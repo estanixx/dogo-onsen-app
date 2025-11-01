@@ -200,6 +200,7 @@ export async function bookService(
     startTime: date,
     endTime: new Date(date.getTime() + 60 * 60 * 1000), // 1 hour later
     isRedeemed: false,
+    isRated: false,
   };
 }
 

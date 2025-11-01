@@ -22,11 +22,11 @@ export default async function RoomLayout({ children, params }: RoomLayoutProps) 
   const account = (await getCurrentVenueAcount(roomId)) as VenueAccount;
   return (
     <DogoPage>
-      <div className="w-2/3">
+      <div className="w-full lg:w-2/3">
         <DogoHeader title={`Habitación #${roomId}`} />
-        <DogoSection className="border-2 border-white rounded-lg object-cover flex w-full text-white relative pt-8">
+        <DogoSection className="border-2 border-white rounded-lg object-cover flex flex-col lg:flex-row w-full text-white relative pt-8">
           {/* Left sidebar with spirit info */}
-          <aside className="w-72 p-6 flex flex-col items-center justify-between">
+          <aside className="w-full lg:w-72 p-6 flex flex-col items-center justify-between">
             <SpiritInfo account={account} />
             <Link
               href={`/room/${roomId}`}
@@ -36,7 +36,7 @@ export default async function RoomLayout({ children, params }: RoomLayoutProps) 
             </Link>
           </aside>
           {/* Main content area */}
-          <main className="flex-1 overflow-y-auto p-6">{children}</main>
+          <main className="flex-1 overflow-y-auto p-6 w-full">{children}</main>
         </DogoSection>
       </div>
     </DogoPage>

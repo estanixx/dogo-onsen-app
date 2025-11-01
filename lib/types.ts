@@ -65,6 +65,7 @@ export interface Reservation {
   seatId?: string;
   serviceId?: string;
   isRedeemed: boolean;
+  isRated: boolean;
   rating?: number;
 }
 

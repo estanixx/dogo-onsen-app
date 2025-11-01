@@ -26,7 +26,7 @@ export function ServiceCard({ service, onSelect }: ServiceCardProps) {
       tabIndex={0}
       onClick={handleClick}
       onKeyDown={handleKeyDown}
-      className="w-full max-w-xs rounded-md border overflow-hidden shadow-md cursor-pointer focus:outline-none"
+      className="w-full h-[260px] rounded-md border overflow-hidden shadow-md cursor-pointer focus:outline-none"
       style={{
         background: 'linear-gradient(180deg, var(--card), var(--dark))',
         borderColor: 'var(--border)',
@@ -34,35 +34,40 @@ export function ServiceCard({ service, onSelect }: ServiceCardProps) {
         boxShadow: 'var(--shadow)',
       }}
     >
-      {/* Image */}
-      <div className="relative h-40 w-full bg-[color]" style={{ background: 'var(--dark-light)' }}>
-        {service.image ? (
-          <Image src={service.image} alt={service.name} fill className="object-cover" />
-        ) : (
-          <div
-            className="flex items-center justify-center h-full text-sm"
-            style={{ color: 'var(--muted-foreground)' }}
+      <div className="h-full flex flex-col">
+        {/* Image */}
+        <div
+          className="relative h-[160px] w-full bg-[color]"
+          style={{ background: 'var(--dark-light)' }}
+        >
+          {service.image ? (
+            <Image src={service.image} alt={service.name} fill className="object-cover" />
+          ) : (
+            <div
+              className="flex items-center justify-center h-full text-sm"
+              style={{ color: 'var(--muted-foreground)' }}
+            >
+              No image
+            </div>
+          )}
+        </div>
+
+        {/* Content */}
+        <div className="flex-1 px-6 py-4 flex flex-col space-y-3">
+          <H2
+            className="text-base font-semibold line-clamp-2 text-center"
+            style={{ color: 'var(--gold)' }}
           >
-            No image
-          </div>
-        )}
-      </div>
+            {service.name}
+          </H2>
 
-      {/* Content */}
-      <div className="p-3">
-        <div className="flex items-start justify-between gap-3">
-          <div>
-            <H2 className="text-base font-semibold" style={{ color: 'var(--gold)' }}>
-              {service.name}
-            </H2>
-            <P className="text-sm mt-1" style={{ color: 'var(--gold-light)' }}>
-              {service.eiltRate} EILT
-            </P>
-          </div>
+          <P className="text-sm text-center" style={{ color: 'var(--gold-light)' }}>
+            {service.eiltRate} EILT
+          </P>
 
-          <div className="flex items-center">
+          <div className="flex justify-center">
             <P
-              className="text-xs px-2 py-1 rounded"
+              className="text-xs px-6 py-2 rounded-md cursor-pointer hover:opacity-90 transition-opacity"
               style={{
                 background: 'var(--primary)',
                 color: 'var(--primary-foreground)',
@@ -73,8 +78,6 @@ export function ServiceCard({ service, onSelect }: ServiceCardProps) {
             </P>
           </div>
         </div>
-
-        {/* Optional description / actions could go here */}
       </div>
     </div>
   );

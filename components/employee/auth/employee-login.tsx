@@ -57,7 +57,7 @@ export function EmployeeLogin() {
       <div className="flex items-center gap-4">
         {isAuthenticated && employee ? (
           <>
-            <span className="text-gold">{employee.name}</span>
+            <span className="text-[var(--gold)]">{employee.name}</span>
             <Button
               onClick={logout}
               variant="outline"
@@ -141,7 +141,15 @@ export function EmployeeLogin() {
             </Button>
             {/* Registration Dialog */}
             <Dialog open={registerOpen} onOpenChange={setRegisterOpen}>
-              <DialogContent className="max-w-md rounded-2xl border border-[var(--gold)] bg-[var(--dark-light)] text-[var(--smoke)] shadow-[0_0_25px_var(--gold)]">
+              <DialogContent
+                className="         
+                max-w-md rounded-2xl border
+                border-[var(--gold)]
+                bg-[var(--dark-light)]
+                text-[var(--smoke)]
+                shadow-[0_0_25px_var(--gold)]
+              "
+              >
                 <DialogHeader>
                   <DialogTitle className="text-xl text-[var(--gold)] text-center font-serif">
                     Registro de Empleado
