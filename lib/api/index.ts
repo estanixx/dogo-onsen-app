@@ -1,3 +1,4 @@
+import { get } from 'http';
 import {
   PrivateVenue,
   Reservation,
@@ -10,12 +11,14 @@ import {
   InventoryOrder,
 } from '../types';
 import { wait } from '../utils';
+import { TIME_SLOTS } from './constants';
 
 /**
  * Function to get available services
  * Returns a list of services with their details
  */
 export async function getAvailableServices(query?: string): Promise<Service[]> {
+  await wait(1000); // Simulate network delay
   const all: Service[] = [
     {
       eiltRate: 50,
@@ -179,7 +182,7 @@ export async function getAllSpiritTypes(): Promise<SpiritType[]> {
 export async function getAvailableTimeSlots(serviceId: string, date: Date): Promise<string[]> {
   // Simulate fetching from server
   await wait(500);
-  return ['09:00 AM', '10:00 AM', '11:00 AM', '01:00 PM', '03:00 PM', '05:00 PM'];
+  return TIME_SLOTS;
 }
 
 /**
@@ -201,6 +204,7 @@ export async function bookService(
     endTime: new Date(date.getTime() + 60 * 60 * 1000), // 1 hour later
     isRedeemed: false,
     isRated: false,
+    account: (await getCurrentVenueAcount('venue1')) as VenueAccount,
   };
 }
 
@@ -488,4 +492,35 @@ export async function authenticateEmployee(username: string, pin: string) {
   // Don't send the PIN and username in the response
   const { pin: _, username: __, ...employeeData } = employee;
   return employeeData;
+}
+
+/**
+ * Function to get all the reservations for a given date and time slot
+ */
+export async function getReservations({
+  serviceId,
+  date,
+  timeSlot,
+}: {
+  serviceId?: string;
+  date?: string;
+  timeSlot?: string;
+}): Promise<Reservation[]> {
+  await wait(500);
+  return Promise.all(
+    Array.from(
+      { length: 5 },
+      async (_, i) =>
+        ({
+          id: `res${i + 1}`,
+          serviceId: serviceId,
+          accountId: `acc1`,
+          startTime: new Date(`${date}`),
+          endTime: new Date(new Date(`${date}`).getTime() + 60 * 60 * 1000),
+          isRedeemed: false,
+          isRated: false,
+          account: (await getCurrentVenueAcount('venue1')) as VenueAccount,
+        }) as Reservation,
+    ),
+  );
 }

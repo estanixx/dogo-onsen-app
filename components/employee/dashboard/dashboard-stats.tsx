@@ -1,8 +1,10 @@
 'use client';
 
 import { DogoSection } from '@/components/shared/dogo-ui';
+import { H3, H4, P } from '@/components/shared/typography';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Home } from 'lucide-react';
+import { MdTableRestaurant } from 'react-icons/md';
 
 export function DashboardStats() {
   return (
@@ -20,9 +22,10 @@ export function DashboardStats() {
         </div>
 
         <div className="bg-[var(--dark-light)] p-4 rounded-lg row-span-2">
-          <div className="flex items-center gap-3 mb-2">
-            <h3 className="text-white font-semibold">Mesas con disponibilidad</h3>
+          <div className="flex items-center gap-3 mb-2 text-white ">
+            <h3 className="font-semibold">Mesas con disponibilidad</h3>
           </div>
+
           <ScrollArea className="h-48">
             <div className="grid grid-cols-4 gap-2 mt-2">
               {Array(50)
@@ -30,20 +33,31 @@ export function DashboardStats() {
                 .map((_, i) => (
                   <div
                     key={i}
-                    className={`w-8 h-8 rounded-full flex items-center justify-center ${
-                      i % 6 > 2 ? 'bg-secondary' : 'bg-destructive'
+                    className={`size-10 rounded-full flex items-center justify-center text-white font-bold ${
+                      i % 6 === 0 ? 'bg-secondary' : i % 3 === 0 ? 'bg-destructive' : 'bg-primary'
                     }`}
                   >
-                    {i % 6 > 2 ? (
-                      <span className="text-white font-bold">✔</span>
-                    ) : (
-                      <span className="text-white font-bold">✘</span>
-                    )}
+                    <MdTableRestaurant className="size-5" />{' '}
+                    <span className="text-xs">{i + 1}</span>
                   </div>
                 ))}
               {/* Mocked data for tables */}
             </div>
           </ScrollArea>
+          <div className="text-white mt-4">
+            <span className="flex gap-3 items-center">
+              <div className="bg-secondary size-3 rounded-full"></div>
+              <P className="text-xs">Disponible</P>
+            </span>
+            <span className="flex gap-3 items-center">
+              <div className="bg-primary size-3 rounded-full"></div>
+              <P className="text-xs">Parcialmente Disponible</P>
+            </span>
+            <span className="flex gap-3 items-center">
+              <div className="bg-destructive size-3 rounded-full"></div>
+              <P className="text-xs">Ocupado</P>
+            </span>
+          </div>
         </div>
       </div>
     </DogoSection>

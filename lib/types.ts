@@ -67,6 +67,7 @@ export interface Reservation {
   isRedeemed: boolean;
   isRated: boolean;
   rating?: number;
+  account: VenueAccount;
 }
 
 /**

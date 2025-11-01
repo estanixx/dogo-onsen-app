@@ -1,9 +1,10 @@
 import { ReactNode } from 'react';
 import { Spinner } from '../ui/spinner';
+import clsx from 'clsx';
 
 type LoadingProps = {
   children?: ReactNode;
-};
+} & React.HTMLAttributes<HTMLDivElement>;
 
 export function LoadingBar({ children }: LoadingProps) {
   return (
@@ -18,10 +19,16 @@ export function LoadingBar({ children }: LoadingProps) {
   );
 }
 
-export function LoadingBox({ children }: LoadingProps) {
+export function LoadingBox({ children, ...rest }: LoadingProps) {
   return (
-    <div className="flex flex-col items-center p-6 border border-gray-200 rounded-lg">
-      <Spinner />
+    <div
+      {...rest}
+      className={clsx(
+        'flex flex-col items-center justify-center p-6 border border-gray-200 rounded-lg',
+        rest.className,
+      )}
+    >
+      <Spinner className="size-10" />
       <div className="mt-3">{children}</div>
     </div>
   );
