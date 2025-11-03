@@ -74,7 +74,7 @@ export default function BanquetLayout({ account, service, venueId }: BanquetLayo
     fetchSlots();
   }, [date]);
 
-  const canConfirm = !!selectedSeat && !!date && !!time && !submitting && !!venueId;
+  const canConfirm = !!selectedSeat && !!date && !!time && !submitting;
 
   const onDateSelect = (selectedDate: Date | undefined) => {
     if (selectedDate) {
@@ -130,7 +130,7 @@ export default function BanquetLayout({ account, service, venueId }: BanquetLayo
   };
 
   return (
-    <div className="w-full space-y-6">
+    <div className="w-full space-y-6 pb-12">
       {/* Date & time selection */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pl-6">
         {/* Date */}
@@ -181,7 +181,7 @@ export default function BanquetLayout({ account, service, venueId }: BanquetLayo
       </div>
 
       {date && time ? (
-        <div className="relative">
+        <>
           {/* Table grid */}
 
           <div className="flex justify-between items-center mb-4 ml-6">
@@ -202,7 +202,7 @@ export default function BanquetLayout({ account, service, venueId }: BanquetLayo
           </ToggleGroup>
 
           {/* Seat availability legend */}
-          <div className="absolute bottom-3 right-3 flex pl-6 gap-6 mb-4">
+          <div className="bottom-3 right-3 flex pl-6 gap-6 mb-4">
             <span className="bg-secondary text-white font-base font-bold rounded-lg p-1">
               Disponible
             </span>
@@ -221,7 +221,7 @@ export default function BanquetLayout({ account, service, venueId }: BanquetLayo
               {submitting ? 'Confirmando...' : 'Confirmar reserva'}
             </Button>
           </div>
-        </div>
+        </>
       ) : (
         <div className="flex justify-center items-center mb-4">
           <H4 className="border-b-2 pb-1 text-primary border-primary">
