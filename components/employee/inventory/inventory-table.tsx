@@ -55,58 +55,70 @@ export function InventoryTable({ onAddOrder }: InventoryTableProps) {
       </div>
 
       <div className="border border-[var(--gold)]/30 rounded-lg overflow-hidden shadow-md">
-        <Table>
-          <TableHeader>
-            <TableRow className="bg-gradient-to-r from-[var(--dark-light)] to-[var(--dark)]">
-              <TableHead className="text-[var(--gold)] font-serif tracking-wider py-3">
-                Producto
-              </TableHead>
-              <TableHead className="text-[var(--gold)] font-serif tracking-wider py-3">
-                Cantidad
-              </TableHead>
-              <TableHead className="text-[var(--gold)] font-serif tracking-wider py-3">
-                Unidad
-              </TableHead>
-              <TableHead className="text-[var(--gold)] font-serif tracking-wider py-3">
-                Estado
-              </TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {isLoading ? (
-              <TableRow>
-                <TableCell colSpan={4} className="text-center text-white">
-                  Cargando inventario...
-                </TableCell>
-              </TableRow>
-            ) : filteredItems.length === 0 ? (
-              <TableRow>
-                <TableCell colSpan={4} className="text-center text-white">
-                  No se encontraron productos
-                </TableCell>
-              </TableRow>
-            ) : (
-              filteredItems.map((item) => (
-                <TableRow key={item.id}>
-                  <TableCell className="font-medium text-white">{item.name}</TableCell>
-                  <TableCell
-                    className={`text-white ${item.quantity < 12 ? 'text-destructive font-bold' : ''}`}
-                  >
-                    {item.quantity}
-                  </TableCell>
-                  <TableCell className="text-white">{item.unit}</TableCell>
-                  <TableCell className="text-white">
-                    {item.quantity < 12 ? (
-                      <span className="text-destructive font-bold">Bajo inventario</span>
-                    ) : (
-                      <span className="text-secondary">Suficiente</span>
-                    )}
-                  </TableCell>
-                </TableRow>
-              ))
-            )}
-          </TableBody>
-        </Table>
+        <div className="max-h-[60vh] overflow-y-auto">
+          <div className="min-w-full inline-block align-middle">
+            <div className="overflow-x-auto">
+              <Table>
+                <TableHeader>
+                  <TableRow className="bg-gradient-to-r from-[var(--dark-light)] to-[var(--dark)] sticky top-0 z-10">
+                    <TableHead className="text-[var(--gold)] font-serif tracking-wider py-3 whitespace-nowrap min-w-[200px]">
+                      Producto
+                    </TableHead>
+                    <TableHead className="text-[var(--gold)] font-serif tracking-wider py-3 whitespace-nowrap">
+                      Cantidad
+                    </TableHead>
+                    <TableHead className="text-[var(--gold)] font-serif tracking-wider py-3 whitespace-nowrap">
+                      Unidad
+                    </TableHead>
+                    <TableHead className="text-[var(--gold)] font-serif tracking-wider py-3 whitespace-nowrap min-w-[150px]">
+                      Estado
+                    </TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {isLoading ? (
+                    <TableRow>
+                      <TableCell colSpan={4} className="text-center text-white">
+                        Cargando inventario...
+                      </TableCell>
+                    </TableRow>
+                  ) : filteredItems.length === 0 ? (
+                    <TableRow>
+                      <TableCell colSpan={4} className="text-center text-white">
+                        No se encontraron productos
+                      </TableCell>
+                    </TableRow>
+                  ) : (
+                    filteredItems.map((item) => (
+                      <TableRow key={item.id} className="hover:bg-white/5">
+                        <TableCell className="font-medium text-white whitespace-nowrap">
+                          {item.name}
+                        </TableCell>
+                        <TableCell
+                          className={`text-white whitespace-nowrap ${
+                            item.quantity < 12 ? 'text-destructive font-bold' : ''
+                          }`}
+                        >
+                          {item.quantity}
+                        </TableCell>
+                        <TableCell className="text-white whitespace-nowrap">
+                          {item.unit}
+                        </TableCell>
+                        <TableCell className="text-white whitespace-nowrap">
+                          {item.quantity < 12 ? (
+                            <span className="text-destructive font-bold">Bajo inventario</span>
+                          ) : (
+                            <span className="text-secondary">Suficiente</span>
+                          )}
+                        </TableCell>
+                      </TableRow>
+                    ))
+                  )}
+                </TableBody>
+              </Table>
+            </div>
+          </div>
+        </div>
       </div>
 
       <div className="flex justify-end mt-6">
