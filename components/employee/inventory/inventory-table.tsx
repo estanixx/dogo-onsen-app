@@ -101,9 +101,7 @@ export function InventoryTable({ onAddOrder }: InventoryTableProps) {
                         >
                           {item.quantity}
                         </TableCell>
-                        <TableCell className="text-white whitespace-nowrap">
-                          {item.unit}
-                        </TableCell>
+                        <TableCell className="text-white whitespace-nowrap">{item.unit}</TableCell>
                         <TableCell className="text-white whitespace-nowrap">
                           {item.quantity < 12 ? (
                             <span className="text-destructive font-bold">Bajo inventario</span>
