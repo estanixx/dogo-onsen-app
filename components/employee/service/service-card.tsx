@@ -72,7 +72,7 @@ export function ServiceCard({ service, onSelect }: ServiceCardProps) {
               {service.eiltRate} EILT
             </P>
 
-            <div className="flex justify-end">
+            <div className="flex justify-center">
               <Button
                 className="text-xs px-6 py-2 rounded-md cursor-pointer hover:opacity-90 transition-opacity"
                 style={{

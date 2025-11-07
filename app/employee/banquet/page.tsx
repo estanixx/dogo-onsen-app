@@ -7,7 +7,7 @@ import { Input } from '@/components/ui/input';
 import { useEffect, useState } from 'react';
 import { getServiceById } from '@/lib/api';
 import { Service } from '@/lib/types';
-import { P } from '@/components/shared/typography';
+import { H4, P } from '@/components/shared/typography';
 
 export default function FeastPage() {
   const [venueId, setVenueId] = useState('');
@@ -25,12 +25,10 @@ export default function FeastPage() {
   return (
     <AuthRequired>
       <DogoHeader title="Reserva de Banquete" className="-mt-16" />
-      <DogoSection className="border-2 border-white rounded-lg object-cover flex  w-full text-white p-6">
-        <form className="flex flex-col items-center w-full justify-center">
-          <span className="flex gap-3 mb-6">
-            <h2 className="text-2xl font-serif tracking-wide text-[var(--gold)] border-b-2 border-[var(--gold)]/20 pb-1">
-              Número de habitación
-            </h2>
+      <DogoSection className="border-2 border-white rounded-lg object-cover flex w-full text-white p-6 overflow-x-auto">
+        <form className="w-full space-y-6 pb-12">
+          <span className="flex gap-3 mb-6 justify-center flex-wrap">
+            <H4 className="block text-sm text-[var(--gold)]">Número de Habitación</H4>
             <Input
               placeholder="Ingrese el número de habitación"
               value={venueId}

@@ -13,16 +13,18 @@ const SpiritCard: React.FC<SpiritCardProps> = ({ spirit }) => {
   const unactive = !spirit.active;
   return (
     <Card className="p-4 border rounded-md grid grid-cols-1 lg:grid-cols-2 gap-2">
-      <figure className="relative w-32 h-32 rounded-md mx-auto">
-        {spirit.image && (
-          <Image
-            fill
-            src={spirit.image}
-            alt={spirit.name}
-            className="w-32 h-32 object-cover rounded-full mx-auto"
-          />
-        )}
-      </figure>
+      <div className="flex items-center justify-center">
+        <figure className="relative w-32 h-32 rounded-full">
+          {spirit.image && (
+            <Image
+              fill
+              src={spirit.image}
+              alt={spirit.name}
+              className="object-cover rounded-full"
+            />
+          )}
+        </figure>
+      </div>
       <span className="flex flex-col">
         <H3 className="font-medium text-center lg:text-left">{spirit.name}</H3>
         <P className="text-sm">Tipo: {spirit.type?.name}</P>

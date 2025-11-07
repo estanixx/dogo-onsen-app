@@ -110,13 +110,17 @@ export default function ServiceBookConfirm({ service, open, setOpen, account }: 
               <Calendar
                 mode="single"
                 required
-                selected={date}
+                selected={date ?? undefined}
                 onSelect={onDateSelect}
-                hidden={{
-                  before: new Date(),
-                  after: account?.endTime,
+                hidden={{ before: new Date() }}
+                className="rounded-lg border bg-[var(--card)] max-w-full"
+                modifiersStyles={{
+                  today: {
+                    backgroundColor: 'transparent',
+                    color: 'inherit',
+                    fontWeight: 'normal',
+                  },
                 }}
-                className="rounded-lg border bg-[var(--card)]"
               />
               {date && (
                 <P className="text-xs text-muted-foreground mt-1">
