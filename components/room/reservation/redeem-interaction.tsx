@@ -25,6 +25,7 @@ export default function RedeemDialog({ spirit, service, songUrl, onClose }: Rede
   // 🎵 Play the song when dialog opens
   useEffect(() => {
     const audio = new Audio(songUrl);
+    audio.volume = 0.1;
     audio.loop = true;
     audio.play().catch(() => {
       console.warn('Autoplay blocked — user interaction required.');

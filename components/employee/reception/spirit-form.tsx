@@ -28,6 +28,7 @@ import {
 } from '@/components/ui/form';
 import { toast } from 'sonner';
 import SpiritCard from '@/components/shared/spirit-card';
+import { useSpirit } from '@/context/spirit-context';
 
 interface SpiritSelectProps {
   id: string;
@@ -44,6 +45,7 @@ const createSpiritSchema = z.object({
 type CreateSpiritValues = z.infer<typeof createSpiritSchema>;
 
 export default function SpiritForm({ id, setId, setOpen }: SpiritSelectProps) {
+  const { setSpirits } = useSpirit();
   const [loading, setLoading] = React.useState(false);
   const [spirit, setSpirit] = React.useState<Spirit | null>(null);
   const [types, setTypes] = React.useState<SpiritType[]>([]);
@@ -71,6 +73,9 @@ export default function SpiritForm({ id, setId, setOpen }: SpiritSelectProps) {
     try {
       const created: Spirit = await createSpirit(id, values.name, values.typeId, values.image);
       setSpirit(created);
+      (setSpirits as unknown as React.Dispatch<React.SetStateAction<Spirit[]>>)((prev) =>
+        prev ? [...prev, created] : [created],
+      );
       setCreating(false);
       // optionally set the id input to the new spirit id
       setId(created.id);

@@ -23,6 +23,7 @@ import {
 } from '@/components/ui/drawer';
 import SpiritForm from './spirit-form';
 import clsx from 'clsx';
+import { Spirit } from '@/lib/types';
 
 interface SpiritSelectProps {
   id: string;

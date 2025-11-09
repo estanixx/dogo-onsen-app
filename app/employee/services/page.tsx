@@ -28,6 +28,7 @@ export default function ServicesManagementPage() {
 
   const handleCreateService = async (serviceData: Omit<Service, 'id' | 'rating'>) => {
     // Por ahora solo simulamos la creación
+    setServices((prev) => [{ id: `srv-${Date.now()}`, rating: 0, ...serviceData }, ...prev]);
     console.warn('Crear servicio:', serviceData);
     // Aquí iría la lógica para crear el servicio cuando implementemos el backend
   };

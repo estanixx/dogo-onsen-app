@@ -26,7 +26,7 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { useForm } from 'react-hook-form';
-import { z } from 'zod';
+import { int, z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 
 export type CheckInResult = {
@@ -36,8 +36,10 @@ export type CheckInResult = {
   checkin: Date;
   checkout: Date;
 };
-
-export default function CheckInForm({ initialValues }: { initialValues?: Partial<CheckInResult> }) {
+interface CheckInFormProps {
+  initialValues?: Partial<CheckInResult>;
+}
+export default function CheckInForm({ initialValues }: CheckInFormProps) {
   const [pin, setPin] = useState<string | null>(null);
 
   // Get available venues

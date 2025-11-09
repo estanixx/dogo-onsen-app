@@ -43,10 +43,10 @@ export function ReservationList({ accountId }: ReservationListProps) {
     totalEilt,
     updateReservation,
   } = useReservations();
-
+  console.log('All Reservations:', allReservations);
   // Filtrar reservaciones por accountId
   const reservations = React.useMemo(() => {
-    return allReservations.filter((reservation) => reservation.accountId === accountId);
+    return allReservations.filter((reservation) => true);
   }, [allReservations, accountId]);
   const [ratingDialog, setRatingDialog] = useState<string | null>(null);
   type ReservationFromContext = Reservation & { service: Service };

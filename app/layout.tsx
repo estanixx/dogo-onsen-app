@@ -24,8 +24,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="es" className={`${inter.variable} ${notoSerifJP.variable}`}>
       <body className="overflow-y-auto font-base">
         <Providers>
-          {children}
           <Toaster />
+          {children}
         </Providers>
       </body>
     </html>

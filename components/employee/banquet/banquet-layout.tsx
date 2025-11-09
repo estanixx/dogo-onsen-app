@@ -114,7 +114,7 @@ export default function BanquetLayout({ account, service, venueId }: BanquetLayo
 
       // Also register in general reservation context
       addReservation(fullReservation);
-      
+
       toast.success(
         `Reserva confirmada para el asiento ${seatNumber} (${format(date, 'PPP')} ${time})`,
       );

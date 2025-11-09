@@ -384,7 +384,7 @@ export async function getBanquetTables(): Promise<BanquetTable[]> {
 export async function getAllSpirits(): Promise<Spirit[]> {
   await wait(500);
   const spirits = await Promise.all(
-    Array.from({ length: 20 }, (_, i) => getSpirit((i + 1).toString())),
+    Array.from({ length: 20 }, (_, i) => getSpirit((i + 200).toString())),
   );
   return spirits.filter((s): s is Spirit => s !== null);
 }
