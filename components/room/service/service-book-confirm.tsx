@@ -58,7 +58,6 @@ export default function ServiceBookConfirm({ service, open, setOpen, account }: 
 
       // 👉 Se guarda globalmente (context + localStorage sincronizado)
       addReservation(fullReservation);
-
       toast.success(`Reservación confirmada: ${service.name} - ${format(date, 'PPP')} ${time}`, {
         duration: 4000,
       });
@@ -78,7 +77,6 @@ export default function ServiceBookConfirm({ service, open, setOpen, account }: 
   const onDateSelect = (selectedDate: Date | undefined) => {
     if (selectedDate) {
       setDate(selectedDate);
-      setTime(null); // reset al cambiar fecha
     }
   };
 
@@ -112,13 +110,17 @@ export default function ServiceBookConfirm({ service, open, setOpen, account }: 
               <Calendar
                 mode="single"
                 required
-                selected={date}
+                selected={date ?? undefined}
                 onSelect={onDateSelect}
-                hidden={{
-                  before: new Date(),
-                  after: account?.endTime,
+                hidden={{ before: new Date() }}
+                className="rounded-lg border bg-[var(--card)] max-w-full"
+                modifiersStyles={{
+                  today: {
+                    backgroundColor: 'transparent',
+                    color: 'inherit',
+                    fontWeight: 'normal',
+                  },
                 }}
-                className="rounded-lg border bg-[var(--card)]"
               />
               {date && (
                 <P className="text-xs text-muted-foreground mt-1">

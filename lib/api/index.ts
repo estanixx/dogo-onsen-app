@@ -196,12 +196,30 @@ export async function bookService(
 ): Promise<Reservation> {
   // Simulate booking a service
   await wait(500);
+
+  // Combine date (YYYY-MM-DD) and time (HH:mm)
+  const [timePart, modifier] = time.split(' ');
+  const [h, m] = timePart.split(':').map(Number);
+  let hours = h;
+  const minutes = m;
+
+  // Convert 12-hour to 24-hour format
+  if (modifier === 'PM' && hours < 12) {
+    hours += 12;
+  }
+  if (modifier === 'AM' && hours === 12) {
+    hours = 0;
+  }
+
+  const startTime = new Date(date);
+  startTime.setHours(hours, minutes, 0, 0);
+
   return {
     id: '1',
     serviceId,
     accountId,
-    startTime: date,
-    endTime: new Date(date.getTime() + 60 * 60 * 1000), // 1 hour later
+    startTime,
+    endTime: new Date(startTime.getTime() + 60 * 60 * 1000), // 1 hour later
     isRedeemed: false,
     isRated: false,
     account: (await getCurrentVenueAcount('venue1')) as VenueAccount,

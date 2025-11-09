@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import { ServiceCreateForm } from '@/components/employee/service/service-create-form';
 import { Service } from '@/lib/types';
 import { AuthRequired } from '@/components/employee/auth/auth-required';
-import { DogoHeader } from '@/components/shared/dogo-ui';
+import { DogoSection, DogoHeader } from '@/components/shared/dogo-ui';
 import { getAvailableServices } from '@/lib/api';
 import { LoadingBar, LoadingBox } from '@/components/shared/loading';
 import { ServiceCard } from '@/components/employee/service/service-card';
@@ -45,7 +45,7 @@ export default function ServicesManagementPage() {
   return (
     <AuthRequired>
       <DogoHeader title="Servicios" className="-mt-16" />
-      <div className="bg-background text-foreground">
+      <div className="border-2 border-white rounded-lg text-foreground mb-5">
         <div className="flex flex-col gap-8 p-6">
           {/* Header Section */}
           <div className="flex flex-col gap-2">

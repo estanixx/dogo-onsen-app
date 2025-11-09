@@ -4,7 +4,6 @@ import { DogoSection, DogoHeader } from '@/components/shared/dogo-ui';
 import BanquetLayout from '@/components/employee/banquet/banquet-layout';
 import { AuthRequired } from '@/components/employee/auth/auth-required';
 import { Input } from '@/components/ui/input';
-import { Button } from '@/components/ui/button';
 import { useEffect, useState } from 'react';
 import { getServiceById } from '@/lib/api';
 import { Service } from '@/lib/types';
@@ -26,10 +25,10 @@ export default function FeastPage() {
   return (
     <AuthRequired>
       <DogoHeader title="Reserva de Banquete" className="-mt-16" />
-      <DogoSection className="border-2 border-white rounded-lg object-cover flex  w-full text-white p-6">
-        <form className="flex flex-col items-center w-full justify-center">
-          <span className="flex gap-3 mb-6">
-            <H4 className="text-center text-muted-foreground">Número de habitación</H4>
+      <DogoSection className="border-2 border-white rounded-lg object-cover flex w-full text-white p-6 overflow-x-auto">
+        <form className="w-full space-y-6 pb-12">
+          <span className="flex gap-3 mb-6 justify-center flex-wrap">
+            <H4 className="block text-sm text-[var(--gold)]">Número de Habitación</H4>
             <Input
               placeholder="Ingrese el número de habitación"
               value={venueId}

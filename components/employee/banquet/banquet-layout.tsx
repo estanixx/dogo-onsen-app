@@ -74,7 +74,7 @@ export default function BanquetLayout({ account, service, venueId }: BanquetLayo
     fetchSlots();
   }, [date]);
 
-  const canConfirm = !!selectedSeat && !!date && !!time && !submitting && !!venueId;
+  const canConfirm = !!selectedSeat && !!date && !!time && !submitting;
 
   const onDateSelect = (selectedDate: Date | undefined) => {
     if (selectedDate) {
@@ -130,15 +130,13 @@ export default function BanquetLayout({ account, service, venueId }: BanquetLayo
   };
 
   return (
-    <div className="w-full space-y-6">
+    <div className="w-full space-y-6 pb-12">
       {/* Date & time selection */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pl-6">
         {/* Date */}
-        <div>
-          <div className="flex justify-between items-center mb-4">
-            <h2 className="text-2xl font-serif tracking-wide text-[var(--gold)] border-b-2 border-[var(--gold)]/20 pb-1">
-              Fecha
-            </h2>
+        <div className="overflow-x-clip">
+          <div className="flex justify-between items-center">
+            <H4 className="block text-sm mb-2 text-[var(--gold)]">Fecha</H4>
           </div>
           <Calendar
             mode="single"
@@ -146,7 +144,7 @@ export default function BanquetLayout({ account, service, venueId }: BanquetLayo
             selected={date ?? undefined}
             onSelect={onDateSelect}
             hidden={{ before: new Date() }}
-            className="rounded-lg border bg-[var(--card)] w-full md:w-1/2"
+            className="rounded-lg border bg-[var(--card)] max-w-full"
             modifiersStyles={{
               today: {
                 backgroundColor: 'transparent',
@@ -155,14 +153,17 @@ export default function BanquetLayout({ account, service, venueId }: BanquetLayo
               },
             }}
           />
+          {date && (
+            <P className="text-xs text-muted-foreground mt-1">
+              Seleccionado: {format(date, 'PPP')}
+            </P>
+          )}
         </div>
 
         {/* Time */}
         <div>
           <div className="flex justify-between items-center">
-            <h2 className="text-2xl font-serif tracking-wide text-[var(--gold)] border-b-2 border-[var(--gold)]/20 pb-1">
-              Horario
-            </h2>
+            <H4 className="block text-sm mb-1 text-[var(--gold)]">Horario</H4>
           </div>
           {loadingSlots ? (
             <LoadingBox>Consultando horarios disponibles...</LoadingBox>
@@ -181,7 +182,7 @@ export default function BanquetLayout({ account, service, venueId }: BanquetLayo
       </div>
 
       {date && time ? (
-        <div className="relative">
+        <>
           {/* Table grid */}
 
           <div className="flex justify-between items-center mb-4 ml-6">
@@ -202,7 +203,7 @@ export default function BanquetLayout({ account, service, venueId }: BanquetLayo
           </ToggleGroup>
 
           {/* Seat availability legend */}
-          <div className="absolute bottom-3 right-3 flex pl-6 gap-6 mb-4">
+          <div className="bottom-3 right-3 flex pl-6 gap-6 mb-4">
             <span className="bg-secondary text-white font-base font-bold rounded-lg p-1">
               Disponible
             </span>
@@ -221,7 +222,7 @@ export default function BanquetLayout({ account, service, venueId }: BanquetLayo
               {submitting ? 'Confirmando...' : 'Confirmar reserva'}
             </Button>
           </div>
-        </div>
+        </>
       ) : (
         <div className="flex justify-center items-center mb-4">
           <H4 className="border-b-2 pb-1 text-primary border-primary">

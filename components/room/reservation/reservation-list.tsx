@@ -27,12 +27,15 @@ import { useState } from 'react';
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
 import { useMediaQuery } from '@/hooks/use-media-query';
 import { toast } from 'sonner';
+import { Reservation, Service } from '@/lib/types';
+import RedeemDialog from './redeem-interaction';
 
 interface ReservationListProps {
   accountId: string;
 }
 
 export function ReservationList({ accountId }: ReservationListProps) {
+  const [redeemDialog, setRedeemDialog] = useState<string | null>(null);
   const {
     reservations: allReservations,
     removeReservation,
@@ -46,13 +49,32 @@ export function ReservationList({ accountId }: ReservationListProps) {
     return allReservations.filter((reservation) => reservation.accountId === accountId);
   }, [allReservations, accountId]);
   const [ratingDialog, setRatingDialog] = useState<string | null>(null);
+  type ReservationFromContext = Reservation & { service: Service };
 
   // Función para redimir una reservación
-  const handleRedeem = (reservationId: string, serviceName: string) => {
-    updateReservation(reservationId, { isRedeemed: true });
-    toast.success(`¡Servicio "${serviceName}" redimido exitosamente!`, {
+  const executeRedeem = (reservation: ReservationFromContext) => {
+    updateReservation(reservation.id, { isRedeemed: true });
+    toast.success(`¡Servicio "${reservation.service.name}" redimido exitosamente!`, {
       description: 'Ya puedes calificar tu experiencia',
     });
+
+    // This will hide the RedeemDialog
+    setRedeemDialog(null);
+  };
+
+  // ✅ 2. The function that CHECKS the time
+  const handleRedeem = (reservation: ReservationFromContext) => {
+    const now = new Date();
+    const start = new Date(reservation.startTime);
+    const end = new Date(reservation.endTime);
+
+    // If the current time is within the reservation window, open the dialog
+    if (now >= start && now <= end) {
+      setRedeemDialog(reservation.id);
+    } else {
+      // Otherwise, redeem directly
+      executeRedeem(reservation);
+    }
   };
 
   // Función para cancelar una reservación
@@ -193,7 +215,8 @@ export function ReservationList({ accountId }: ReservationListProps) {
                   <span>
                     {format(new Date(reservation.startTime), "d 'de' MMMM, h:mm a", {
                       locale: es,
-                    })}
+                    })}{' '}
+                    - {format(new Date(reservation.endTime), 'h:mm a', { locale: es })}.
                   </span>
                 </div>
                 <div className="flex items-center gap-2">
@@ -201,7 +224,7 @@ export function ReservationList({ accountId }: ReservationListProps) {
                     <Button
                       variant="default"
                       className="bg-gold text-secondary transition-colors"
-                      onClick={() => handleRedeem(reservation.id, reservation.service.name)}
+                      onClick={() => handleRedeem(reservation)}
                     >
                       Redimir
                     </Button>
@@ -262,6 +285,25 @@ export function ReservationList({ accountId }: ReservationListProps) {
           Eliminar todo
         </Button>
       </div>
+
+      {/* ✅ ADD THIS RENDER LOGIC OUTSIDE THE MAP LOOP */}
+      {(() => {
+        // Find the full reservation object that matches the ID in our state
+        const activeReservation = reservations.find((r) => r.id === redeemDialog);
+
+        if (!activeReservation) {
+          return null;
+        }
+        return (
+          <RedeemDialog
+            spirit={activeReservation.account.spirit}
+            service={activeReservation.service}
+            songUrl={'/song.mp3'}
+            onClose={() => executeRedeem(activeReservation)}
+          />
+        );
+      })()}
+      {/* End of added logic */}
     </div>
   );
 }
