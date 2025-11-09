@@ -9,8 +9,8 @@ export default function Providers({ children }: { children: React.ReactNode }) {
   return (
     <ReservationProvider>
       <BanquetProvider>
-        <Toaster />
         {children}
+        <Toaster />
       </BanquetProvider>
     </ReservationProvider>
   );

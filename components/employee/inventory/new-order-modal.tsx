@@ -14,6 +14,7 @@ import { Input } from '@/components/ui/input';
 import { toast } from 'sonner';
 import { createInventoryOrder, getInventoryItems } from '@/lib/api';
 import { InventoryItem } from '@/lib/types';
+import { ScrollArea } from '@/components/ui/scroll-area';
 
 interface NewOrderModalProps {
   open: boolean;
@@ -81,7 +82,7 @@ export function NewOrderModal({ open, onOpenChange }: NewOrderModalProps) {
           bg-[var(--dark-light)]
           text-[var(--smoke)]
           shadow-[0_0_25px_var(--gold)]
-          max-h-[90vh] overflow-y-auto
+          
         "
       >
         <DialogHeader>
@@ -90,9 +91,9 @@ export function NewOrderModal({ open, onOpenChange }: NewOrderModalProps) {
           </DialogTitle>
         </DialogHeader>
 
-        <div className="space-y-4 py-4">
+        <ScrollArea className="py-4 px-2 overflow-y-hidden max-h-[70vh]">
           {items.map((item, index) => (
-            <div key={index} className="grid grid-cols-[1fr,auto,auto] gap-4 items-end">
+            <div key={index} className="my-4 grid grid-cols-[1fr,auto,auto] gap-4 items-end">
               <div>
                 <Label
                   htmlFor={`product-${index}`}
@@ -155,10 +156,10 @@ export function NewOrderModal({ open, onOpenChange }: NewOrderModalProps) {
           <Button type="button" variant="outline" onClick={handleAddItem} className="w-full">
             Agregar producto
           </Button>
-        </div>
+        </ScrollArea>
 
         <DialogFooter>
-          <Button variant="outline" onClick={() => onOpenChange(false)} className="mr-2">
+          <Button variant="outline" onClick={() => onOpenChange(false)} className="md:mr-2">
             Cancelar
           </Button>
           <Button
