@@ -1,3 +1,5 @@
+# Dogo Onsen App
+
 Small Next.js (App Router) project that demonstrates UI for rooms, services, reservations, and shared components.
 
 ## Quick start
@@ -9,7 +11,30 @@ npm install
 npm run dev
 ```
 
-Open http://localhost:3000 in your browser.
+Open [http://localhost:3000](http://localhost:3000) in your browser.
+
+## Clerk authentication
+
+The employee panel now relies on Clerk for authentication/authorization. Configure the following environment variables in `.env.local` before running the app:
+
+```bash
+NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=pk_test_...
+CLERK_SECRET_KEY=sk_test_...
+CLERK_SIGN_IN_URL=/sign-in
+CLERK_SIGN_UP_URL=/sign-up
+CLERK_AFTER_SIGN_IN_URL=/employee
+CLERK_AFTER_SIGN_UP_URL=/employee
+NEXT_PUBLIC_BACKEND_URL=http://localhost:8004
+```
+
+Set `publicMetadata` for each Clerk user to control in-app access:
+
+- `role`: one of `reception`, `banquet`, `inventory`, `services`, `admin` (defaults to `reception`).
+- `accessStatus`: `approved`, `pending`, or `revoked` (defaults to `pending`).
+
+Newly registered employees remain in `pending` until an admin flips `accessStatus` to `approved` inside Clerk. Users with `revoked` status are signed in but blocked from the `/employee` routes until reinstated.
+
+The frontend proxies employee CRUD traffic through Next.js API routes located under `app/api/employees/*`, which forward requests to the FastAPI service exposed at `NEXT_PUBLIC_BACKEND_URL`.
 
 ## Folder structure
 

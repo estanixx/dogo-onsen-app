@@ -1,80 +1,57 @@
 'use client';
 
-import React, { createContext, useContext, useState, useEffect } from 'react';
-import { authenticateEmployee, registerEmployee } from '@/lib/api';
+import React, { createContext, useContext, useMemo, useCallback } from 'react';
+import { useAuth, useUser } from '@clerk/nextjs';
+import type { UserResource } from '@clerk/types';
+import type {
+  EmployeeAccessStatus,
+  EmployeeProfile,
+  EmployeeRole,
+  EmployeeAuthState,
+} from '@/lib/types';
 
-interface Employee {
-  id: string;
-  name: string;
-  role: string;
-}
-
-interface EmployeeContextType {
-  isAuthenticated: boolean;
-  employee: Employee | null;
-  login: (username: string, pin: string) => Promise<boolean>;
-  logout: () => void;
-  register: (
-    username: string,
-    name: string,
-    pin: string,
-    role?: string,
-  ) => Promise<{ ok: boolean; error?: string }>;
+interface EmployeeContextType extends EmployeeAuthState {
+  refreshEmployeeProfile: () => Promise<void>;
+  signOutEmployee: () => Promise<void>;
 }
 
 const EmployeeContext = createContext<EmployeeContextType | undefined>(undefined);
 
 export function EmployeeProvider({ children }: { children: React.ReactNode }) {
-  const [employee, setEmployee] = useState<Employee | null>(null);
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const { user, isLoaded, isSignedIn } = useUser();
+  const { signOut } = useAuth();
 
-  // Check authentication status on mount
-  useEffect(() => {
-    const storedEmployee = localStorage.getItem('employee-data');
-    if (storedEmployee) {
-      const data = JSON.parse(storedEmployee);
-      setEmployee(data);
-      setIsAuthenticated(true);
+  const employeeProfile = useMemo(() => {
+    if (!isLoaded || !isSignedIn || !user) {
+      return null;
     }
-  }, []);
+    return mapClerkUserToEmployeeProfile(user);
+  }, [isLoaded, isSignedIn, user]);
 
-  const login = async (username: string, pin: string) => {
-    const employeeData = await authenticateEmployee(username, pin);
-    if (employeeData) {
-      setEmployee(employeeData);
-      setIsAuthenticated(true);
-      localStorage.setItem('employee-data', JSON.stringify(employeeData));
-      return true;
+  const accessStatus: EmployeeAccessStatus = employeeProfile?.accessStatus ?? 'pending';
+  const hasApprovedAccess = accessStatus === 'approved';
+
+  const refreshEmployeeProfile = useCallback(async () => {
+    if (user && 'reload' in user && typeof user.reload === 'function') {
+      await user.reload();
     }
-    return false;
+  }, [user]);
+
+  const signOutEmployee = useCallback(async () => {
+    await signOut();
+  }, [signOut]);
+
+  const value: EmployeeContextType = {
+    employeeProfile,
+    accessStatus,
+    isEmployeeAuthenticated: Boolean(isSignedIn && employeeProfile),
+    isEmployeeLoading: !isLoaded,
+    hasApprovedAccess,
+    refreshEmployeeProfile,
+    signOutEmployee,
   };
 
-  const logout = () => {
-    setEmployee(null);
-    setIsAuthenticated(false);
-    localStorage.removeItem('employee-data');
-  };
-
-  const register = async (username: string, name: string, pin: string, role?: string) => {
-    try {
-      const employeeData = await registerEmployee({ username, name, pin, role });
-      setEmployee(employeeData);
-      setIsAuthenticated(true);
-      localStorage.setItem('employee-data', JSON.stringify(employeeData));
-      return { ok: true };
-    } catch (e: unknown) {
-      if (e instanceof Error) {
-        return { ok: false, error: e.message };
-      }
-      return { ok: false, error: 'An unknown error occurred' };
-    }
-  };
-
-  return (
-    <EmployeeContext.Provider value={{ isAuthenticated, employee, login, logout, register }}>
-      {children}
-    </EmployeeContext.Provider>
-  );
+  return <EmployeeContext.Provider value={value}>{children}</EmployeeContext.Provider>;
 }
 
 export function useEmployee() {
@@ -83,4 +60,77 @@ export function useEmployee() {
     throw new Error('useEmployee must be used within an EmployeeProvider');
   }
   return context;
+}
+
+function mapClerkUserToEmployeeProfile(user: UserResource): EmployeeProfile {
+  const {
+    id,
+    firstName,
+    lastName,
+    fullName,
+    imageUrl,
+    emailAddresses,
+    publicMetadata,
+    primaryEmailAddress,
+  } = user;
+
+  const metadata =
+    typeof publicMetadata === 'object' && publicMetadata !== null ? publicMetadata : {};
+  const resolvedRole = resolveEmployeeRole((metadata as Record<string, unknown>).role);
+  const resolvedAccess = resolveEmployeeAccessStatus(
+    (metadata as Record<string, unknown>).accessStatus,
+  );
+
+  const organizationIds = extractOrganizationIds(user);
+
+  const fallbackFullName = `${firstName ?? ''} ${lastName ?? ''}`.trim();
+
+  return {
+    id,
+    clerkId: id,
+    firstName: firstName ?? '',
+    lastName: lastName ?? '',
+    fullName: fullName ?? fallbackFullName,
+    emailAddress: primaryEmailAddress?.emailAddress ?? emailAddresses?.[0]?.emailAddress ?? '',
+    imageUrl: imageUrl ?? undefined,
+    role: resolvedRole,
+    accessStatus: resolvedAccess,
+    organizationIds,
+  };
+}
+
+function resolveEmployeeRole(candidate: unknown): EmployeeRole {
+  if (
+    candidate === 'reception' ||
+    candidate === 'banquet' ||
+    candidate === 'inventory' ||
+    candidate === 'services' ||
+    candidate === 'admin'
+  ) {
+    return candidate;
+  }
+  return 'reception';
+}
+
+function resolveEmployeeAccessStatus(candidate: unknown): EmployeeAccessStatus {
+  if (candidate === 'approved' || candidate === 'pending' || candidate === 'revoked') {
+    return candidate;
+  }
+  return 'pending';
+}
+
+type ClerkOrganizationMembership = {
+  organization: { id: string };
+};
+
+function extractOrganizationIds(user: UserResource): string[] {
+  const candidate = user as unknown as {
+    organizationMemberships?: ClerkOrganizationMembership[];
+  };
+
+  if (!Array.isArray(candidate.organizationMemberships)) {
+    return [];
+  }
+
+  return candidate.organizationMemberships.map((membership) => membership.organization.id);
 }
