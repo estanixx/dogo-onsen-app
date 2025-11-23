@@ -1,83 +1,42 @@
-import { get } from 'http';
+import { start } from 'repl';
 import {
+  BanquetTable,
+  InventoryItem,
+  InventoryOrder,
   PrivateVenue,
   Reservation,
   Service,
   Spirit,
   SpiritType,
   VenueAccount,
-  BanquetTable,
-  InventoryItem,
-  InventoryOrder,
 } from '../types';
 import { wait } from '../utils';
-import { TIME_SLOTS } from './constants';
+
+const getBase = () => {
+  return typeof window !== 'undefined'
+    ? window.location.origin
+    : (process.env.NEXT_PUBLIC_BASE_URL ?? 'http://localhost:3000');
+};
 
 /**
  * Function to get available services
  * Returns a list of services with their details
  */
 export async function getAvailableServices(query?: string): Promise<Service[]> {
-  await wait(1000); // Simulate network delay
-  const all: Service[] = [
-    {
-      eiltRate: 50,
-      id: '1',
-      name: 'Banquete',
-      description: 'Un banquete donde podrás disfrutar de deliciosos platillos.',
-      rating: 4.7,
-      image:
-        'https://media.istockphoto.com/id/495329828/es/foto/tostado-casero-del-d%C3%ADa-de-acci%C3%B3n-de-gracias-de-turqu%C3%ADa.jpg?s=612x612&w=0&k=20&c=5JwMBcNXS4lIDWp5a5ojJDEf-f-xraaIIXLQl_Vu2to=',
-    },
-    {
-      eiltRate: 50,
-      id: '2',
-      name: 'Masaje relajante',
-      description: 'Un masaje relajante para relajarse y descansar.',
-      rating: 4.8,
-      image:
-        'https://media.istockphoto.com/id/1357320952/es/foto/primer-plano-de-un-hombre-recibiendo-masaje.jpg?s=612x612&w=0&k=20&c=CfWa3f91Ylq3u69hezJrOczxSpphtTl1xnHUvNe1pXA=',
-    },
-    {
-      eiltRate: 80,
-      id: '3',
-      name: 'Tratamiento facial',
-      description: 'Un tratamiento facial rejuvenecedor para tener una piel brillante.',
-      rating: 4.6,
-      image: 'https://leonardmedispa.com/wp-content/uploads/2017/03/facial-86487979-1.jpg',
-    },
-    {
-      eiltRate: 999,
-      id: '4',
-      name: 'Exorcismo',
-      description: 'Una sesión de exorcismo para una limpieza espiritual.',
-      rating: 4.2,
-      image:
-        'https://www.sublimehorror.com/wp-content/uploads/2019/03/medieval-representations-of-exorcism-in-art.jpg',
-    },
-    {
-      eiltRate: 2900,
-      id: '5',
-      name: 'Sesión de brujería',
-      description: 'Una sesión mística de brujería para necesidades especiales.',
-      rating: 4.9,
-      image:
-        'https://media.cnn.com/api/v1/images/stellar/prod/211030185915-05-witchcraft-taschen-witch-symbolism-art.jpg?q=w_1110,c_fill',
-    },
-  ];
-
-  if (!query) {
-    return all;
-  }
-
-  const q = query.toLowerCase().trim();
-  return all.filter((s) => s.name.toLowerCase().includes(q));
+  const queryParam = query ? `?q=${encodeURIComponent(query)}` : '';
+  // Use an absolute URL so this works both in browser and on the server.
+  const base = getBase();
+  const resp = await fetch(`${base}/api/service${queryParam}`);
+  const all: Service[] = await resp.json();
+  return all;
 }
 
 export async function getServiceById(id: string): Promise<Service | null> {
-  const services = await getAvailableServices();
-  const service = services.find((s) => s.id === id);
-  return service ?? null;
+  // Use an absolute URL so this works both in browser and on the server.
+  const base = getBase();
+  const resp = await fetch(`${base}/api/service/${id}`);
+  const all: Service | null = await resp.json();
+  return all;
 }
 
 export async function getAvailablePrivateVenues(
@@ -113,76 +72,44 @@ export async function getAvailablePrivateVenues(
  * Returns account details including spirit ID and time information
  */
 export async function getCurrentVenueAcount(venueId: string): Promise<VenueAccount | null> {
-  return {
-    id: '1',
-    spiritId: '007',
-    spirit: (await getSpirit('007')) as Spirit,
-    venueId: venueId,
-    startTime: new Date('2025-10-25'),
-    endTime: new Date('2025-10-30'),
-  };
+  const resp = await fetch(`${getBase()}/api/venue_account/${venueId}`);
+  const account: VenueAccount | null = await resp.json();
+  return account;
 }
 
 /**
  * Function to get spirit details by ID
  */
 export async function getSpirit(spiritId: string): Promise<Spirit | null> {
-  return {
-    id: spiritId,
-    name: 'Agente ' + spiritId,
-    typeId: '1',
-    type: (await getSpiritType('1')) as SpiritType,
-    accountId: '1',
-    eiltBalance: 200,
-    individualRecord: new Date().toISOString(),
-    image:
-      'https://static.wikia.nocookie.net/hitman/images/e/ec/Agent_47_in_Hitman_2016.png/revision/latest/scale-to-width/360?cb=20230124042322',
-  };
+  const resp = await fetch(`${getBase()}/api/spirit/${spiritId}`);
+  const spirit: Spirit | null = await resp.json();
+  return spirit;
 }
 
 /**
  * Function to get spirit type details by ID
  */
 export async function getSpiritType(typeId: string): Promise<SpiritType | null> {
-  return {
-    id: typeId,
-    name: 'Agente Secreto',
-    dangerScore: 90,
-  };
+  const resp = await fetch(`${getBase()}/api/spirit_type/${typeId}`);
+  const type: SpiritType | null = await resp.json();
+  return type;
 }
 
 export async function getAllSpiritTypes(): Promise<SpiritType[]> {
-  return [
-    {
-      id: '1',
-      name: 'Agente Secreto',
-      dangerScore: 90,
-    },
-    {
-      id: '2',
-      name: 'Fantasma amigable',
-      dangerScore: 10,
-    },
-    {
-      id: '3',
-      name: 'Espíritu travieso',
-      dangerScore: 50,
-    },
-    {
-      id: '4',
-      name: 'Alma en pena',
-      dangerScore: 70,
-    },
-  ];
+  const resp = await fetch(`${getBase()}/api/spirit_type/`);
+  const types: SpiritType[] = await resp.json();
+  return types;
 }
 
 /**
  * Function to get available time slots for a service on a specific date
  */
 export async function getAvailableTimeSlots(serviceId: string, date: Date): Promise<string[]> {
-  // Simulate fetching from server
-  await wait(500);
-  return TIME_SLOTS;
+  const resp = await fetch(
+    `${getBase()}/api/service/${serviceId}/available_time_slots?date=${date.toISOString()}`,
+  );
+  const slots: string[] = await resp.json();
+  return slots;
 }
 
 /**
@@ -194,9 +121,6 @@ export async function bookService(
   date: Date,
   time: string,
 ): Promise<Reservation> {
-  // Simulate booking a service
-  await wait(500);
-
   // Combine date (YYYY-MM-DD) and time (HH:mm)
   const [timePart, modifier] = time.split(' ');
   const [h, m] = timePart.split(':').map(Number);
@@ -214,16 +138,23 @@ export async function bookService(
   const startTime = new Date(date);
   startTime.setHours(hours, minutes, 0, 0);
 
-  return {
-    id: '1',
-    serviceId,
-    accountId,
-    startTime,
-    endTime: new Date(startTime.getTime() + 60 * 60 * 1000), // 1 hour later
-    isRedeemed: false,
-    isRated: false,
-    account: (await getCurrentVenueAcount('venue1')) as VenueAccount,
-  };
+  const resp = await fetch(`${getBase()}/api/reservation/`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      id: '1',
+      serviceId,
+      accountId,
+      startTime,
+      endTime: new Date(startTime.getTime() + 60 * 60 * 1000), // 1 hour later
+      isRedeemed: false,
+      isRated: false,
+    }),
+  });
+  const reservation: Reservation = await resp.json();
+  return reservation;
 }
 
 export async function createSpirit(
@@ -233,16 +164,23 @@ export async function createSpirit(
   image?: string,
 ): Promise<Spirit> {
   // Simulate creating a new spirit
-  await wait(500);
-  return {
-    id,
-    name,
-    typeId,
-    type: (await getSpiritType(typeId)) as SpiritType,
-    eiltBalance: 0,
-    individualRecord: new Date().toISOString(),
-    image,
-  };
+  const resp = await fetch(`${getBase()}/api/spirit/`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      id,
+      name,
+      typeId,
+      type: (await getSpiritType(typeId)) as SpiritType,
+      eiltBalance: 0,
+      individualRecord: new Date().toISOString(),
+      image,
+    }),
+  });
+  const spirit: Spirit = await resp.json();
+  return spirit;
 }
 
 // In-memory reservations for banquet seats
@@ -256,137 +194,74 @@ const banquetReservations: {
 }[] = [];
 
 export async function getBanquetReservationsForDate(date: string) {
-  await wait(200);
-  return banquetReservations.filter((r) => r.date === date);
+  const resp = await fetch(`${getBase()}/api/reservation/banquet-by-date`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ date }),
+  });
+  const reservations: {
+    id: string;
+    tableId: string;
+    seatNumber: number;
+    date: string; // ISO date
+    time: string; // HH:MM
+    accountId?: string;
+  }[] = await resp.json();
+  return reservations;
 }
 
 export async function createBanquetReservation({
-  tableId,
-  seatNumber,
+  seatId, 
   date,
   time,
   accountId,
 }: {
-  tableId: string;
-  seatNumber: number;
+  seatId: number;
   date: string;
   time: string;
   accountId?: string;
 }) {
-  await wait(300);
-  // check if seat is already reserved for that date/time
-  const exists = banquetReservations.some(
-    (r) =>
-      r.tableId === tableId && r.seatNumber === seatNumber && r.date === date && r.time === time,
-  );
-  if (exists) {
-    throw new Error('Seat already reserved for that slot');
+    // Combine date (YYYY-MM-DD) and time (HH:mm)
+  const [timePart, modifier] = time.split(' ');
+  const [h, m] = timePart.split(':').map(Number);
+  let hours = h;
+  const minutes = m;
+
+  // Convert 12-hour to 24-hour format
+  if (modifier === 'PM' && hours < 12) {
+    hours += 12;
+  }
+  if (modifier === 'AM' && hours === 12) {
+    hours = 0;
   }
 
-  const id = Math.random().toString(36).slice(2, 9);
-  const reservation = { id, tableId, seatNumber, date, time, accountId };
-  banquetReservations.push(reservation);
+  const startTime = new Date(date);
+  startTime.setHours(hours, minutes, 0, 0);
+  const resp = await fetch(`${getBase()}/api/reservation/`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      seatId,
+      startTime,
+      endTime: new Date(startTime.getTime() + 60 * 60 * 1000), // 1 hour later
+      accountId,
+    }),
+  });
+  const reservation = await resp.json();
   return reservation;
-}
-
-export async function getBanquetTables(): Promise<BanquetTable[]> {
-  return [
-    {
-      id: '1',
-      capacity: 6,
-      availableSeats: [
-        { reservationId: '', tableId: '1', seatNumber: 1, rationsConsumed: 0 },
-        { reservationId: '', tableId: '1', seatNumber: 2, rationsConsumed: 0 },
-        { reservationId: '', tableId: '1', seatNumber: 3, rationsConsumed: 0 },
-        { reservationId: '', tableId: '1', seatNumber: 4, rationsConsumed: 0 },
-        { reservationId: '', tableId: '1', seatNumber: 5, rationsConsumed: 0 },
-        { reservationId: '', tableId: '1', seatNumber: 6, rationsConsumed: 0 },
-      ],
-      occupiants: [],
-      state: true,
-    },
-    {
-      id: '2',
-      capacity: 6,
-      availableSeats: [
-        { reservationId: '', tableId: '2', seatNumber: 1, rationsConsumed: 0 },
-        { reservationId: '', tableId: '2', seatNumber: 2, rationsConsumed: 0 },
-        { reservationId: '', tableId: '2', seatNumber: 3, rationsConsumed: 0 },
-        { reservationId: '', tableId: '2', seatNumber: 4, rationsConsumed: 0 },
-        { reservationId: '', tableId: '2', seatNumber: 5, rationsConsumed: 0 },
-        { reservationId: '', tableId: '2', seatNumber: 6, rationsConsumed: 0 },
-      ],
-      occupiants: [],
-      state: true,
-    },
-    {
-      id: '3',
-      capacity: 6,
-      availableSeats: [
-        { reservationId: '', tableId: '3', seatNumber: 1, rationsConsumed: 0 },
-        { reservationId: '', tableId: '3', seatNumber: 2, rationsConsumed: 0 },
-        { reservationId: '', tableId: '3', seatNumber: 3, rationsConsumed: 0 },
-        { reservationId: '', tableId: '3', seatNumber: 4, rationsConsumed: 0 },
-        { reservationId: '', tableId: '3', seatNumber: 5, rationsConsumed: 0 },
-        { reservationId: '', tableId: '3', seatNumber: 6, rationsConsumed: 0 },
-      ],
-      occupiants: [],
-      state: true,
-    },
-    {
-      id: '4',
-      capacity: 6,
-      availableSeats: [
-        { reservationId: '', tableId: '4', seatNumber: 1, rationsConsumed: 0 },
-        { reservationId: '', tableId: '4', seatNumber: 2, rationsConsumed: 0 },
-        { reservationId: '', tableId: '4', seatNumber: 3, rationsConsumed: 0 },
-        { reservationId: '', tableId: '4', seatNumber: 4, rationsConsumed: 0 },
-        { reservationId: '', tableId: '4', seatNumber: 5, rationsConsumed: 0 },
-        { reservationId: '', tableId: '4', seatNumber: 6, rationsConsumed: 0 },
-      ],
-      occupiants: [],
-      state: true,
-    },
-    {
-      id: '5',
-      capacity: 6,
-      availableSeats: [
-        { reservationId: '', tableId: '5', seatNumber: 1, rationsConsumed: 0 },
-        { reservationId: '', tableId: '5', seatNumber: 2, rationsConsumed: 0 },
-        { reservationId: '', tableId: '5', seatNumber: 3, rationsConsumed: 0 },
-        { reservationId: '', tableId: '5', seatNumber: 4, rationsConsumed: 0 },
-        { reservationId: '', tableId: '5', seatNumber: 5, rationsConsumed: 0 },
-        { reservationId: '', tableId: '5', seatNumber: 6, rationsConsumed: 0 },
-      ],
-      occupiants: [],
-      state: true,
-    },
-    {
-      id: '6',
-      capacity: 6,
-      availableSeats: [
-        { reservationId: '', tableId: '6', seatNumber: 1, rationsConsumed: 0 },
-        { reservationId: '', tableId: '6', seatNumber: 2, rationsConsumed: 0 },
-        { reservationId: '', tableId: '6', seatNumber: 3, rationsConsumed: 0 },
-        { reservationId: '', tableId: '6', seatNumber: 4, rationsConsumed: 0 },
-        { reservationId: '', tableId: '6', seatNumber: 5, rationsConsumed: 0 },
-        { reservationId: '', tableId: '6', seatNumber: 6, rationsConsumed: 0 },
-      ],
-      occupiants: [],
-      state: true,
-    },
-  ];
 }
 
 /**
  * Function to get all the registered spirits
  */
 export async function getAllSpirits(): Promise<Spirit[]> {
-  await wait(500);
-  const spirits = await Promise.all(
-    Array.from({ length: 20 }, (_, i) => getSpirit((i + 200).toString())),
-  );
-  return spirits.filter((s): s is Spirit => s !== null);
+  const resp = await fetch(`${getBase()}/api/spirit/`);
+  const spirits: Spirit[] = await resp.json();
+  return spirits;
 }
 
 // Mock data for inventory

@@ -46,7 +46,7 @@ export function ServiceDialog({ service, account }: ServiceDialogProps) {
             <DialogHeader>
               <Image
                 className="w-full object-cover"
-                src={service.image}
+                src={service.image || '/images/service-placeholder.jpg'}
                 alt={service.name}
                 width={500}
                 height={300}

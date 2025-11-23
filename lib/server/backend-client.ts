@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
+import { BACKEND_BASE_URL } from '../api/constants';
 
-const BACKEND_BASE_URL = process.env.NEXT_PUBLIC_BACKEND_URL ?? 'http://localhost:8004';
 
 export async function proxyBackendRequest(path: string, init?: RequestInit) {
   const url = `${BACKEND_BASE_URL}${path}`;
