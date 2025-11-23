@@ -121,13 +121,6 @@ export interface Item {
   image?: string;
 }
 
-// Local helper type used by the mock API
-// TODO: Modify this (?).
-export interface PrivateVenue {
-  id: string;
-  state: boolean;
-}
-
 /**
  * Inventory Item - Represents items in the inventory system
  */
@@ -149,4 +142,29 @@ export interface InventoryOrder {
   }[];
   status: 'pending' | 'delivered';
   createdAt: string;
+}
+
+export type EmployeeRole = 'reception' | 'banquet' | 'inventory' | 'services' | 'admin';
+
+export type EmployeeAccessStatus = 'pending' | 'approved' | 'revoked';
+
+export interface EmployeeProfile {
+  id: string;
+  clerkId: string;
+  firstName: string;
+  lastName: string;
+  fullName: string;
+  emailAddress: string;
+  imageUrl?: string;
+  role: EmployeeRole;
+  accessStatus: EmployeeAccessStatus;
+  organizationIds: string[];
+}
+
+export interface EmployeeAuthState {
+  employeeProfile: EmployeeProfile | null;
+  accessStatus: EmployeeAccessStatus;
+  isEmployeeAuthenticated: boolean;
+  isEmployeeLoading: boolean;
+  hasApprovedAccess: boolean;
 }

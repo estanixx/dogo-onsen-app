@@ -1,3 +1,4 @@
+import { ClerkProvider } from '@clerk/nextjs';
 import { Toaster } from '@/components/ui/sonner';
 import './globals.css';
 import { Inter, Noto_Serif_JP } from 'next/font/google';
@@ -21,13 +22,15 @@ export const metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="es" className={`${inter.variable} ${notoSerifJP.variable}`}>
-      <body className="overflow-y-auto font-base">
-        <Providers>
-          <Toaster />
-          {children}
-        </Providers>
-      </body>
-    </html>
+    <ClerkProvider>
+      <html lang="es" className={`${inter.variable} ${notoSerifJP.variable}`}>
+        <body className="overflow-y-auto font-base">
+          <Providers>
+            {children}
+            <Toaster />
+          </Providers>
+        </body>
+      </html>
+    </ClerkProvider>
   );
 }
