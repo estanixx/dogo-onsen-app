@@ -1,4 +1,4 @@
-import { DeviceSelector } from '@/components/device/device-selector';
+import { DeviceConfigurator } from '@/components/device/device-configurator';
 import { SyncDeviceConfig } from '@/components/device/device-config';
 import { DogoPage, DogoHeader, DogoSection } from '@/components/shared/dogo-ui';
 import { cookies } from 'next/headers';
@@ -14,7 +14,15 @@ export default function Home() {
 
     // Save configuration in cookies (for middleware)
     const cookieStore = await cookies();
-    cookieStore.set('dogo-device-config', JSON.stringify({ type }));
+    cookieStore.set({
+      name: 'dogo-device-config',
+      value: JSON.stringify({ type }),
+      path: '/',
+      httpOnly: true,
+      sameSite: 'lax',
+      secure: process.env.NODE_ENV === 'production',
+      maxAge: 60 * 60 * 24 * 30, // 30 days
+    });
 
     // Redirect based on device type
     if (type === 'employee') {
@@ -35,7 +43,7 @@ export default function Home() {
         />
 
         <DogoSection>
-          <DeviceSelector onSelect={configureDevice} />
+          <DeviceConfigurator configureDevice={configureDevice} />
         </DogoSection>
       </div>
     </DogoPage>

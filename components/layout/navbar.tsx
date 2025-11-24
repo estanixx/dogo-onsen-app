@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useState } from 'react';
+import { useIsMobile } from '@/hooks/use-mobile';
 import { Menu, X } from 'lucide-react'; // Shadcn icons
 import DogoIcon from '../shared/dogo-icon';
 import { P } from '../shared/typography';
@@ -13,6 +14,7 @@ import { EmployeeLogin } from '../employee/auth/employee-login';
 export default function Navbar() {
   const pathname = usePathname();
   const [menuOpen, setMenuOpen] = useState(false);
+  const isMobile = useIsMobile();
 
   const links = [
     { name: 'Dashboard', href: '/employee' },
@@ -35,41 +37,46 @@ export default function Navbar() {
       </div>
 
       {/* Desktop Nav */}
-      <div className="hidden md:flex items-center space-x-10 text-sm">
-        {links.map((link) => (
-          <Link
-            key={link.href}
-            href={link.href}
-            className={cn(
-              'transition-all duration-150 border-b-2 border-transparent hover:text-primary hover:border-primary/40',
-              pathname === link.href && 'text-primary border-primary',
-            )}
-          >
-            <P className="text-sm sm:text-base">{link.name}</P>
-          </Link>
-        ))}
-      </div>
+      {!isMobile && (
+        <div className="flex items-center space-x-10 text-sm">
+          {links.map((link) => (
+            <Link
+              key={link.href}
+              href={link.href}
+              className={cn(
+                'transition-all duration-150 border-b-2 border-transparent hover:text-primary hover:border-primary/40',
+                pathname === link.href && 'text-primary border-primary',
+              )}
+            >
+              <P className="text-sm sm:text-base">{link.name}</P>
+            </Link>
+          ))}
+        </div>
+      )}
 
       {/* User + Menu */}
       <div className="flex items-center space-x-3">
-        <div className="hidden md:block">
-          <EmployeeLogin />
-        </div>
+        {!isMobile ? (
+          <div>
+            <EmployeeLogin />
+          </div>
+        ) : null}
 
-        {/* Mobile Menu Button */}
-        <Button
-          variant="ghost"
-          size="icon"
-          className="md:hidden text-primary hover:text-white"
-          onClick={() => setMenuOpen((prev) => !prev)}
-        >
-          {menuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
-        </Button>
+        {isMobile && (
+          <Button
+            variant="ghost"
+            size="icon"
+            className="text-primary hover:text-white"
+            onClick={() => setMenuOpen((prev) => !prev)}
+          >
+            {menuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+          </Button>
+        )}
       </div>
 
       {/* Mobile Dropdown */}
-      {menuOpen && (
-        <div className="absolute top-16 left-0 w-full bg-background backdrop-blur-md border-b border-white flex flex-col items-center py-4 space-y-4 md:hidden">
+      {menuOpen && isMobile && (
+        <div className="absolute top-16 left-0 w-full bg-background backdrop-blur-md border-b border-white flex flex-col items-center py-4 space-y-4">
           {links.map((link) => (
             <Link
               key={link.href}

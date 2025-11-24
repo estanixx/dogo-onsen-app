@@ -68,7 +68,7 @@ export default function CameraCapture({ onCapture, onUploadComplete }: CameraCap
       try {
         // 1. Convertir Base64 a File
         const file = dataURLtoFile(dataUrl, `capture-${Date.now()}.png`);
-        
+
         // 2. Preparar FormData
         const formData = new FormData();
         formData.append('file', file);
@@ -84,20 +84,19 @@ export default function CameraCapture({ onCapture, onUploadComplete }: CameraCap
           try {
             // FastAPI envía los errores en formato JSON: { "detail": "Mensaje..." }
             const errorData = await response.json();
-            
+
             // Extraemos el mensaje específico que escribiste en Python
-            const mensajeBackend = errorData.detail || "Error desconocido en el servidor";
-            
+            const mensajeBackend = errorData.detail || 'Error desconocido en el servidor';
+
             // A. Opción simple: Alerta nativa
             alert(`⚠️ Atención: ${mensajeBackend}`);
 
             // B. (Opcional) Si tuvieras un prop onError, lo llamarías aquí:
             // if (props.onError) props.onError(mensajeBackend);
-
           } catch (parseError) {
             // Si el backend se rompió feo y no mandó JSON (ej. 500 HTML)
-            console.error("Error parseando respuesta:", parseError);
-            alert("Ocurrió un error inesperado al procesar la imagen.");
+            console.error('Error parseando respuesta:', parseError);
+            alert('Ocurrió un error inesperado al procesar la imagen.');
           }
           setIsUploading(false);
           return; // Salimos de la función aquí para no ejecutar lo de abajo
@@ -105,13 +104,12 @@ export default function CameraCapture({ onCapture, onUploadComplete }: CameraCap
         }
 
         const data = await response.json();
-        
+
         // 4. Devolver datos finales (URL S3 + Rostros)
         onUploadComplete(data.url, data.faces);
-
       } catch (error) {
-        console.error("Error subiendo imagen:", error);
-        alert("Hubo un error al procesar la imagen en el servidor.");
+        console.error('Error subiendo imagen:', error);
+        alert('Hubo un error al procesar la imagen en el servidor.');
       } finally {
         setIsUploading(false);
       }

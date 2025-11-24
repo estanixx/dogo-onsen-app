@@ -1,7 +1,6 @@
 import { NextResponse } from 'next/server';
 import { BACKEND_BASE_URL } from '../api/constants';
 
-
 export async function proxyBackendRequest(path: string, init?: RequestInit) {
   const url = `${BACKEND_BASE_URL}${path}`;
   const headers = new Headers(init?.headers);
