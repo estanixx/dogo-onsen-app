@@ -147,19 +147,19 @@ export default function SpiritForm({ id, setId, setOpen }: SpiritSelectProps) {
               <label className="block text-sm mb-1">Foto</label>
               {!imagePreview && (
                 // <CameraCapture onCapture={(dataUrl) => form.setValue('image', dataUrl)} />
-                <CameraCapture 
+                <CameraCapture
                   onCapture={(localUrl) => {
                     // Mostrar preview instantáneo
-                    setPreviewImage(localUrl); 
+                    setPreviewImage(localUrl);
                   }}
                   onUploadComplete={(s3Url, faces) => {
                     // Guardar la URL real de la BD
-                    setFinalImageUrl(s3Url); 
+                    setFinalImageUrl(s3Url);
                     // Guardar los datos de rostros
                     setFacesData(faces);
-                    console.log("Imagen guardada en S3:", s3Url);
-                    console.log("Rostros detectados:", faces);
-                  }} 
+                    console.log('Imagen guardada en S3:', s3Url);
+                    console.log('Rostros detectados:', faces);
+                  }}
                 />
               )}
               {imagePreview && (

@@ -26,6 +26,7 @@ import {
 import { useState } from 'react';
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
 import { useMediaQuery } from '@/hooks/use-media-query';
+import { DESKTOP_MIN_QUERY } from '@/lib/config';
 import { toast } from 'sonner';
 import { Reservation, Service } from '@/lib/types';
 import RedeemDialog from './redeem-interaction';
@@ -95,7 +96,7 @@ export function ReservationList({ accountId }: ReservationListProps) {
   };
 
   const RatingDialog = React.memo(({ reservationId }: { reservationId: string }) => {
-    const isDesktop = useMediaQuery('(min-width: 768px)');
+    const isDesktop = useMediaQuery(DESKTOP_MIN_QUERY);
 
     const ratingContent = (
       <>

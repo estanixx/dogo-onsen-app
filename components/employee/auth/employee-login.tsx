@@ -54,7 +54,11 @@ export function EmployeeLogin() {
 
       <SignedOut>
         <div className="flex items-center gap-2">
-          <SignInButton mode="modal" forceRedirectUrl="/employee" signUpForceRedirectUrl="/employee">
+          <SignInButton
+            mode="modal"
+            forceRedirectUrl="/employee"
+            signUpForceRedirectUrl="/employee"
+          >
             <Button
               type="button"
               variant="outline"

@@ -59,3 +59,8 @@ export const isDeviceConfigured = (): boolean => {
   // For employee devices, only type is required
   return config.type === 'employee';
 };
+
+// Breakpoints
+export const DESKTOP_BREAKPOINT = 1150; // widths >= 1150px considered desktop
+export const DESKTOP_MIN_QUERY = `(min-width: ${DESKTOP_BREAKPOINT}px)`;
+export const MOBILE_MAX_QUERY = `(max-width: ${DESKTOP_BREAKPOINT - 1}px)`;

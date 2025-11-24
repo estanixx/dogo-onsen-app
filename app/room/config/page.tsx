@@ -18,8 +18,16 @@ export default function RoomConfig() {
     const config = existingConfig ? JSON.parse(existingConfig) : { type: 'room' };
     config.roomId = roomId;
 
-    // Update configuration
-    cookieStore.set('dogo-device-config', JSON.stringify(config));
+    // Update configuration as httpOnly cookie
+    cookieStore.set({
+      name: 'dogo-device-config',
+      value: JSON.stringify(config),
+      path: '/',
+      httpOnly: true,
+      sameSite: 'lax',
+      secure: process.env.NODE_ENV === 'production',
+      maxAge: 60 * 60 * 24 * 30, // 30 days
+    });
 
     // Redirect to room dashboard
     redirect(`/room/${roomId}`);

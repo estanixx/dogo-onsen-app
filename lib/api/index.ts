@@ -213,7 +213,7 @@ export async function getBanquetReservationsForDate(date: string) {
 }
 
 export async function createBanquetReservation({
-  seatId, 
+  seatId,
   date,
   time,
   accountId,
@@ -223,7 +223,7 @@ export async function createBanquetReservation({
   time: string;
   accountId?: string;
 }) {
-    // Combine date (YYYY-MM-DD) and time (HH:mm)
+  // Combine date (YYYY-MM-DD) and time (HH:mm)
   const [timePart, modifier] = time.split(' ');
   const [h, m] = timePart.split(':').map(Number);
   let hours = h;

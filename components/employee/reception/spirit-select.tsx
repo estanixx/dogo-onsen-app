@@ -3,6 +3,7 @@
 import * as React from 'react';
 import { Button } from '@/components/ui/button';
 import { useMediaQuery } from '@/hooks/use-media-query';
+import { DESKTOP_MIN_QUERY } from '@/lib/config';
 import {
   Dialog,
   DialogTrigger,
@@ -32,7 +33,7 @@ interface SpiritSelectProps {
 
 export default function SpiritSelect({ id, setId }: SpiritSelectProps) {
   const [open, setOpen] = React.useState(false);
-  const isDesktop = useMediaQuery('(min-width: 768px)');
+  const isDesktop = useMediaQuery(DESKTOP_MIN_QUERY);
   const sharedClass = 'text-white';
   const btn = <Button variant="outline">{id ? `Espíritu #${id}` : 'Buscar Espíritu'}</Button>;
   if (isDesktop) {

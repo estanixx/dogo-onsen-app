@@ -14,7 +14,15 @@ export default function Home() {
 
     // Save configuration in cookies (for middleware)
     const cookieStore = await cookies();
-    cookieStore.set('dogo-device-config', JSON.stringify({ type }));
+    cookieStore.set({
+      name: 'dogo-device-config',
+      value: JSON.stringify({ type }),
+      path: '/',
+      httpOnly: true,
+      sameSite: 'lax',
+      secure: process.env.NODE_ENV === 'production',
+      maxAge: 60 * 60 * 24 * 30, // 30 days
+    });
 
     // Redirect based on device type
     if (type === 'employee') {
