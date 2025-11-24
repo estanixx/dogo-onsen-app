@@ -58,7 +58,7 @@ export default function AdminPage() {
 
       const data = await response.json();
       setSyncMessage(`✓ ${data.message || 'Sync completed'}`);
-      
+
       // Refresh the employees table by reloading the component
       setTimeout(() => {
         window.location.reload();
@@ -72,57 +72,57 @@ export default function AdminPage() {
 
   return (
     <div className="w-full min-h-screen p-4 md:p-6">
-    <DogoHeader title="Panel Administrativo"/>
+      <DogoHeader title="Panel Administrativo" />
 
-    <DogoSection>
+      <DogoSection>
         <div className="space-y-6">
-        {/* Header with title */}
-        <h2 className="text-2xl md:text-3xl font-serif tracking-wide text-[var(--gold)] border-b-2 border-[var(--gold)]/20 pb-2">
+          {/* Header with title */}
+          <h2 className="text-2xl md:text-3xl font-serif tracking-wide text-[var(--gold)] border-b-2 border-[var(--gold)]/20 pb-2">
             Empleados
-        </h2>
+          </h2>
 
-        {/* Sync message */}
-        {syncMessage && (
+          {/* Sync message */}
+          {syncMessage && (
             <div
-            className={`p-3 rounded-lg text-sm ${
+              className={`p-3 rounded-lg text-sm ${
                 syncMessage.startsWith('✓')
-                ? 'bg-green-900/30 text-green-400 border border-green-500/30'
-                : 'bg-red-900/30 text-red-400 border border-red-500/30'
-            }`}
+                  ? 'bg-green-900/30 text-green-400 border border-green-500/30'
+                  : 'bg-red-900/30 text-red-400 border border-red-500/30'
+              }`}
             >
-            {syncMessage}
+              {syncMessage}
             </div>
-        )}
+          )}
 
-        {/* Employees table */}
-        <EmployeesManagementTable />
+          {/* Employees table */}
+          <EmployeesManagementTable />
 
-        {/* Buttons below table */}
-        <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 justify-end">
+          {/* Buttons below table */}
+          <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 justify-end">
             <Button
-            onClick={handleSync}
-            disabled={isSyncing}
-            className="bg-[var(--gold)] hover:bg-[var(--gold)]/80 text-[var(--dark)] font-medium"
+              onClick={handleSync}
+              disabled={isSyncing}
+              className="bg-[var(--gold)] hover:bg-[var(--gold)]/80 text-[var(--dark)] font-medium"
             >
-            {isSyncing ? (
+              {isSyncing ? (
                 <>
-                <Loader2 className="animate-spin mr-2 size-4" />
-                Sincronizando...
+                  <Loader2 className="animate-spin mr-2 size-4" />
+                  Sincronizando...
                 </>
-            ) : (
+              ) : (
                 'Sincronizar con Clerk'
-            )}
+              )}
             </Button>
             <Button
-            onClick={handleLogout}
-            className="bg-red-900/20 border-red-500/30 text-red-400 hover:bg-red-900/40"
-            variant="outline"
+              onClick={handleLogout}
+              className="bg-red-900/20 border-red-500/30 text-red-400 hover:bg-red-900/40"
+              variant="outline"
             >
-            Cerrar sesión
+              Cerrar sesión
             </Button>
+          </div>
         </div>
-        </div>
-    </DogoSection>
+      </DogoSection>
     </div>
   );
 }

@@ -18,7 +18,7 @@ export function DeviceConfigurator({ configureDevice }: DeviceConfiguratorProps)
 
   const handleSelectDevice = async (type: 'employee' | 'room') => {
     setIsProcessing(true);
-    
+
     // If employee device selected and user is admin, handle admin login
     if (type === 'employee' && isLoaded && user) {
       const metadata =

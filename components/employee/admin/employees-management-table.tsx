@@ -199,7 +199,10 @@ export function EmployeesManagementTable() {
                     </TableRow>
                   ) : (
                     employees.map((employee) => (
-                      <TableRow key={employee.clerk_id} className="hover:bg-white/5 border-b border-white/5">
+                      <TableRow
+                        key={employee.clerk_id}
+                        className="hover:bg-white/5 border-b border-white/5"
+                      >
                         <TableCell className="text-white font-medium whitespace-nowrap px-2 md:px-3 py-2 text-xs md:text-sm">
                           {employee.first_name} {employee.last_name}
                         </TableCell>

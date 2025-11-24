@@ -20,13 +20,10 @@ export async function POST(request: NextRequest) {
         const errorData = await response.json();
         errorMessage = errorData.detail || errorMessage;
       } catch {
-        errorMessage = await response.text() || errorMessage;
+        errorMessage = (await response.text()) || errorMessage;
       }
-      
-      return NextResponse.json(
-        { error: errorMessage },
-        { status: response.status },
-      );
+
+      return NextResponse.json({ error: errorMessage }, { status: response.status });
     }
 
     const data = await response.json();
@@ -46,9 +43,6 @@ export async function POST(request: NextRequest) {
     return cookieResponse;
   } catch (error) {
     console.error('Admin login error:', error);
-    return NextResponse.json(
-      { error: 'Internal server error' },
-      { status: 500 },
-    );
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }
