@@ -1,5 +1,5 @@
-import { start } from 'repl';
 import {
+  BanquetSeat,
   BanquetTable,
   InventoryItem,
   InventoryOrder,
@@ -10,7 +10,7 @@ import {
   SpiritType,
   VenueAccount,
 } from '../types';
-import { wait } from '../utils';
+import { createDatetimeFromDateAndTime, wait } from '../utils';
 
 const getBase = () => {
   return typeof window !== 'undefined'
@@ -71,8 +71,18 @@ export async function getAvailablePrivateVenues(
  * Function to get the current venue account for a room
  * Returns account details including spirit ID and time information
  */
-export async function getCurrentVenueAcount(venueId: string): Promise<VenueAccount | null> {
+export async function getCurrentVenueAccount(venueId: string): Promise<VenueAccount | null> {
   const resp = await fetch(`${getBase()}/api/venue_account/${venueId}`);
+  const account: VenueAccount | null = await resp.json();
+  return account;
+}
+/** * Function to get venue account details by ID
+ */
+export async function getVenueAccountById(venueId: string): Promise<VenueAccount | null> {
+  const resp = await fetch(`${getBase()}/api/venue_account/${venueId}`);
+  if (!resp.ok) {
+    return null;
+  }
   const account: VenueAccount | null = await resp.json();
   return account;
 }
@@ -104,9 +114,26 @@ export async function getAllSpiritTypes(): Promise<SpiritType[]> {
 /**
  * Function to get available time slots for a service on a specific date
  */
-export async function getAvailableTimeSlots(serviceId: string, date: Date): Promise<string[]> {
+export async function getAvailableTimeSlotsForService(
+  serviceId: string,
+  date: Date,
+): Promise<string[]> {
   const resp = await fetch(
     `${getBase()}/api/service/${serviceId}/available_time_slots?date=${date.toISOString()}`,
+  );
+  const slots: string[] = await resp.json();
+  return slots;
+}
+
+/**
+ * Function to get available time slots for a spirit at the banquet on a specific date
+ */
+export async function getAvailableTimeSlotsForBanquet(
+  spiritId: string,
+  date: Date,
+): Promise<string[]> {
+  const resp = await fetch(
+    `${getBase()}/api/banquet/${spiritId}/available_time_slots?date=${date.toISOString()}`,
   );
   const slots: string[] = await resp.json();
   return slots;
@@ -213,32 +240,24 @@ export async function getBanquetReservationsForDate(date: string) {
 }
 
 export async function createBanquetReservation({
-  seatId, 
+  seatId,
   date,
   time,
   accountId,
 }: {
   seatId: number;
-  date: string;
+  date: Date;
   time: string;
   accountId?: string;
 }) {
-    // Combine date (YYYY-MM-DD) and time (HH:mm)
-  const [timePart, modifier] = time.split(' ');
-  const [h, m] = timePart.split(':').map(Number);
-  let hours = h;
-  const minutes = m;
-
-  // Convert 12-hour to 24-hour format
-  if (modifier === 'PM' && hours < 12) {
-    hours += 12;
-  }
-  if (modifier === 'AM' && hours === 12) {
-    hours = 0;
-  }
-
-  const startTime = new Date(date);
-  startTime.setHours(hours, minutes, 0, 0);
+  // Combine date (YYYY-MM-DD) and time (HH:mm)
+  const startTime = createDatetimeFromDateAndTime(date, time);
+  console.log(JSON.stringify({
+      seatId,
+      startTime,
+      endTime: new Date(startTime.getTime() + 60 * 60 * 1000),
+      accountId,
+    }),)
   const resp = await fetch(`${getBase()}/api/reservation/`, {
     method: 'POST',
     headers: {
@@ -247,12 +266,34 @@ export async function createBanquetReservation({
     body: JSON.stringify({
       seatId,
       startTime,
-      endTime: new Date(startTime.getTime() + 60 * 60 * 1000), // 1 hour later
+      endTime: new Date(startTime.getTime() + 60 * 60 * 1000),
       accountId,
     }),
   });
   const reservation = await resp.json();
   return reservation;
+}
+
+export async function getAvailableBanquetSeats(
+  spiritId: string,
+  date: Date,
+  time: string): Promise<BanquetTable[]> {
+  const datetime = createDatetimeFromDateAndTime(date, time);
+  const resp = await fetch(
+    `${getBase()}/api/banquet/table/available/${spiritId}`,
+    {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        datetime: datetime,
+      }),
+    }
+  );
+  const seats: BanquetTable[] = await resp.json();
+  console.log('Response from banquet seats API:', seats);
+  return seats;
 }
 
 /**
@@ -412,8 +453,17 @@ export async function getReservations({
           endTime: new Date(new Date(`${date}`).getTime() + 60 * 60 * 1000),
           isRedeemed: false,
           isRated: false,
-          account: (await getCurrentVenueAcount('venue1')) as VenueAccount,
+          account: (await getCurrentVenueAccount('venue1')) as VenueAccount,
         }) as Reservation,
     ),
   );
+}
+
+/**
+ * Function to get all banquet tables
+ */
+export async function getBanquetTables(): Promise<BanquetTable[]> {
+  const resp = await fetch(`${getBase()}/api/banquet/table`);
+  const tables: BanquetTable[] = await resp.json();
+  return tables;
 }

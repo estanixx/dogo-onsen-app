@@ -1,25 +1,25 @@
 'use client';
 
-import * as React from 'react';
+import { LoadingBox } from '@/components/shared/loading';
+import TimeSlotSelector from '@/components/shared/time-slot-selector';
+import { H2, H4, P } from '@/components/shared/typography';
+import { Button } from '@/components/ui/button';
+import { Calendar } from '@/components/ui/calendar';
 import {
   Dialog,
   DialogContent,
-  DialogTitle,
   DialogDescription,
   DialogFooter,
   DialogHeader,
+  DialogTitle,
 } from '@/components/ui/dialog';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { Service, VenueAccount } from '@/lib/types';
-import { Button } from '@/components/ui/button';
-import { format } from 'date-fns';
-import TimeSlotSelector from '@/components/shared/time-slot-selector';
-import { Calendar } from '@/components/ui/calendar';
-import { LoadingBox } from '@/components/shared/loading';
-import { bookService, getAvailableTimeSlots } from '@/lib/api';
-import { H2, H4, P } from '@/components/shared/typography';
-import { toast } from 'sonner';
 import { useReservations } from '@/context/reservation-context'; // ✅ Importa el contexto
+import { bookService, getAvailableTimeSlotsForService } from '@/lib/api';
+import { Service, VenueAccount } from '@/lib/types';
+import { format } from 'date-fns';
+import * as React from 'react';
+import { toast } from 'sonner';
 
 interface Props {
   service: Service;
@@ -39,7 +39,7 @@ export default function ServiceBookConfirm({ service, open, setOpen, account }: 
   // 🔹 Cargar horarios disponibles al cambiar fecha o servicio
   React.useEffect(() => {
     setAvailableTimeSlots(null);
-    getAvailableTimeSlots(service.id, date).then((slots) => {
+    getAvailableTimeSlotsForService(service.id, date).then((slots) => {
       setAvailableTimeSlots(slots);
     });
   }, [service.id, date]);

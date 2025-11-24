@@ -1,10 +1,10 @@
-import { ReactNode } from 'react';
 import { SpiritInfo } from '@/components/room/shared/spirit-info';
-import { getCurrentVenueAcount } from '@/lib/api';
-import { VenueAccount } from '@/lib/types';
-import { DogoHeader, DogoPage, DogoSection } from '@/components/shared/dogo-ui';
-import Link from 'next/link';
 import DogoIcon from '@/components/shared/dogo-icon';
+import { DogoHeader, DogoPage, DogoSection } from '@/components/shared/dogo-ui';
+import { getCurrentVenueAccount } from '@/lib/api';
+import { VenueAccount } from '@/lib/types';
+import Link from 'next/link';
+import { ReactNode } from 'react';
 
 interface RoomLayoutProps {
   children: ReactNode;
@@ -19,7 +19,7 @@ interface RoomLayoutProps {
  */
 export default async function RoomLayout({ children, params }: RoomLayoutProps) {
   const roomId = (await params).id;
-  const account = (await getCurrentVenueAcount(roomId)) as VenueAccount;
+  const account = (await getCurrentVenueAccount(roomId)) as VenueAccount;
   return (
     <DogoPage>
       <div className="w-full lg:w-2/3">

@@ -1,32 +1,26 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
-import {
-  getBanquetTables,
-  getAvailableTimeSlots,
-  bookService,
-  getCurrentVenueAcount,
-} from '@/lib/api';
-import { BanquetTable, Service, Reservation, VenueAccount } from '@/lib/types';
-import { ToggleGroup } from '@/components/ui/toggle-group';
+import { LoadingBox } from '@/components/shared/loading';
+import TimeSlotSelector from '@/components/shared/time-slot-selector';
+import { H4, P } from '@/components/shared/typography';
 import { Button } from '@/components/ui/button';
 import { Calendar } from '@/components/ui/calendar';
-import { LoadingBox } from '@/components/shared/loading';
-import { H4, P } from '@/components/shared/typography';
-import { format } from 'date-fns';
-import TableItem from './table-item';
-import TimeSlotSelector from '@/components/shared/time-slot-selector';
-import { toast } from 'sonner';
+import { ToggleGroup } from '@/components/ui/toggle-group';
 import { useBanquet } from '@/context/banquet-context';
 import { useReservations } from '@/context/reservation-context';
+import { bookService, createBanquetReservation, getAvailableBanquetSeats, getAvailableTimeSlotsForBanquet, getBanquetTables, getCurrentVenueAccount } from '@/lib/api';
+import { BanquetTable, Reservation, Service, VenueAccount } from '@/lib/types';
+import { format } from 'date-fns';
+import { useEffect, useState } from 'react';
+import { toast } from 'sonner';
+import TableItem from './table-item';
 
 interface BanquetLayoutProps {
-  account?: VenueAccount;
-  service: Service;
-  venueId?: string;
+  account: VenueAccount;
+  venueId: string;
 }
 
-export default function BanquetLayout({ account, service, venueId }: BanquetLayoutProps) {
+export default function BanquetLayout({ account, venueId }: BanquetLayoutProps) {
   const [tables, setTables] = useState<BanquetTable[]>([]);
   const [selectedSeat, setSelectedSeat] = useState<string | null>(null);
   const [date, setDate] = useState<Date | null>(null);
@@ -50,11 +44,15 @@ export default function BanquetLayout({ account, service, venueId }: BanquetLayo
   // Load banquet tables
   useEffect(() => {
     const fetchData = async () => {
-      const data = await getBanquetTables();
+      if (!date || !time || !account?.spiritId) {
+        setTables([]);
+        return;
+      }
+      const data = await getAvailableBanquetSeats(account.spiritId, date, time);
       setTables(data);
     };
     fetchData();
-  }, []);
+  }, [date, time]);
 
   // Load available time slots when date changes
   useEffect(() => {
@@ -65,7 +63,7 @@ export default function BanquetLayout({ account, service, venueId }: BanquetLayo
       setAvailableTimeSlots(null);
       setLoadingSlots(true);
       try {
-        const slots = await getAvailableTimeSlots('banquet', date);
+        const slots = await getAvailableTimeSlotsForBanquet(account.spiritId, date);
         setAvailableTimeSlots(slots);
       } finally {
         setLoadingSlots(false);
@@ -85,23 +83,15 @@ export default function BanquetLayout({ account, service, venueId }: BanquetLayo
 
   // Submit reservation (mock)
   const handleSeatSubmit = async () => {
-    if (!selectedSeat || !date || !time) {
+    if (!selectedSeat || !date || !time || !account) {
       return;
-    }
-    let venueAccount;
-    if (venueId && !account) {
-      venueAccount = await getCurrentVenueAcount(venueId);
     }
 
     setSubmitting(true);
     try {
-      const [tableId, seatNumber] = selectedSeat.split('-');
-      let reservation;
-      if (!venueAccount && account) {
-        reservation = await bookService('1', account.id, date, time);
-      } else if (venueAccount) {
-        reservation = await bookService('1', venueAccount.id, date, time);
-      }
+      selectedSeat
+      const reservation = await createBanquetReservation({seatId: selectedSeat, date, time, accountId: account.id});
+
       const fullReservation = { ...reservation, service } as Reservation & { service: Service };
 
       // Save in banquet context

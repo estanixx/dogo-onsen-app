@@ -50,6 +50,7 @@ export default function SpiritForm({ id, setId, setOpen }: SpiritSelectProps) {
   const [spirit, setSpirit] = React.useState<Spirit | null>(null);
   const [types, setTypes] = React.useState<SpiritType[]>([]);
   const [creating, setCreating] = React.useState(false);
+  const [previewImage, setPreviewImage] = React.useState<string | null>(null);
 
   React.useEffect(() => {
     getAllSpiritTypes().then(setTypes);

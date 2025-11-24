@@ -7,6 +7,7 @@ import { cn } from '@/lib/utils';
 import { useBanquet } from '@/context/banquet-context';
 import { MdTableRestaurant } from 'react-icons/md';
 import { PiChairFill } from 'react-icons/pi';
+import clsx from 'clsx';
 
 interface TableSelectorProps {
   table: BanquetTable;
@@ -36,17 +37,13 @@ export default function TableItem({ table, selectedDate, selectedTime }: TableSe
         {/* Seats — 6 total */}
         {table.availableSeats.map((seat) => {
           // Check if seat is already reserved (for this date & time)
-          const isReserved = reservations.some(
-            (r) =>
-              r.tableId === table.id.toString() &&
-              r.seatNumber === seat.seatNumber &&
-              r.date === dateString &&
-              r.time === selectedTime,
-          );
-
-          const isOccupied = seat.reservationId !== '' || isReserved;
-
-          const colorClass = isOccupied ? 'bg-destructive text-black' : 'bg-secondary text-black';
+          const isReserved = seat.reservationId !== '';
+          const isAvailable = seat.available;
+          const colorClass = clsx({
+            'bg-destructive text-black': isReserved,
+            'bg-secondary text-black': isAvailable,
+            'bg-primary text-white': !isAvailable && !isReserved,
+          })
 
           const positions: Record<number, string> = {
             1: 'absolute top-4 left-6',
@@ -60,14 +57,14 @@ export default function TableItem({ table, selectedDate, selectedTime }: TableSe
           return (
             <ToggleGroupItem
               key={seat.seatNumber}
-              value={`${table.id}-${seat.seatNumber}`}
+              value={`${seat.id}`}
               className={cn(
                 'w-10 h-7 rounded-md border flex items-center justify-center text-xs font-bold transition-all',
                 colorClass,
                 positions[seat.seatNumber],
                 'data-[state=on]:bg-primary data-[state=on]:text-black',
               )}
-              disabled={isOccupied || !selectedTime}
+              disabled={!isAvailable || !selectedTime}
             >
               {seat.seatNumber}
             </ToggleGroupItem>

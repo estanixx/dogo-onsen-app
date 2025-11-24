@@ -1,7 +1,7 @@
-import { getAvailableServices, getCurrentVenueAcount } from '@/lib/api';
-import { Service, VenueAccount } from '@/lib/types';
-import ServiceSearch from '@/components/room/service/service-search';
 import { ServiceDialog } from '@/components/room/service/service-dialog';
+import ServiceSearch from '@/components/room/service/service-search';
+import { getAvailableServices, getCurrentVenueAccount } from '@/lib/api';
+import { Service, VenueAccount } from '@/lib/types';
 
 interface ServicesPageProps {
   searchParams: {
@@ -19,7 +19,7 @@ export default async function ServicesPage({ searchParams, params }: ServicesPag
   const q = (await searchParams)?.q ?? undefined;
   const services: Service[] = await getAvailableServices(q);
   const roomId = (await params).id;
-  const account = (await getCurrentVenueAcount(roomId)) as VenueAccount;
+  const account = (await getCurrentVenueAccount(roomId)) as VenueAccount;
 
   return (
     <div className="space-y-4">
