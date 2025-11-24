@@ -1,4 +1,4 @@
-import { DeviceSelector } from '@/components/device/device-selector';
+import { DeviceConfigurator } from '@/components/device/device-configurator';
 import { SyncDeviceConfig } from '@/components/device/device-config';
 import { DogoPage, DogoHeader, DogoSection } from '@/components/shared/dogo-ui';
 import { cookies } from 'next/headers';
@@ -43,7 +43,7 @@ export default function Home() {
         />
 
         <DogoSection>
-          <DeviceSelector onSelect={configureDevice} />
+          <DeviceConfigurator configureDevice={configureDevice} />
         </DogoSection>
       </div>
     </DogoPage>

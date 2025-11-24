@@ -9,6 +9,7 @@ type DeviceConfig = {
 
 const PUBLIC_PATHS = ['/', '/room/config', '/sign-in', '/sign-up'];
 const isEmployeeRoute = createRouteMatcher(['/employee(.*)']);
+const isAdminRoute = createRouteMatcher(['/employee/admin(.*)']);
 
 export default clerkMiddleware(async (auth, request) => {
   const { pathname } = request.nextUrl;
@@ -17,6 +18,20 @@ export default clerkMiddleware(async (auth, request) => {
   if (isEmployeeRoute(request)) {
     if (!authState.userId) {
       return authState.redirectToSignIn({ returnBackUrl: request.url });
+    }
+  }
+
+  // Protect admin routes with token validation
+  if (isAdminRoute(request)) {
+    if (!authState.userId) {
+      return authState.redirectToSignIn({ returnBackUrl: request.url });
+    }
+
+    // Check for admin token in cookies
+    const adminToken = request.cookies.get('dogo-admin-token')?.value;
+    if (!adminToken) {
+      // Redirect to home if no admin token
+      return NextResponse.redirect(new URL('/', request.url));
     }
   }
 
