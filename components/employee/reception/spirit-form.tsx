@@ -72,7 +72,7 @@ export default function SpiritForm({ id, setId, setOpen }: SpiritSelectProps) {
   const onSubmit = async (values: CreateSpiritValues) => {
     // TODO: persist new spirit to server
     try {
-      const created: Spirit = await createSpirit(id, values.name, values.typeId, values.image);
+      const created: Spirit = await createSpirit(values.name, values.typeId, values.image);
       setSpirit(created);
       (setSpirits as unknown as React.Dispatch<React.SetStateAction<Spirit[]>>)((prev) =>
         prev ? [...prev, created] : [created],
@@ -85,6 +85,8 @@ export default function SpiritForm({ id, setId, setOpen }: SpiritSelectProps) {
       toast.error('Error al crear el espíritu', { duration: 4000 });
     }
   };
+
+  const selectedType = form.watch('typeId');
 
   const imagePreview = form.watch('image');
 
@@ -146,32 +148,57 @@ export default function SpiritForm({ id, setId, setOpen }: SpiritSelectProps) {
 
             <div>
               <label className="block text-sm mb-1">Foto</label>
-              {!imagePreview && (
-                // <CameraCapture onCapture={(dataUrl) => form.setValue('image', dataUrl)} />
+
+              {/* Si ya hay imagen en el formulario, mostramos el preview */}
+              {imagePreview ? (
+                <div className="relative inline-block">
+                  <Image
+                    src={imagePreview}
+                    width={300}
+                    height={300}
+                    alt="preview"
+                    className="w-full h-48 object-cover rounded-md mt-2 border"
+                  />
+                  <Button
+                    type="button" // Importante: type="button" para no enviar el form
+                    variant="destructive"
+                    size="sm"
+                    className="absolute top-2 right-2"
+                    onClick={() => form.setValue('image', '' as never)} // Borramos la imagen del form
+                  >
+                    X
+                  </Button>
+                </div>
+              ) : selectedType ? (
+                /* Si no hay imagen, mostramos la cámara */
                 <CameraCapture
+                  typeId={form.watch('typeId')}
+                  // 1. Preview local rápido (opcional)
                   onCapture={(localUrl) => {
-                    // Mostrar preview instantáneo
-                    setPreviewImage(localUrl);
+                    console.log('Capturando...');
                   }}
+                  // 2. AQUÍ ESTÁ EL CAMBIO IMPORTANTE:
                   onUploadComplete={(s3Url, faces) => {
-                    // Guardar la URL real de la BD
-                    setFinalImageUrl(s3Url);
-                    // Guardar los datos de rostros
-                    setFacesData(faces);
-                    console.log('Imagen guardada en S3:', s3Url);
-                    console.log('Rostros detectados:', faces);
+                    // En lugar de setFinalImageUrl, le decimos al form que actualice el campo 'image'
+                    form.setValue('image', s3Url, {
+                      shouldValidate: true, // Para que Zod verifique que es una URL válida
+                      shouldDirty: true,
+                    });
+
+                    // Como tu esquema Zod no tiene campo para 'faces',
+                    // simplemente notificamos o lo ignoramos.
+                    if (faces.length > 0) {
+                      toast.success('Rostro detectado y guardado');
+                    }
                   }}
+                  // 3. Manejo de errores
+                  onError={(msg) => toast.error(msg)}
                 />
-              )}
-              {imagePreview && (
-                // plain img is fine for preview
-                <Image
-                  src={imagePreview}
-                  width={600}
-                  height={400}
-                  alt="preview"
-                  className="w-32 h-32 object-cover rounded-md mt-2"
-                />
+              ) : (
+                // Si no ha seleccionado tipo, mostramos un mensaje placeholder
+                <div className="p-4 border rounded-md text-sm text-muted-foreground bg-muted/30">
+                  Selecciona un tipo antes de tomar la foto.
+                </div>
               )}
             </div>
 

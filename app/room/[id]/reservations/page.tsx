@@ -12,7 +12,7 @@ interface ReservationsPageProps {
  */
 export default async function ReservationsPage({ params }: ReservationsPageProps) {
   const { id } = await params;
-
+  console.log(id);
   return (
     <div className="space-y-6">
       <div>

@@ -3,10 +3,13 @@
 import * as React from 'react';
 import { Button } from '@/components/ui/button';
 import clsx from 'clsx';
+import { getSpiritType } from '@/lib/api';
+import { SpiritType } from '@/lib/types';
+import { toLowerCase } from 'zod';
 
 const dataURLtoFile = (dataurl: string, filename: string): File => {
   const arr = dataurl.split(',');
-  // @ts-ignore
+  // @ts-expect-error expected error
   const mime = arr[0].match(/:(.*?);/)[1];
   const bstr = atob(arr[1]);
   let n = bstr.length;
@@ -17,12 +20,22 @@ const dataURLtoFile = (dataurl: string, filename: string): File => {
   return new File([u8arr], filename, { type: mime });
 };
 
-interface CameraCaptureProps {
-  onCapture: (dataUrl: string) => void; // Para vista previa inmediata local
-  onUploadComplete?: (s3Url: string, faces: any[]) => void; // Para cuando el backend responda
+export interface DetectedFace {
+  x: number;
+  y: number;
+  w: number;
+  h: number;
+  area: number;
 }
 
-export default function CameraCapture({ onCapture, onUploadComplete }: CameraCaptureProps) {
+interface CameraCaptureProps {
+  typeId: string;
+  onCapture: (dataUrl: string) => void; // Para vista previa inmediata local
+  onUploadComplete?: (s3Url: string, faces: DetectedFace[]) => void; // Para cuando el backend responda
+  onError?: (message: string) => void;
+}
+
+export default function CameraCapture({ typeId, onCapture, onUploadComplete, onError }: CameraCaptureProps) {
   const videoRef = React.useRef<HTMLVideoElement | null>(null);
   const canvasRef = React.useRef<HTMLCanvasElement | null>(null);
   const [stream, setStream] = React.useState<MediaStream | null>(null);
@@ -69,47 +82,67 @@ export default function CameraCapture({ onCapture, onUploadComplete }: CameraCap
         // 1. Convertir Base64 a File
         const file = dataURLtoFile(dataUrl, `capture-${Date.now()}.png`);
 
-        // 2. Preparar FormData
-        const formData = new FormData();
-        formData.append('file', file);
-
-        // 3. Llamada al API (Asegúrate de que la URL sea correcta para tu entorno)
-        // NOTA: Usa localhost si estás probando local, o tu variable de entorno
-        const response = await fetch('http://localhost:8000/api/v1/files/upload-image-with-faces', {
-          method: 'POST',
-          body: formData,
-        });
-
-        if (!response.ok) {
-          try {
-            // FastAPI envía los errores en formato JSON: { "detail": "Mensaje..." }
-            const errorData = await response.json();
-
-            // Extraemos el mensaje específico que escribiste en Python
-            const mensajeBackend = errorData.detail || 'Error desconocido en el servidor';
-
-            // A. Opción simple: Alerta nativa
-            alert(`⚠️ Atención: ${mensajeBackend}`);
-
-            // B. (Opcional) Si tuvieras un prop onError, lo llamarías aquí:
-            // if (props.onError) props.onError(mensajeBackend);
-          } catch (parseError) {
-            // Si el backend se rompió feo y no mandó JSON (ej. 500 HTML)
-            console.error('Error parseando respuesta:', parseError);
-            alert('Ocurrió un error inesperado al procesar la imagen.');
-          }
+        if (!typeId) {
+          console.error('ERROR CRÍTICO: No hay typeId seleccionado.');
+          alert('Error: No se ha seleccionado el tipo de espíritu.');
           setIsUploading(false);
-          return; // Salimos de la función aquí para no ejecutar lo de abajo
-          // throw new Error('Error en la subida al servidor');
+          return;
+        }
+        let templateName = '';
+        try {
+          const type = await getSpiritType(typeId);
+          if (!type || !type.name) {
+            throw new Error("El objeto 'type' no es válido.");
+          }
+          // Aseguramos minúsculas/mayúsculas según tu S3.
+          // Si en S3 es "onryo.png", usa toLowerCase().
+          templateName = type.name + '.png';
+        } catch (typeError) {
+          console.error('Error obteniendo tipo de espíritu:', typeError);
+          alert('Error al identificar el tipo de espíritu.');
+          setIsUploading(false);
+          return;
         }
 
+        // 4. Preparar EL ÚNICO FormData
+        const formData = new FormData();
+        // Agregamos el archivo (asegurando nombre)
+        formData.append('user_file', file, 'user_capture.png');
+        // Agregamos el template (ahora seguro que existe)
+        formData.append('template_filename', templateName);
+
+        // Debugging (Opcional)
+        console.log(`Enviando: File=${file.size}bytes, Template=${templateName}`);
+
+        // 5. Llamada ÚNICA al API
+        const response = await fetch(`http://localhost:8004/files/upload-image-with-faces`, {
+          method: 'POST',
+          body: formData,
+          // NO PONGAS HEADERS MANUALES DE CONTENT-TYPE AQUÍ
+        });
+
+        // 6. Manejo de Errores HTTP
+        if (!response.ok) {
+          try {
+            const errorData = await response.json();
+            const mensajeBackend = errorData.detail || 'Error desconocido';
+            alert(`⚠️ Atención: ${mensajeBackend}`);
+          } catch (parseError) {
+            console.error('Error parseando respuesta de error:', parseError);
+            alert('Error 500: El servidor falló internamente.');
+          }
+          setIsUploading(false);
+          return;
+        }
+
+        // 7. Éxito
         const data = await response.json();
 
-        // 4. Devolver datos finales (URL S3 + Rostros)
-        onUploadComplete(data.url, data.faces);
+        // Aquí asumimos que data tiene { url: "...", status: "...", faces: [] }
+        onUploadComplete(data.url, data.faces || []);
       } catch (error) {
-        console.error('Error subiendo imagen:', error);
-        alert('Hubo un error al procesar la imagen en el servidor.');
+        console.error('Error de red o inesperado:', error);
+        alert('Hubo un error de conexión al subir la imagen.');
       } finally {
         setIsUploading(false);
       }

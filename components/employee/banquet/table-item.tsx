@@ -43,7 +43,7 @@ export default function TableItem({ table, selectedDate, selectedTime }: TableSe
             'bg-destructive text-black': isReserved,
             'bg-secondary text-black': isAvailable,
             'bg-primary text-white': !isAvailable && !isReserved,
-          })
+          });
 
           const positions: Record<number, string> = {
             1: 'absolute top-4 left-6',

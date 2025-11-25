@@ -132,13 +132,16 @@ export default function CheckInForm({ initialValues }: CheckInFormProps) {
         Check-In: Reservar habitación
       </h2>
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col gap-5 w-full">
+        <form
+          onSubmit={form.handleSubmit(onSubmit)}
+          className="flex flex-col gap-5 w-full overflow-x-hidden"
+        >
           <FormField
             control={control}
             name="id"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="text-lg">Seleccionar Espíritu</FormLabel>
+                <FormLabel className="text-lg w-full">Seleccionar Espíritu</FormLabel>
                 <FormControl>
                   <SpiritSelect id={field.value} setId={(v: string) => field.onChange(v)} />
                 </FormControl>

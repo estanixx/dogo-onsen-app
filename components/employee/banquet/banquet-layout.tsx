@@ -8,7 +8,14 @@ import { Calendar } from '@/components/ui/calendar';
 import { ToggleGroup } from '@/components/ui/toggle-group';
 import { useBanquet } from '@/context/banquet-context';
 import { useReservations } from '@/context/reservation-context';
-import { bookService, createBanquetReservation, getAvailableBanquetSeats, getAvailableTimeSlotsForBanquet, getBanquetTables, getCurrentVenueAccount } from '@/lib/api';
+import {
+  bookService,
+  createBanquetReservation,
+  getAvailableBanquetSeats,
+  getAvailableTimeSlotsForBanquet,
+  getBanquetTables,
+  getCurrentVenueAccount,
+} from '@/lib/api';
 import { BanquetTable, Reservation, Service, VenueAccount } from '@/lib/types';
 import { format } from 'date-fns';
 import { useEffect, useState } from 'react';
@@ -89,8 +96,13 @@ export default function BanquetLayout({ account, venueId }: BanquetLayoutProps) 
 
     setSubmitting(true);
     try {
-      selectedSeat
-      const reservation = await createBanquetReservation({seatId: selectedSeat, date, time, accountId: account.id});
+      selectedSeat;
+      const reservation = await createBanquetReservation({
+        seatId: selectedSeat,
+        date,
+        time,
+        accountId: account.id,
+      });
 
       const fullReservation = { ...reservation, service } as Reservation & { service: Service };
 

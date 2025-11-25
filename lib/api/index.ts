@@ -102,6 +102,7 @@ export async function getSpirit(spiritId: string): Promise<Spirit | null> {
 export async function getSpiritType(typeId: string): Promise<SpiritType | null> {
   const resp = await fetch(`${getBase()}/api/spirit_type/${typeId}`);
   const type: SpiritType | null = await resp.json();
+  console.log(type, typeId);
   return type;
 }
 
@@ -185,19 +186,20 @@ export async function bookService(
 }
 
 export async function createSpirit(
-  id: string,
+  // id: string,
   name: string,
   typeId: string,
   image?: string,
 ): Promise<Spirit> {
   // Simulate creating a new spirit
-  const resp = await fetch(`${getBase()}/api/spirit/`, {
+  console.log(image);
+  const resp = await fetch(`http://localhost:8004/spirit/`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({
-      id,
+      // id,
       name,
       typeId,
       type: (await getSpiritType(typeId)) as SpiritType,
@@ -207,6 +209,7 @@ export async function createSpirit(
     }),
   });
   const spirit: Spirit = await resp.json();
+  console.log(spirit);
   return spirit;
 }
 
@@ -252,12 +255,14 @@ export async function createBanquetReservation({
 }) {
   // Combine date (YYYY-MM-DD) and time (HH:mm)
   const startTime = createDatetimeFromDateAndTime(date, time);
-  console.log(JSON.stringify({
+  console.log(
+    JSON.stringify({
       seatId,
       startTime,
       endTime: new Date(startTime.getTime() + 60 * 60 * 1000),
       accountId,
-    }),)
+    }),
+  );
   const resp = await fetch(`${getBase()}/api/reservation/`, {
     method: 'POST',
     headers: {
@@ -277,20 +282,18 @@ export async function createBanquetReservation({
 export async function getAvailableBanquetSeats(
   spiritId: string,
   date: Date,
-  time: string): Promise<BanquetTable[]> {
+  time: string,
+): Promise<BanquetTable[]> {
   const datetime = createDatetimeFromDateAndTime(date, time);
-  const resp = await fetch(
-    `${getBase()}/api/banquet/table/available/${spiritId}`,
-    {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        datetime: datetime,
-      }),
-    }
-  );
+  const resp = await fetch(`${getBase()}/api/banquet/table/available/${spiritId}`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      datetime: datetime,
+    }),
+  });
   const seats: BanquetTable[] = await resp.json();
   console.log('Response from banquet seats API:', seats);
   return seats;

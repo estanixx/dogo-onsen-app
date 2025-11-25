@@ -12,9 +12,11 @@ export function wait(ms: number) {
 export function createDatetimeFromDateAndTime(date: Date, timeString: string): Date {
   // Accept formats like "11:00", "23:30", "11:00 AM", "11:00AM", optionally with seconds "11:00:30 PM"
   const m = timeString.trim().match(/^(\d{1,2}):(\d{2})(?::(\d{2}))?\s*([AaPp][Mm])?$/);
-  if (!m) throw new Error(`Invalid time string: ${timeString}`);
+  if (!m) {
+    throw new Error(`Invalid time string: ${timeString}`);
+  }
 
-  let [, hStr, minStr, secStr, ampm] = m;
+  const [, hStr, minStr, secStr, ampm] = m;
   let hours = Number(hStr);
   const minutes = Number(minStr);
   const seconds = secStr ? Number(secStr) : 0;
@@ -22,10 +24,14 @@ export function createDatetimeFromDateAndTime(date: Date, timeString: string): D
   if (ampm) {
     const up = ampm.toUpperCase();
     if (up === 'AM') {
-      if (hours === 12) hours = 0;
+      if (hours === 12) {
+        hours = 0;
+      }
     } else {
       // PM
-      if (hours !== 12) hours = (hours % 12) + 12;
+      if (hours !== 12) {
+        hours = (hours % 12) + 12;
+      }
     }
   }
 
