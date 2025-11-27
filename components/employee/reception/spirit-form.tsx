@@ -4,7 +4,7 @@ import * as React from 'react';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
-import { getAllSpiritTypes, createSpirit } from '@/lib/api';
+import { getAllSpiritTypes, createSpirit, getSpirit } from '@/lib/api';
 import { Spirit, SpiritType } from '@/lib/types';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -58,7 +58,7 @@ export default function SpiritForm({ id, setId, setOpen }: SpiritSelectProps) {
 
   const lookup = async () => {
     setLoading(true);
-    const s = null; // await getSpirit(id)
+    const s = await getSpirit(id);
     setSpirit(s);
     setCreating(!s);
     setLoading(false);

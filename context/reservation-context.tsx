@@ -4,8 +4,8 @@ import React, { createContext, useContext, useEffect, useState } from 'react';
 import { Reservation, Service } from '@/lib/types';
 
 interface ReservationContextType {
-  reservations: (Reservation & { service: Service })[];
-  addReservation: (res: Reservation & { service: Service }) => void;
+  reservations: (Reservation)[];
+  addReservation: (res: Reservation) => void;
   removeReservation: (id: string) => void;
   clearReservations: () => void;
   updateReservation: (id: string, updates: Partial<Reservation>) => void;
@@ -15,7 +15,7 @@ interface ReservationContextType {
 const ReservationContext = createContext<ReservationContextType | undefined>(undefined);
 
 export function ReservationProvider({ children }: { children: React.ReactNode }) {
-  const [reservations, setReservations] = useState<(Reservation & { service: Service })[]>([]);
+  const [reservations, setReservations] = useState<(Reservation)[]>([]);
 
   // Cargar desde localStorage al montar
   useEffect(() => {
@@ -30,7 +30,7 @@ export function ReservationProvider({ children }: { children: React.ReactNode })
     localStorage.setItem('reservations', JSON.stringify(reservations));
   }, [reservations]);
 
-  const addReservation = (res: Reservation & { service: Service }) => {
+  const addReservation = (res: Reservation) => {
     setReservations((prev) => {
       // Generar un ID único basado en timestamp y un número aleatorio
       const uniqueId = `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;

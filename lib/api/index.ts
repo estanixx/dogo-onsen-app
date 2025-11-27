@@ -11,6 +11,7 @@ import {
   VenueAccount,
 } from '../types';
 import { createDatetimeFromDateAndTime, wait } from '../utils';
+import { BACKEND_BASE_URL } from './constants';
 
 const getBase = () => {
   return typeof window !== 'undefined'
@@ -93,6 +94,9 @@ export async function getVenueAccountById(venueId: string): Promise<VenueAccount
 export async function getSpirit(spiritId: string): Promise<Spirit | null> {
   const resp = await fetch(`${getBase()}/api/spirit/${spiritId}`);
   const spirit: Spirit | null = await resp.json();
+  if (!resp.ok) {
+    return null;
+  }
   return spirit;
 }
 
@@ -263,7 +267,7 @@ export async function createBanquetReservation({
       accountId,
     }),
   );
-  const resp = await fetch(`${getBase()}/api/reservation/`, {
+  const resp = await fetch(`${BACKEND_BASE_URL}/reservation/`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -275,6 +279,9 @@ export async function createBanquetReservation({
       accountId,
     }),
   });
+  if (!resp.ok) {
+    return null;
+  }
   const reservation = await resp.json();
   return reservation;
 }
@@ -469,4 +476,20 @@ export async function getBanquetTables(): Promise<BanquetTable[]> {
   const resp = await fetch(`${getBase()}/api/banquet/table`);
   const tables: BanquetTable[] = await resp.json();
   return tables;
+}
+
+
+export async function createService(service: Service): Promise<Service | null> {
+  const resp = await fetch(`${getBase()}/api/service/`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(service),
+  });
+  if (!resp.ok) {
+    return null
+  }
+  const createdService: Service = await resp.json();
+  return createdService;
 }

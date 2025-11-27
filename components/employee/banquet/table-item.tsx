@@ -2,7 +2,7 @@
 
 import { Card } from '@/components/ui/card';
 import { ToggleGroupItem } from '@/components/ui/toggle-group';
-import { BanquetTable } from '@/lib/types';
+import { BanquetSeat, BanquetTable } from '@/lib/types';
 import { cn } from '@/lib/utils';
 import { useBanquet } from '@/context/banquet-context';
 import { MdTableRestaurant } from 'react-icons/md';
@@ -35,7 +35,7 @@ export default function TableItem({ table, selectedDate, selectedTime }: TableSe
         </div>
 
         {/* Seats — 6 total */}
-        {table.availableSeats.map((seat) => {
+        {table.availableSeats.map((seat: BanquetSeat) => {
           // Check if seat is already reserved (for this date & time)
           const isReserved = seat.reservationId !== '';
           const isAvailable = seat.available;
@@ -57,7 +57,7 @@ export default function TableItem({ table, selectedDate, selectedTime }: TableSe
           return (
             <ToggleGroupItem
               key={seat.seatNumber}
-              value={`${seat.id}`}
+              value={seat.id}
               className={cn(
                 'w-10 h-7 rounded-md border flex items-center justify-center text-xs font-bold transition-all',
                 colorClass,

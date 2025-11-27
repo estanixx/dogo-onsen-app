@@ -7,12 +7,13 @@ import { ServiceCreateForm } from '@/components/employee/service/service-create-
 import { Service } from '@/lib/types';
 import { AuthRequired } from '@/components/employee/auth/auth-required';
 import { DogoSection, DogoHeader } from '@/components/shared/dogo-ui';
-import { getAvailableServices } from '@/lib/api';
+import { createService, getAvailableServices } from '@/lib/api';
 import { LoadingBar, LoadingBox } from '@/components/shared/loading';
 import { ServiceCard } from '@/components/employee/service/service-card';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { SidebarProvider, Sidebar, SidebarContent } from '@/components/ui/sidebar';
 import ReservationSidebar from '@/components/employee/service/reservation-sidebar';
+import { toast } from 'sonner';
 
 export default function ServicesManagementPage() {
   const [createDialogOpen, setCreateDialogOpen] = useState(false);
@@ -28,8 +29,13 @@ export default function ServicesManagementPage() {
 
   const handleCreateService = async (serviceData: Omit<Service, 'id' | 'rating'>) => {
     // Por ahora solo simulamos la creación
-    setServices((prev) => [{ id: `srv-${Date.now()}`, rating: 0, ...serviceData }, ...prev]);
-    console.warn('Crear servicio:', serviceData);
+    const service = await createService(serviceData as Service);
+    if (!service) {
+      toast.error('Error al crear el servicio. Inténtalo de nuevo.');
+      return;
+    }
+    toast.success('Servicio creado exitosamente.');
+    setServices((prev) => [service, ...prev]);
     // Aquí iría la lógica para crear el servicio cuando implementemos el backend
   };
 

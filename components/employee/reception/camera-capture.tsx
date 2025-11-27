@@ -91,12 +91,12 @@ export default function CameraCapture({ typeId, onCapture, onUploadComplete, onE
         let templateName = '';
         try {
           const type = await getSpiritType(typeId);
-          if (!type || !type.name) {
+          if (!type || !type.name || !type.image) {
             throw new Error("El objeto 'type' no es válido.");
           }
           // Aseguramos minúsculas/mayúsculas según tu S3.
           // Si en S3 es "onryo.png", usa toLowerCase().
-          templateName = type.name + '.png';
+          templateName = type.image;
         } catch (typeError) {
           console.error('Error obteniendo tipo de espíritu:', typeError);
           alert('Error al identificar el tipo de espíritu.');

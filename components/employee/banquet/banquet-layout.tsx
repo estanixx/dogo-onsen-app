@@ -29,7 +29,7 @@ interface BanquetLayoutProps {
 
 export default function BanquetLayout({ account, venueId }: BanquetLayoutProps) {
   const [tables, setTables] = useState<BanquetTable[]>([]);
-  const [selectedSeat, setSelectedSeat] = useState<string | null>(null);
+  const [selectedSeat, setSelectedSeat] = useState<number | null>(null);
   const [date, setDate] = useState<Date | null>(null);
   const [time, setTime] = useState<string | null>(null);
   const [availableTimeSlots, setAvailableTimeSlots] = useState<string[] | null>(null);
@@ -45,21 +45,20 @@ export default function BanquetLayout({ account, venueId }: BanquetLayoutProps) 
     setTime(null);
     setAvailableTimeSlots(null);
   };
-
-  useEffect(clearSelection, [venueId]);
-
-  // Load banquet tables
-  useEffect(() => {
-    const fetchData = async () => {
-      if (!date || !time || !account?.spiritId) {
+  const fetchBanquetSeats = async () => {
+      if (!date || !time || !account?.spiritId || submitting) {
         setTables([]);
         return;
       }
       const data = await getAvailableBanquetSeats(account.spiritId, date, time);
       setTables(data);
     };
-    fetchData();
-  }, [date, time]);
+  
+  useEffect(clearSelection, [venueId]);
+  // Load banquet tables
+  useEffect(() => {
+    fetchBanquetSeats();
+  }, [date, time, submitting]);
 
   // Load available time slots when date changes
   useEffect(() => {
@@ -103,25 +102,17 @@ export default function BanquetLayout({ account, venueId }: BanquetLayoutProps) 
         time,
         accountId: account.id,
       });
-
-      const fullReservation = { ...reservation, service } as Reservation & { service: Service };
-
-      // Save in banquet context
-      createReservation({
-        tableId,
-        seatNumber: Number(seatNumber),
-        date: date.toISOString().split('T')[0],
-        time,
-      });
+      
+      if (!reservation) {
+        toast.error('Error al crear la reserva');
+        return;
+      }
 
       // Also register in general reservation context
-      addReservation(fullReservation);
-
+      addReservation(reservation as Reservation);
       toast.success(
-        `Reserva confirmada para el asiento ${seatNumber} (${format(date, 'PPP')} ${time})`,
+        `Reserva confirmada para el asiento ${selectedSeat} (${format(date, 'PPP')} ${time})`,
       );
-      setSelectedSeat(null);
-      setTime(null);
     } catch (e) {
       toast.error('Error al crear la reserva');
       console.error(e);

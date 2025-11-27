@@ -27,11 +27,12 @@ async function forward(request: Request, params: { path?: string[] }) {
       outgoingHeaders[key] = value;
     });
 
-    // Prepare body for non-GET/HEAD
+    // Prepare body for non-GET/HEAD. Use ArrayBuffer/Uint8Array so this works
+    // in edge and node runtimes (avoid Buffer which may be undefined).
     let body: BodyInit | undefined = undefined;
     if (request.method !== 'GET' && request.method !== 'HEAD') {
       const buf = await request.arrayBuffer();
-      body = buf.byteLength ? Buffer.from(buf) : undefined;
+      body = buf.byteLength ? buf : undefined;
     }
 
     const res = await fetch(target.toString(), {
@@ -41,7 +42,6 @@ async function forward(request: Request, params: { path?: string[] }) {
       // follow redirects server-side
       redirect: 'follow',
     });
-
     // Build response headers to return to client
     const responseHeaders = new Headers();
     res.headers.forEach((value, key) => {

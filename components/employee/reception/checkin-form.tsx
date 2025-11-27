@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import { getAvailablePrivateVenues } from '@/lib/api/index';
+import { getAvailablePrivateVenues, getSpirit } from '@/lib/api/index';
 import SpiritSelect from './spirit-select';
 import { Label } from '@/components/ui/label';
 import { Calendar } from '@/components/ui/calendar';
@@ -113,6 +113,12 @@ export default function CheckInForm({ initialValues }: CheckInFormProps) {
   }, [watchedCheckin, watchedCheckout]);
 
   const onSubmit = (values: FormValues) => {
+    const spirit = getSpirit(values.id);
+    if (!spirit) {
+      toast.error('No se encontró el espíritu seleccionado.', { duration: 4000 });
+      return;
+    } 
+
     setIsSuccess(true);
 
     // Generate a new PIN. In the future this should be handled by the backend
@@ -134,13 +140,13 @@ export default function CheckInForm({ initialValues }: CheckInFormProps) {
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit(onSubmit)}
-          className="flex flex-col gap-5 w-full overflow-x-hidden"
+          className="flex flex-col gap-5 w-full"
         >
           <FormField
             control={control}
             name="id"
             render={({ field }) => (
-              <FormItem>
+              <FormItem className='truncate'>
                 <FormLabel className="text-lg w-full">Seleccionar Espíritu</FormLabel>
                 <FormControl>
                   <SpiritSelect id={field.value} setId={(v: string) => field.onChange(v)} />

@@ -5,6 +5,7 @@ export interface SpiritType {
   id: string;
   name: string;
   dangerScore: number;
+  image: string;
 }
 
 /**
@@ -66,6 +67,8 @@ export interface Reservation {
   serviceId?: string;
   isRedeemed: boolean;
   isRated: boolean;
+  service?: Service;
+  seat?: BanquetSeat;
   rating?: number;
   account: VenueAccount;
 }
@@ -96,6 +99,8 @@ export interface BanquetTable {
  * BanquetSeat - Represents individual seats at banquet tables
  */
 export interface BanquetSeat {
+  id: string;
+  available: boolean;
   reservationId?: string;
   tableId: string;
   seatNumber: number;
