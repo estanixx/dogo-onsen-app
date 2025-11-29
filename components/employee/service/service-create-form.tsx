@@ -39,9 +39,8 @@ export function ServiceCreateForm({ open, onOpenChange, onSubmit }: ServiceCreat
     try {
       await onSubmit(serviceData);
       onOpenChange(false);
-      toast.success('Servicio creado exitosamente');
     } catch (error) {
-      toast.error('Error al crear el servicio');
+      console.error('Error al crear el servicio');
     } finally {
       setLoading(false);
     }

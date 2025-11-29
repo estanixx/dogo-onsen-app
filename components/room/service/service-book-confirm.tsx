@@ -15,7 +15,7 @@ import {
 } from '@/components/ui/dialog';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { useReservations } from '@/context/reservation-context'; // ✅ Importa el contexto
-import { bookService, getAvailableTimeSlotsForService } from '@/lib/api';
+import { bookService, createServiceReservation, getAvailableTimeSlotsForService } from '@/lib/api';
 import { Service, VenueAccount } from '@/lib/types';
 import { format } from 'date-fns';
 import * as React from 'react';
@@ -53,10 +53,14 @@ export default function ServiceBookConfirm({ service, open, setOpen, account }: 
     }
     setLoading(true);
     try {
-      const reservation = await bookService(service.id, account.id, date, time);
+      const reservation = await createServiceReservation({ serviceId: service.id, accountId: account.id, date, timeSlot: time });
       const fullReservation = { ...reservation, service };
-
       // 👉 Se guarda globalmente (context + localStorage sincronizado)
+
+      if (!reservation) {
+        toast.error('No se pudo crear la reservación');
+        return;
+      }
       addReservation(fullReservation);
       toast.success(`Reservación confirmada: ${service.name} - ${format(date, 'PPP')} ${time}`, {
         duration: 4000,

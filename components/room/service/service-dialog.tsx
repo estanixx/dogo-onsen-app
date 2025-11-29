@@ -16,6 +16,7 @@ import { useState } from 'react';
 import ServiceBookConfirm from './service-book-confirm';
 import BanquetLayout from '@/components/employee/banquet/banquet-layout';
 import { VisuallyHidden } from '@radix-ui/react-visually-hidden';
+import { createServiceReservation } from '@/lib/api';
 
 interface ServiceDialogProps {
   service: Service;

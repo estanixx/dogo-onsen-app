@@ -30,6 +30,7 @@ export default function ServicesManagementPage() {
   const handleCreateService = async (serviceData: Omit<Service, 'id' | 'rating'>) => {
     // Por ahora solo simulamos la creación
     const service = await createService(serviceData as Service);
+    console.log('Servicio creado:', service);
     if (!service) {
       toast.error('Error al crear el servicio. Inténtalo de nuevo.');
       return;

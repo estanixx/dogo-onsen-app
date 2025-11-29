@@ -1,5 +1,4 @@
 import {
-  BanquetSeat,
   BanquetTable,
   InventoryItem,
   InventoryOrder,
@@ -11,7 +10,6 @@ import {
   VenueAccount,
 } from '../types';
 import { createDatetimeFromDateAndTime, wait } from '../utils';
-import { BACKEND_BASE_URL } from './constants';
 
 const getBase = () => {
   return typeof window !== 'undefined'
@@ -144,51 +142,6 @@ export async function getAvailableTimeSlotsForBanquet(
   return slots;
 }
 
-/**
- * Function to book a service for a venue account at a specific date and time
- */
-export async function bookService(
-  serviceId: string,
-  accountId: string,
-  date: Date,
-  time: string,
-): Promise<Reservation> {
-  // Combine date (YYYY-MM-DD) and time (HH:mm)
-  const [timePart, modifier] = time.split(' ');
-  const [h, m] = timePart.split(':').map(Number);
-  let hours = h;
-  const minutes = m;
-
-  // Convert 12-hour to 24-hour format
-  if (modifier === 'PM' && hours < 12) {
-    hours += 12;
-  }
-  if (modifier === 'AM' && hours === 12) {
-    hours = 0;
-  }
-
-  const startTime = new Date(date);
-  startTime.setHours(hours, minutes, 0, 0);
-
-  const resp = await fetch(`${getBase()}/api/reservation/`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
-      id: '1',
-      serviceId,
-      accountId,
-      startTime,
-      endTime: new Date(startTime.getTime() + 60 * 60 * 1000), // 1 hour later
-      isRedeemed: false,
-      isRated: false,
-    }),
-  });
-  const reservation: Reservation = await resp.json();
-  return reservation;
-}
-
 export async function createSpirit(
   // id: string,
   name: string,
@@ -267,7 +220,7 @@ export async function createBanquetReservation({
       accountId,
     }),
   );
-  const resp = await fetch(`${BACKEND_BASE_URL}/reservation/`, {
+  const resp = await fetch(`${getBase()}/api/reservation/`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -450,23 +403,22 @@ export async function getReservations({
   date?: string;
   timeSlot?: string;
 }): Promise<Reservation[]> {
-  await wait(500);
-  return Promise.all(
-    Array.from(
-      { length: 5 },
-      async (_, i) =>
-        ({
-          id: `res${i + 1}`,
-          serviceId: serviceId,
-          accountId: `acc1`,
-          startTime: new Date(`${date}`),
-          endTime: new Date(new Date(`${date}`).getTime() + 60 * 60 * 1000),
-          isRedeemed: false,
-          isRated: false,
-          account: (await getCurrentVenueAccount('venue1')) as VenueAccount,
-        }) as Reservation,
-    ),
-  );
+  const datetime =
+    date && timeSlot
+      ? createDatetimeFromDateAndTime(new Date(date), timeSlot).toISOString()
+      : date
+        ? date
+        : undefined;
+  const queryParams = new URLSearchParams();
+  if (serviceId) {
+    queryParams.append('serviceId', serviceId);
+  }
+  if (datetime) {
+    queryParams.append('datetime', datetime);
+  }
+  const resp = await fetch(`${getBase()}/api/reservation?${queryParams.toString()}`);
+  const reservations: Reservation[] = await resp.json();
+  return reservations;
 }
 
 /**
@@ -478,7 +430,6 @@ export async function getBanquetTables(): Promise<BanquetTable[]> {
   return tables;
 }
 
-
 export async function createService(service: Service): Promise<Service | null> {
   const resp = await fetch(`${getBase()}/api/service/`, {
     method: 'POST',
@@ -488,8 +439,48 @@ export async function createService(service: Service): Promise<Service | null> {
     body: JSON.stringify(service),
   });
   if (!resp.ok) {
-    return null
+    return null;
   }
   const createdService: Service = await resp.json();
   return createdService;
+}
+
+export async function createServiceReservation({
+  serviceId,
+  accountId,
+  date,
+  timeSlot,
+}: {
+  serviceId: string;
+  accountId: string;
+  date: Date;
+  timeSlot: string;
+}): Promise<Reservation | null> {
+  const startTime = createDatetimeFromDateAndTime(date, timeSlot);
+  console.log(JSON.stringify({
+      serviceId,
+      accountId,
+      startTime,
+      endTime: new Date(startTime.getTime() + 60 * 60 * 1000),
+    }))
+  const resp = await fetch(`${getBase()}/api/reservation`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      serviceId,
+      accountId,
+      startTime,
+      endTime: new Date(startTime.getTime() + 60 * 60 * 1000),
+    }),
+  });
+  if (!resp.ok) {
+    return null;
+  }
+  const createdReservation: Reservation = await resp.json();
+  if (!resp.ok) {
+    return null;
+  }
+  return createdReservation;
 }
