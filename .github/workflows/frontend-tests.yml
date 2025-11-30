@@ -24,10 +24,8 @@ jobs:
 
       - name: Install dependencies
         run: |
-          cd dogo-onsen-app
           npm ci
 
       - name: Run tests
         run: |
-          cd dogo-onsen-app
           npx vitest --run
