@@ -23,7 +23,10 @@ export default function FeastPage() {
         setAccount(null);
         return;
       }
-      if ('detail' in venueAccount && (venueAccount as Record<string, unknown>).detail === 'Venue account not found') {
+      if (
+        'detail' in venueAccount &&
+        (venueAccount as Record<string, unknown>).detail === 'Venue account not found'
+      ) {
         setAccount(null);
         return;
       }

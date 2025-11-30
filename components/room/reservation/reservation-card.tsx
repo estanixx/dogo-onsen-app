@@ -13,8 +13,8 @@ interface ReservationCardProps {
 }
 
 /**
- * Card component for displaying a single reservation
- * Shows service details and actions (remove)
+ * Componente tarjeta para mostrar una reservación
+ * Muestra detalles del servicio y acciones (eliminar)
  */
 export function ReservationCard({ reservation, onRemove }: ReservationCardProps) {
   const { service, startTime, endTime } = reservation;

@@ -39,7 +39,7 @@ function ScrollBar({
       orientation={orientation}
       className={cn(
         'flex touch-none p-px transition-colors select-none',
-        // slightly wider track and subtle track background for better contrast
+        // pista ligeramente más ancha y fondo sutil para mejor contraste
         orientation === 'vertical' &&
           'h-full w-3 bg-[var(--dark-darker)]/40 border-l border-l-transparent',
         orientation === 'horizontal' &&
@@ -50,7 +50,7 @@ function ScrollBar({
     >
       <ScrollAreaPrimitive.ScrollAreaThumb
         data-slot="scroll-area-thumb"
-        // high-contrast thumb with subtle ring and hover state
+        // pulgar de alto contraste con anillo sutil y estado hover
         className="bg-[var(--gold)] relative flex-1 rounded-full ring-1 ring-white/10 hover:bg-[var(--gold-light)] transition-colors"
       />
     </ScrollAreaPrimitive.ScrollAreaScrollbar>

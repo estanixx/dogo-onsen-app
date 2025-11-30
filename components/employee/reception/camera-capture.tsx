@@ -35,7 +35,12 @@ interface CameraCaptureProps {
   onError?: (message: string) => void;
 }
 
-export default function CameraCapture({ typeId, onCapture, onUploadComplete, onError }: CameraCaptureProps) {
+export default function CameraCapture({
+  typeId,
+  onCapture,
+  onUploadComplete,
+  onError,
+}: CameraCaptureProps) {
   const videoRef = React.useRef<HTMLVideoElement | null>(null);
   const canvasRef = React.useRef<HTMLCanvasElement | null>(null);
   const [stream, setStream] = React.useState<MediaStream | null>(null);

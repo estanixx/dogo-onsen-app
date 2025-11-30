@@ -44,7 +44,11 @@ export default function ReservationSidebar({ service }: Props) {
     setLoading(true);
     (async () => {
       try {
-        const res = await getReservations({ serviceId: service.id, date: dateStr, timeSlot: timeSlot === ' ' ? undefined : timeSlot });
+        const res = await getReservations({
+          serviceId: service.id,
+          date: dateStr,
+          timeSlot: timeSlot === ' ' ? undefined : timeSlot,
+        });
         if (mounted) {
           setReservations(res);
         }

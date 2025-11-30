@@ -8,7 +8,7 @@ const nextConfig: NextConfig = {
         source: '/api/:path*',
         destination: `${BACKEND_BASE_URL}/:path*`,
       },
-    ]
+    ];
   },
   images: {
     remotePatterns: [

@@ -47,10 +47,22 @@ export function ReservationList({ accountId }: ReservationListProps) {
   console.log('All Reservations:', allReservations);
   // Filtrar reservaciones por accountId
   const reservations = React.useMemo(() => {
-    return allReservations.filter((reservation) => true);
+    // Only include reservations that belong to this account and have a service and account defined.
+    type ReservationWithServiceAndAccount = Reservation & {
+      service: Service;
+      account: NonNullable<Reservation['account']>;
+    };
+
+    return allReservations.filter(
+      (reservation): reservation is ReservationWithServiceAndAccount =>
+        Boolean(reservation.service) && Boolean(reservation.account) && reservation.account.id === accountId,
+    );
   }, [allReservations, accountId]);
   const [ratingDialog, setRatingDialog] = useState<string | null>(null);
-  type ReservationFromContext = Reservation & { service: Service };
+  type ReservationFromContext = Reservation & {
+    service: Service;
+    account: NonNullable<Reservation['account']>;
+  };
 
   // Función para redimir una reservación
   const executeRedeem = (reservation: ReservationFromContext) => {

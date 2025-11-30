@@ -35,7 +35,7 @@ export function ServiceCard({ service, onSelect }: ServiceCardProps) {
       }}
     >
       <div className="h-full flex flex-col">
-        {/* Image */}
+        {/* Imagen */}
         <div
           className="relative h-[160px] w-full bg-[color]"
           style={{ background: 'var(--dark-light)' }}
@@ -52,7 +52,7 @@ export function ServiceCard({ service, onSelect }: ServiceCardProps) {
           )}
         </div>
 
-        {/* Content */}
+        {/* Contenido */}
         <div className="flex-1 px-6 py-4 flex flex-col space-y-3">
           <H2
             className="text-base font-semibold line-clamp-2 text-center"

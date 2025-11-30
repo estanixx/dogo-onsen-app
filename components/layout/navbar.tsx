@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useState } from 'react';
 import { useIsMobile } from '@/hooks/use-mobile';
-import { Menu, X } from 'lucide-react'; // Shadcn icons
+import { Menu, X } from 'lucide-react'; // Iconos (Shadcn)
 import DogoIcon from '../shared/dogo-icon';
 import { P } from '../shared/typography';
 import { Button } from '@/components/ui/button';
@@ -36,7 +36,7 @@ export default function Navbar() {
         </Link>
       </div>
 
-      {/* Desktop Nav */}
+      {/* Navegación de escritorio */}
       {!isMobile && (
         <div className="flex items-center space-x-10 text-sm">
           {links.map((link) => (
@@ -54,7 +54,7 @@ export default function Navbar() {
         </div>
       )}
 
-      {/* User + Menu */}
+      {/* Usuario + Menú */}
       <div className="flex items-center space-x-3">
         {!isMobile ? (
           <div>
@@ -74,7 +74,7 @@ export default function Navbar() {
         )}
       </div>
 
-      {/* Mobile Dropdown */}
+      {/* Menú desplegable móvil */}
       {menuOpen && isMobile && (
         <div className="absolute top-16 left-0 w-full bg-background backdrop-blur-md border-b border-white flex flex-col items-center py-4 space-y-4">
           {links.map((link) => (

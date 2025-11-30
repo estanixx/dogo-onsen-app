@@ -9,7 +9,7 @@ import { ToggleGroup } from '@/components/ui/toggle-group';
 import { useBanquet } from '@/context/banquet-context';
 import { useReservations } from '@/context/reservation-context';
 import {
-  bookService,
+  // bookService, DECOMENTAR @samuelColoradoCastrillon
   createBanquetReservation,
   getAvailableBanquetSeats,
   getAvailableTimeSlotsForBanquet,
@@ -46,14 +46,14 @@ export default function BanquetLayout({ account, venueId }: BanquetLayoutProps) 
     setAvailableTimeSlots(null);
   };
   const fetchBanquetSeats = async () => {
-      if (!date || !time || !account?.spiritId || submitting) {
-        setTables([]);
-        return;
-      }
-      const data = await getAvailableBanquetSeats(account.spiritId, date, time);
-      setTables(data);
-    };
-  
+    if (!date || !time || !account?.spiritId || submitting) {
+      setTables([]);
+      return;
+    }
+    const data = await getAvailableBanquetSeats(account.spiritId, date, time);
+    setTables(data);
+  };
+
   useEffect(clearSelection, [venueId]);
   // Load banquet tables
   useEffect(() => {
@@ -102,7 +102,7 @@ export default function BanquetLayout({ account, venueId }: BanquetLayoutProps) 
         time,
         accountId: account.id,
       });
-      
+
       if (!reservation) {
         toast.error('Error al crear la reserva');
         return;
@@ -183,8 +183,9 @@ export default function BanquetLayout({ account, venueId }: BanquetLayoutProps) 
               Escoger asiento
             </h2>
           </div>
+          {/* @samuelColoradoCastrillon DECOMENTAR */}
 
-          <ToggleGroup
+          {/* <ToggleGroup
             type="single"
             value={selectedSeat ?? undefined}
             onValueChange={(value) => setSelectedSeat((prev) => (prev === value ? null : value))}
@@ -193,7 +194,7 @@ export default function BanquetLayout({ account, venueId }: BanquetLayoutProps) 
             {tables.map((table) => (
               <TableItem key={table.id} table={table} selectedDate={date} selectedTime={time} />
             ))}
-          </ToggleGroup>
+          </ToggleGroup> */}
 
           {/* Seat availability legend */}
           <div className="bottom-3 right-3 flex pl-6 gap-6 mb-4">

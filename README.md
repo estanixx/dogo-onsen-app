@@ -87,3 +87,31 @@ If you use VS Code, enable format-on-save and set Prettier as your default forma
 2. Add types to `lib/types.ts` when they are shared across features.
 3. If the component needs browser APIs, add `"use client"` at the top and keep the component focused on interactivity only.
 4. Add small Storybook story or a test page where useful.
+
+## Tests
+
+Unit tests live under `tests/unit/` and use Vitest with Testing Library for React components. There's a shared test setup at `tests/setup.ts` which registers `@testing-library/jest-dom`, polyfills `fetch`, exposes a minimal Clerk mock, and provides browser shims used by hooks.
+
+How to run frontend tests locally:
+
+```bash
+cd /path/to/dogo-onsen-app
+npm ci
+npx vitest --run
+```
+
+What tests were added:
+
+- Component tests (device configurator, sidebar cookie behavior, admin page interactions)
+- API helper tests under `tests/unit` for `lib/api` (timeslots, inventory, index)
+- Small integration-style tests for forms and dashboard components
+
+How to add tests:
+
+- Create a `.test.ts` or `.test.tsx` file under `tests/unit/`.
+- Use `@testing-library/react` for rendering and assertions and `vi` (Vitest) for mocks.
+
+CI (GitHub Actions)
+
+- A workflow has been added to run frontend tests on push and PRs: `dogo-onsen-app/.github/workflows/frontend-tests.yml` (uses Node 20 and runs `npx vitest --run`).
+

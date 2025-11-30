@@ -4,7 +4,7 @@ import React, { createContext, useContext, useEffect, useState } from 'react';
 import { Reservation, Service } from '@/lib/types';
 
 interface ReservationContextType {
-  reservations: (Reservation)[];
+  reservations: Reservation[];
   addReservation: (res: Reservation) => void;
   removeReservation: (id: string) => void;
   clearReservations: () => void;
@@ -15,7 +15,7 @@ interface ReservationContextType {
 const ReservationContext = createContext<ReservationContextType | undefined>(undefined);
 
 export function ReservationProvider({ children }: { children: React.ReactNode }) {
-  const [reservations, setReservations] = useState<(Reservation)[]>([]);
+  const [reservations, setReservations] = useState<Reservation[]>([]);
 
   // Cargar desde localStorage al montar
   useEffect(() => {

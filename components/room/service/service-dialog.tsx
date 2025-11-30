@@ -23,8 +23,8 @@ interface ServiceDialogProps {
   account: VenueAccount;
 }
 /**
- * ServiceDialog - Represents the dialog that is opened once the service card is pressed.
- * @param service The service to show in the dialog.
+ * ServiceDialog - Representa el diálogo que se abre cuando se pulsa la tarjeta del servicio.
+ * @param service El servicio que se muestra en el diálogo.
  */
 export function ServiceDialog({ service, account }: ServiceDialogProps) {
   const [serviceDialogOpen, setServiceDialogOpen] = useState<boolean>(false);
@@ -91,7 +91,7 @@ export function ServiceDialog({ service, account }: ServiceDialogProps) {
               <VisuallyHidden>
                 <DialogTitle>Banquete</DialogTitle>
               </VisuallyHidden>
-              <BanquetLayout service={service} account={account} />
+              <BanquetLayout account={account} venueId={account.venueId} />
             </ScrollArea>
           </DialogContent>
         </Dialog>

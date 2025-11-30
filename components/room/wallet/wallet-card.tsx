@@ -30,7 +30,7 @@ export function CardModal({
   const [amount, setAmount] = React.useState('');
   const [isSuccess, setIsSuccess] = React.useState(false);
 
-  // In the future, it will be needed to handle the form submission to the backend
+  // En el futuro será necesario manejar el envío del formulario al backend
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
 
@@ -67,7 +67,7 @@ export function CardModal({
           )}
         </DialogHeader>
 
-        {/* Wallet Form */}
+        {/* Formulario de la billetera */}
         <form
           onSubmit={handleSubmit}
           className="flex flex-col gap-6 py-4"

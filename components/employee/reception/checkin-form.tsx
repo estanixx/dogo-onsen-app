@@ -117,7 +117,7 @@ export default function CheckInForm({ initialValues }: CheckInFormProps) {
     if (!spirit) {
       toast.error('No se encontró el espíritu seleccionado.', { duration: 4000 });
       return;
-    } 
+    }
 
     setIsSuccess(true);
 
@@ -138,15 +138,12 @@ export default function CheckInForm({ initialValues }: CheckInFormProps) {
         Check-In: Reservar habitación
       </h2>
       <Form {...form}>
-        <form
-          onSubmit={form.handleSubmit(onSubmit)}
-          className="flex flex-col gap-5 w-full"
-        >
+        <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col gap-5 w-full">
           <FormField
             control={control}
             name="id"
             render={({ field }) => (
-              <FormItem className='truncate'>
+              <FormItem className="truncate">
                 <FormLabel className="text-lg w-full">Seleccionar Espíritu</FormLabel>
                 <FormControl>
                   <SpiritSelect id={field.value} setId={(v: string) => field.onChange(v)} />

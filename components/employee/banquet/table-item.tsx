@@ -18,7 +18,7 @@ interface TableSelectorProps {
 export default function TableItem({ table, selectedDate, selectedTime }: TableSelectorProps) {
   const { reservations } = useBanquet();
 
-  // Convert the selected date to YYYY-MM-DD
+  // Convertir la fecha seleccionada a YYYY-MM-DD
   const dateString = selectedDate?.toISOString().split('T')[0];
 
   return (
@@ -29,14 +29,14 @@ export default function TableItem({ table, selectedDate, selectedTime }: TableSe
           table.state ? 'opacity-100' : 'opacity-50 grayscale',
         )}
       >
-        {/* Table (center rectangle) */}
+        {/* Mesa (rectángulo central) */}
         <div className="w-32 h-20 bg-gray-700 rounded-lg flex items-center justify-center text-white font-semibold">
           <MdTableRestaurant className="size-10" /> <span className="text-xs mt-6">{table.id}</span>
         </div>
 
-        {/* Seats — 6 total */}
+        {/* Asientos — 6 en total */}
         {table.availableSeats.map((seat: BanquetSeat) => {
-          // Check if seat is already reserved (for this date & time)
+          // Verificar si el asiento ya está reservado (para esta fecha y hora)
           const isReserved = seat.reservationId !== '';
           const isAvailable = seat.available;
           const colorClass = clsx({

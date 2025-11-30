@@ -457,12 +457,14 @@ export async function createServiceReservation({
   timeSlot: string;
 }): Promise<Reservation | null> {
   const startTime = createDatetimeFromDateAndTime(date, timeSlot);
-  console.log(JSON.stringify({
+  console.log(
+    JSON.stringify({
       serviceId,
       accountId,
       startTime,
       endTime: new Date(startTime.getTime() + 60 * 60 * 1000),
-    }))
+    }),
+  );
   const resp = await fetch(`${getBase()}/api/reservation`, {
     method: 'POST',
     headers: {

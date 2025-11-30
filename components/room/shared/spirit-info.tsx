@@ -6,8 +6,8 @@ interface SpiritInfoProps {
 }
 
 /**
- * Displays spirit information in the room sidebar
- * Shows spirit details, type, balance and remaining time
+ * Muestra información del espíritu en la barra lateral de la habitación
+ * Presenta detalles del espíritu, tipo, balance y tiempo restante
  */
 export function SpiritInfo({ account }: SpiritInfoProps) {
   const spirit: Spirit = account.spirit;
@@ -24,7 +24,8 @@ export function SpiritInfo({ account }: SpiritInfoProps) {
   }
 
   // const timeRemaining = new Date(account.endTime).getTime() - Date.now();
-  // const daysRemaining = Math.ceil(timeRemaining / (1000 * 60 * 60 * 24)); La estoy mockeando temporalmente porque en el frontend sale -1
+  // const daysRemaining = Math.ceil(timeRemaining / (1000 * 60 * 60 * 24));
+  // Nota: se está mockeando temporalmente porque en el frontend aparece -1
 
   const daysRemaining = 20;
 

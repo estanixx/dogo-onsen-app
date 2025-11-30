@@ -22,7 +22,7 @@ export default function RedeemDialog({ spirit, service, songUrl, onClose }: Rede
     setCurrentSpiritSrc(SPIRIT_FALLBACK_URL || spirit.image);
   }, [spirit.image]);
 
-  // 🎵 Play the song when dialog opens
+  // 🎵 Reproducir la canción cuando se abra el diálogo
   useEffect(() => {
     const audio = new Audio(songUrl);
     audio.volume = 0.1;
@@ -37,7 +37,7 @@ export default function RedeemDialog({ spirit, service, songUrl, onClose }: Rede
     };
   }, [songUrl]);
 
-  // 🖱 Track mouse or touch position
+  // 🖱 Rastrear la posición del ratón o el toque
   const handleMove = (e: React.MouseEvent | React.TouchEvent) => {
     const { clientX, clientY } = 'touches' in e ? e.touches[0] : (e as React.MouseEvent);
     setPos({ x: clientX, y: clientY });
@@ -52,7 +52,7 @@ export default function RedeemDialog({ spirit, service, songUrl, onClose }: Rede
       <h1 className="text-2xl font-serif tracking-wide text-[var(--gold)] border-b-2 border-[var(--gold)]/20 pb-1">
         Disfruta de tu {service.name}.
       </h1>
-      {/* Service image */}
+      {/* Imagen del servicio */}
       <div className="relative w-[90vw] max-w-xs sm:max-w-sm md:max-w-md lg:max-w-lg aspect-square">
         <Image
           src={service.image}
@@ -62,7 +62,7 @@ export default function RedeemDialog({ spirit, service, songUrl, onClose }: Rede
           sizes="(max-width: 640px) 90vw, (max-width: 1024px) 70vw, 50vw"
         />
       </div>
-      {/* Spirit image */}
+      {/* Imagen del espíritu */}
       <motion.img
         src={currentSpiritSrc}
         alt="Fantasma"
@@ -73,7 +73,7 @@ export default function RedeemDialog({ spirit, service, songUrl, onClose }: Rede
         onError={() => setCurrentSpiritSrc(SPIRIT_FALLBACK_URL)}
       />
 
-      {/* ✅ Terminé button */}
+      {/* ✅ Botón "Terminé" */}
       <Button onClick={onClose} className="mt-8 bg-white text-black text-lg px-6 py-3 rounded-full">
         Terminé
       </Button>

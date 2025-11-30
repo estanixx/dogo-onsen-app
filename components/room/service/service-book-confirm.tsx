@@ -14,8 +14,11 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { useReservations } from '@/context/reservation-context'; // ✅ Importa el contexto
-import { bookService, createServiceReservation, getAvailableTimeSlotsForService } from '@/lib/api';
+import { useReservations } from '@/context/reservation-context'; 
+import { 
+  // bookService, @estanixx decomentar 
+  createServiceReservation, 
+  getAvailableTimeSlotsForService } from '@/lib/api';
 import { Service, VenueAccount } from '@/lib/types';
 import { format } from 'date-fns';
 import * as React from 'react';
@@ -29,14 +32,13 @@ interface Props {
 }
 
 export default function ServiceBookConfirm({ service, open, setOpen, account }: Props) {
-  const { addReservation } = useReservations(); // ✅ Usa el contexto global
+  const { addReservation } = useReservations(); 
 
   const [date, setDate] = React.useState<Date>(new Date());
   const [time, setTime] = React.useState<string | null>(null);
   const [availableTimeSlots, setAvailableTimeSlots] = React.useState<string[] | null>(null);
   const [loading, setLoading] = React.useState(false);
 
-  // 🔹 Cargar horarios disponibles al cambiar fecha o servicio
   React.useEffect(() => {
     setAvailableTimeSlots(null);
     getAvailableTimeSlotsForService(service.id, date).then((slots) => {
@@ -46,14 +48,18 @@ export default function ServiceBookConfirm({ service, open, setOpen, account }: 
 
   const canConfirm = !!date && !!time && !loading;
 
-  /** ✅ Confirmar reserva y agregarla al contexto */
   const handleConfirm = async () => {
     if (!time) {
       return;
     }
     setLoading(true);
     try {
-      const reservation = await createServiceReservation({ serviceId: service.id, accountId: account.id, date, timeSlot: time });
+      const reservation = await createServiceReservation({
+        serviceId: service.id,
+        accountId: account.id,
+        date,
+        timeSlot: time,
+      });
       const fullReservation = { ...reservation, service };
       // 👉 Se guarda globalmente (context + localStorage sincronizado)
 
@@ -61,10 +67,10 @@ export default function ServiceBookConfirm({ service, open, setOpen, account }: 
         toast.error('No se pudo crear la reservación');
         return;
       }
-      addReservation(fullReservation);
-      toast.success(`Reservación confirmada: ${service.name} - ${format(date, 'PPP')} ${time}`, {
-        duration: 4000,
-      });
+      // addReservation(fullReservation);
+      // toast.success(`Reservación confirmada: ${service.name} - ${format(date, 'PPP')} ${time}`, {
+      //   duration: 4000,
+      // }); @estanixx DECOMENTAR
 
       setOpen(false);
     } catch (error) {
