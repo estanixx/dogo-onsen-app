@@ -66,7 +66,7 @@ export function ReservationList({ account }: ReservationListProps) {
     toast.success(`¡Servicio "${reservation?.service?.name}" redimido exitosamente!`, {
       description: 'Ya puedes calificar tu experiencia',
     });
-    
+
     // This will hide the RedeemDialog
     setRedeemDialog(null);
   };
@@ -85,7 +85,6 @@ export function ReservationList({ account }: ReservationListProps) {
       executeRedeem(reservation);
     }
     onReloadReservations((prev) => !prev);
-    
   };
 
   // Función para cancelar una reservación
@@ -200,7 +199,9 @@ export function ReservationList({ account }: ReservationListProps) {
     <div className="space-y-6">
       <div className="grid gap-4">
         {reservations?.map((reservation, index) => {
-          const service: Service = reservation.seatId ? BANQUET_SERVICE_DATA as Service : reservation.service as Service;
+          const service: Service = reservation.seatId
+            ? (BANQUET_SERVICE_DATA as Service)
+            : (reservation.service as Service);
           return (
             <Card
               key={`reservation-${index}`}

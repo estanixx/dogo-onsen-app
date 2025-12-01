@@ -36,8 +36,6 @@ export function RoomConfigForm({ onSubmit }: RoomConfigFormProps) {
     await onSubmit(roomId);
   }
 
-
-
   return (
     <div className="w-full max-w-md mx-auto">
       <DogoCard className="p-6">

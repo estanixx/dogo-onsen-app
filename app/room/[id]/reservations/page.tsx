@@ -22,9 +22,7 @@ export default async function ReservationsPage({ params }: ReservationsPageProps
       </div>
       {
         /* Reservation List Component */
-        account && (
-          <ReservationList account={account} />
-        )
+        account && <ReservationList account={account} />
       }
     </div>
   );

@@ -34,7 +34,7 @@ export function ServiceDialog({ service, account }: ServiceDialogProps) {
     setServiceDialogOpen(false);
     setConfirmDialogOpen(true);
   };
-  const available = service.eiltRate <= account.eiltBalance;
+  const available = service.eiltRate <= account.eiltBalance; // @estanixx Acá hay otro error en el build
   const isBanquet = service.name.toLowerCase().includes('banquete');
 
   return (
@@ -73,9 +73,12 @@ export function ServiceDialog({ service, account }: ServiceDialogProps) {
               </div>
 
               <button
-                className={clsx("mt-4 w-full bg-primary text-white py-2 px-4 rounded hover:bg-primary/90 transition", {
-                  "opacity-50 cursor-not-allowed": !available,
-                })}
+                className={clsx(
+                  'mt-4 w-full bg-primary text-white py-2 px-4 rounded hover:bg-primary/90 transition',
+                  {
+                    'opacity-50 cursor-not-allowed': !available,
+                  },
+                )}
                 type="button"
                 onClick={handleBookService}
                 disabled={!available}
