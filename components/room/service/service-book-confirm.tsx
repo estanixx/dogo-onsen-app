@@ -14,11 +14,12 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { useReservations } from '@/context/reservation-context'; 
-import { 
-  // bookService, @estanixx decomentar 
-  createServiceReservation, 
-  getAvailableTimeSlotsForService } from '@/lib/api';
+import { useReservations } from '@/context/reservation-context';
+import {
+  // bookService, @estanixx decomentar
+  createServiceReservation,
+  getAvailableTimeSlotsForService,
+} from '@/lib/api';
 import { Service, VenueAccount } from '@/lib/types';
 import { format } from 'date-fns';
 import { useRouter } from 'next/navigation';
@@ -33,7 +34,6 @@ interface Props {
 }
 
 export default function ServiceBookConfirm({ service, open, setOpen, account }: Props) {
-
   const [date, setDate] = React.useState<Date>(new Date());
   const [time, setTime] = React.useState<string | null>(null);
   const [availableTimeSlots, setAvailableTimeSlots] = React.useState<string[] | null>(null);
@@ -67,7 +67,7 @@ export default function ServiceBookConfirm({ service, open, setOpen, account }: 
       }
       toast.success(`Reservación confirmada: ${service.name} - ${format(date, 'PPP')} ${time}`, {
         duration: 4000,
-      }); 
+      });
       router.refresh();
       setOpen(false);
     } catch (error) {

@@ -115,3 +115,14 @@ CI (GitHub Actions)
 
 - A workflow has been added to run frontend tests on push and PRs: `dogo-onsen-app/.github/workflows/frontend-tests.yml` (uses Node 20 and runs `npx vitest --run`).
 
+Performance tests
+
+Performance tests use [k6](https://k6.io/) to validate API latency and throughput.
+
+- **Location**: `tests/performance/load_test.js`
+- **Run locally**:
+  ```bash
+  # Ensure backend is running on port 8004 and frontend on 3000
+  k6 run tests/performance/load_test.js
+  ```
+- **CI**: Runs via `.github/workflows/performance-tests.yml`.

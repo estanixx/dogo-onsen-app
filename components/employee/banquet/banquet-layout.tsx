@@ -184,7 +184,6 @@ export default function BanquetLayout({ account, venueId }: BanquetLayoutProps) 
               Escoger asiento
             </h2>
           </div>
-          {/* @samuelColoradoCastrillon DECOMENTAR */}
 
           <ToggleGroup
             type="single"

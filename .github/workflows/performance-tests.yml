@@ -1,0 +1,48 @@
+name: Frontend Performance Tests
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'tests/performance/**'
+      - '.github/workflows/performance-tests.yml'
+
+jobs:
+  performance-test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build Application
+        run: npm run build
+
+      - name: Start Application
+        run: |
+          # Start Next.js in background
+          npm start -- -p 3000 &
+          # Wait for server to be ready
+          echo "Waiting for server to start..."
+          sleep 10
+
+      - name: Setup k6
+        uses: grafana/setup-k6-action@v1
+
+      - name: Run k6 test
+        uses: grafana/run-k6-action@v1
+        env:
+          K6_CLOUD_TOKEN: ${{ secrets.K6_CLOUD_TOKEN }}
+          K6_CLOUD_PROJECT_ID: ${{ secrets.K6_CLOUD_PROJECT_ID }}
+          BASE_URL: http://localhost:3000
+        with:
+          path: tests/performance/load_test.js
+          cloud-run-locally: true
