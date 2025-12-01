@@ -1,4 +1,5 @@
 import { ReservationList } from '@/components/room/reservation/reservation-list';
+import { getVenueAccountById } from '@/lib/api';
 
 interface ReservationsPageProps {
   params: {
@@ -12,15 +13,19 @@ interface ReservationsPageProps {
  */
 export default async function ReservationsPage({ params }: ReservationsPageProps) {
   const { id } = await params;
-  console.log(id);
+  const account = await getVenueAccountById(id);
   return (
     <div className="space-y-6">
       <div>
         <h1 className="text-3xl font-serif text-[var(--gold)] mb-2">Mis Reservaciones</h1>
         <p className="text-[#a89f8a] text-sm">Visualiza y administra tus reservaciones.</p>
       </div>
-
-      <ReservationList accountId={id} />
+      {
+        /* Reservation List Component */
+        account && (
+          <ReservationList account={account} />
+        )
+      }
     </div>
   );
 }

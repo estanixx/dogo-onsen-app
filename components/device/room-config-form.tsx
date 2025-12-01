@@ -2,8 +2,12 @@
 
 import { DogoCard, DogoButton } from '@/components/shared/dogo-ui';
 import { Input } from '@/components/ui/input';
+import { getCurrentVenueAccount } from '@/lib/api';
+import { VenueAccount } from '@/lib/types';
+import React from 'react';
 import { MdOutlineMeetingRoom } from 'react-icons/md';
 import { VscKey } from 'react-icons/vsc';
+import { toast } from 'sonner';
 interface RoomConfigFormProps {
   onSubmit: (roomId: string) => Promise<void>;
 }
@@ -11,11 +15,28 @@ interface RoomConfigFormProps {
 export function RoomConfigForm({ onSubmit }: RoomConfigFormProps) {
   async function handleSubmit(formData: FormData) {
     const roomId = formData.get('roomId')?.toString();
+    const pin = formData.get('pin')?.toString();
     if (!roomId) {
+      toast.error('Por favor ingresa un identificador de habitación válido.');
+      return;
+    }
+    if (!pin) {
+      toast.error('Por favor ingresa un PIN de seguridad válido.');
+      return;
+    }
+    const account = await getCurrentVenueAccount(roomId);
+    if (!account) {
+      toast.error('No se encontró una cuenta para la habitación proporcionada.');
+      return;
+    }
+    if (account.pin !== pin) {
+      toast.error('El PIN de seguridad es incorrecto.');
       return;
     }
     await onSubmit(roomId);
   }
+
+
 
   return (
     <div className="w-full max-w-md mx-auto">

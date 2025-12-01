@@ -17,7 +17,6 @@ export interface Spirit {
   typeId: string;
   type: SpiritType;
   accountId?: string;
-  eiltBalance: number;
   individualRecord: string;
   image?: string;
   active?: boolean;
@@ -33,6 +32,8 @@ export interface VenueAccount {
   venueId: string;
   startTime: Date;
   endTime: Date;
+  pin: string;
+  eiltBalance?: number;
 }
 
 /**

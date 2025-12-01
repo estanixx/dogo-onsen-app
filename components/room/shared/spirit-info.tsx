@@ -62,7 +62,7 @@ export function SpiritInfo({ account }: SpiritInfoProps) {
           {/* EILT Balance */}
           <div className="text-center lg:text-left">
             <p className="text-sm text-indigo-200">Balance</p>
-            <p className="font-medium">{spirit.eiltBalance} EILT</p>
+            <p className="font-medium">{account.eiltBalance ?? 0} EILT</p>
           </div>
 
           {/* Time Remaining */}

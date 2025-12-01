@@ -1,5 +1,6 @@
 import {
   BanquetTable,
+  Deposit,
   InventoryItem,
   InventoryOrder,
   PrivateVenue,
@@ -38,7 +39,7 @@ export async function getServiceById(id: string): Promise<Service | null> {
   return all;
 }
 
-export async function getAvailablePrivateVenues(
+export async function getAvailablePrivateVenues( // TODO: implement real API
   startTime: Date,
   endTime: Date,
 ): Promise<PrivateVenue[]> {
@@ -70,8 +71,8 @@ export async function getAvailablePrivateVenues(
  * Function to get the current venue account for a room
  * Returns account details including spirit ID and time information
  */
-export async function getCurrentVenueAccount(venueId: string): Promise<VenueAccount | null> {
-  const resp = await fetch(`${getBase()}/api/venue_account/${venueId}`);
+export async function getCurrentVenueAccount(roomId: string): Promise<VenueAccount | null> {
+  const resp = await fetch(`${getBase()}/api/venue_account/room/${roomId}`);
   const account: VenueAccount | null = await resp.json();
   return account;
 }
@@ -128,6 +129,12 @@ export async function getAvailableTimeSlotsForService(
   return slots;
 }
 
+export async function getTimeSlots(): Promise<string[]> {
+  const resp = await fetch(`${getBase()}/api/time-slots`);
+  const slots: string[] = await resp.json();
+  return slots;
+}
+
 /**
  * Function to get available time slots for a spirit at the banquet on a specific date
  */
@@ -150,7 +157,7 @@ export async function createSpirit(
 ): Promise<Spirit> {
   // Simulate creating a new spirit
   console.log(image);
-  const resp = await fetch(`http://localhost:8004/spirit/`, {
+  const resp = await fetch(`${getBase()}/api/spirit/`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -160,7 +167,6 @@ export async function createSpirit(
       name,
       typeId,
       type: (await getSpiritType(typeId)) as SpiritType,
-      eiltBalance: 0,
       individualRecord: new Date().toISOString(),
       image,
     }),
@@ -266,6 +272,56 @@ export async function getAllSpirits(): Promise<Spirit[]> {
   const resp = await fetch(`${getBase()}/api/spirit/`);
   const spirits: Spirit[] = await resp.json();
   return spirits;
+}
+
+/**
+ * Update a spirit with partial data (uses PUT /api/spirit/{id})
+ */
+export async function updateSpirit(
+  spiritId: string,
+  update: Partial<Spirit>,
+): Promise<Spirit | null> {
+  const resp = await fetch(`${getBase()}/api/spirit/${spiritId}`, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(update),
+  });
+  if (!resp.ok) {
+    return null;
+  }
+  const spirit: Spirit = await resp.json();
+  return spirit;
+}
+
+/**
+ * Create a deposit record for a venue account
+ */
+export async function createDeposit(accountId: string, amount: number): Promise<Deposit> {
+  const resp = await fetch(`${getBase()}/api/deposit/`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      accountId,
+      amount,
+      date: new Date().toISOString(),
+    }),
+  });
+  if (!resp.ok) {
+    throw new Error('Failed to create deposit');
+  }
+  const deposit: Deposit = await resp.json();
+  return deposit;
+}
+
+export async function getDepositsForAccount(accountId: string): Promise<Deposit[]> {
+  const resp = await fetch(`${getBase()}/api/deposit/account/${encodeURIComponent(accountId)}`);
+  if (!resp.ok) {
+    throw new Error('Failed to fetch deposits for account');
+  }
+  const deposits: Deposit[] = await resp.json();
+  return deposits;
 }
 
 // Mock data for inventory
@@ -395,6 +451,7 @@ export async function authenticateEmployee(username: string, pin: string) {
  * Function to get all the reservations for a given date and time slot
  */
 export async function getReservations({
+  accountId,
   serviceId,
   date,
   timeSlot,
@@ -402,6 +459,7 @@ export async function getReservations({
   serviceId?: string;
   date?: string;
   timeSlot?: string;
+  accountId?: string;
 }): Promise<Reservation[]> {
   const datetime =
     date && timeSlot
@@ -413,12 +471,40 @@ export async function getReservations({
   if (serviceId) {
     queryParams.append('serviceId', serviceId);
   }
+  if (accountId) {
+    queryParams.append('accountId', accountId);
+  }
   if (datetime) {
     queryParams.append('datetime', datetime);
   }
   const resp = await fetch(`${getBase()}/api/reservation?${queryParams.toString()}`);
   const reservations: Reservation[] = await resp.json();
   return reservations;
+}
+
+export async function updateReservation(
+  id: string,
+  reservation: Partial<Reservation>,
+): Promise<Reservation | null> {
+  const resp = await fetch(`${getBase()}/api/reservation/${id}`, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(reservation),
+  });
+  if (!resp.ok) {
+    return null;
+  }
+  const updatedReservation: Reservation = await resp.json();
+  return updatedReservation;
+}
+
+export async function removeReservation(id: string): Promise<boolean> {
+  const resp = await fetch(`${getBase()}/api/reservation/${id}`, {
+    method: 'DELETE',
+  });
+  return resp.ok;
 }
 
 /**
@@ -485,4 +571,34 @@ export async function createServiceReservation({
     return null;
   }
   return createdReservation;
+}
+
+export async function createVenueAccount({
+  spiritId,
+  privateVenueId,
+  startTime,
+  endTime,
+}: {
+  spiritId: string;
+  privateVenueId: string;
+  startTime: Date;
+  endTime: Date;
+}): Promise<VenueAccount | null> {
+  const resp = await fetch(`${getBase()}/api/venue_account/`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      spiritId,
+      privateVenueId,
+      startTime,
+      endTime,
+    }),
+  });
+  if (!resp.ok) {
+    return null;
+  }
+  const createdAccount: VenueAccount = await resp.json();
+  return createdAccount;
 }

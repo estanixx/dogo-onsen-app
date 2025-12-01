@@ -99,8 +99,6 @@ export default function CameraCapture({
           if (!type || !type.name || !type.image) {
             throw new Error("El objeto 'type' no es válido.");
           }
-          // Aseguramos minúsculas/mayúsculas según tu S3.
-          // Si en S3 es "onryo.png", usa toLowerCase().
           templateName = type.image;
         } catch (typeError) {
           console.error('Error obteniendo tipo de espíritu:', typeError);
@@ -123,7 +121,6 @@ export default function CameraCapture({
         const response = await fetch(`http://localhost:8004/files/upload-image-with-faces`, {
           method: 'POST',
           body: formData,
-          // NO PONGAS HEADERS MANUALES DE CONTENT-TYPE AQUÍ
         });
 
         // 6. Manejo de Errores HTTP

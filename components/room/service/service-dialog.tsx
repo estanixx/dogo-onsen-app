@@ -17,6 +17,7 @@ import ServiceBookConfirm from './service-book-confirm';
 import BanquetLayout from '@/components/employee/banquet/banquet-layout';
 import { VisuallyHidden } from '@radix-ui/react-visually-hidden';
 import { createServiceReservation } from '@/lib/api';
+import clsx from 'clsx';
 
 interface ServiceDialogProps {
   service: Service;
@@ -33,7 +34,7 @@ export function ServiceDialog({ service, account }: ServiceDialogProps) {
     setServiceDialogOpen(false);
     setConfirmDialogOpen(true);
   };
-
+  const available = service.eiltRate <= account.eiltBalance;
   const isBanquet = service.name.toLowerCase().includes('banquete');
 
   return (
@@ -72,9 +73,12 @@ export function ServiceDialog({ service, account }: ServiceDialogProps) {
               </div>
 
               <button
-                className="mt-4 w-full bg-primary text-white py-2 px-4 rounded hover:bg-primary/90 transition"
+                className={clsx("mt-4 w-full bg-primary text-white py-2 px-4 rounded hover:bg-primary/90 transition", {
+                  "opacity-50 cursor-not-allowed": !available,
+                })}
                 type="button"
                 onClick={handleBookService}
+                disabled={!available}
               >
                 Agendar Servicio
               </button>

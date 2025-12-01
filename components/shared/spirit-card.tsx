@@ -1,8 +1,8 @@
+import { Spirit } from '@/lib/types';
 import Image from 'next/image';
+import { Badge } from '../ui/badge';
 import { Card } from '../ui/card';
 import { H3, P } from './typography';
-import { Spirit } from '@/lib/types';
-import { Badge } from '../ui/badge';
 
 interface SpiritCardProps {
   spirit: Spirit;
@@ -28,7 +28,7 @@ const SpiritCard: React.FC<SpiritCardProps> = ({ spirit }) => {
       <span className="flex flex-col">
         <H3 className="font-medium text-center lg:text-left">{spirit.name}</H3>
         <P className="text-sm">Tipo: {spirit.type?.name}</P>
-        <P className="text-sm">Saldo: {spirit.eiltBalance}</P>
+        {/* Balance is computed on the venue account - not present on Spirit here */}
         {active && (
           <Badge variant="secondary" className="self-end">
             Activo

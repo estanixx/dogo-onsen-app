@@ -57,7 +57,7 @@ export default function TableItem({ table, selectedDate, selectedTime }: TableSe
           return (
             <ToggleGroupItem
               key={seat.seatNumber}
-              value={seat.id}
+              value={String(seat.id)}
               className={cn(
                 'w-10 h-7 rounded-md border flex items-center justify-center text-xs font-bold transition-all',
                 colorClass,

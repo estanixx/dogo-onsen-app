@@ -1,8 +1,8 @@
-import { useEffect, useRef, useState } from 'react';
-import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import type { Service, Spirit } from '@/lib/types';
+import { motion } from 'framer-motion';
 import Image from 'next/image';
+import { useEffect, useRef, useState } from 'react';
 
 interface RedeemDialogProps {
   songUrl: string;
@@ -16,11 +16,15 @@ export default function RedeemDialog({ spirit, service, songUrl, onClose }: Rede
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const SPIRIT_FALLBACK_URL =
     'https://theentertainmentnut.wordpress.com/wp-content/uploads/2012/09/nf0.jpg?w=584';
-  const [currentSpiritSrc, setCurrentSpiritSrc] = useState(SPIRIT_FALLBACK_URL || spirit.image);
+
+  // const spiritImage = spirit.ima;
+  const [currentSpiritSrc, setCurrentSpiritSrc] = useState(spirit.image || SPIRIT_FALLBACK_URL);
+
+  console.log(spirit.image);
 
   useEffect(() => {
-    setCurrentSpiritSrc(SPIRIT_FALLBACK_URL || spirit.image);
-  }, [spirit.image]);
+    setCurrentSpiritSrc(spirit.image || SPIRIT_FALLBACK_URL);
+  }, [spirit]);
 
   // 🎵 Reproducir la canción cuando se abra el diálogo
   useEffect(() => {

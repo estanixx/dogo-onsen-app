@@ -13,14 +13,13 @@ import {
   createBanquetReservation,
   getAvailableBanquetSeats,
   getAvailableTimeSlotsForBanquet,
-  getBanquetTables,
-  getCurrentVenueAccount,
 } from '@/lib/api';
-import { BanquetTable, Reservation, Service, VenueAccount } from '@/lib/types';
+import { BanquetTable, Reservation, VenueAccount } from '@/lib/types';
 import { format } from 'date-fns';
 import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
 import TableItem from './table-item';
+import { useRouter } from 'next/navigation';
 
 interface BanquetLayoutProps {
   account: VenueAccount;
@@ -35,7 +34,7 @@ export default function BanquetLayout({ account, venueId }: BanquetLayoutProps) 
   const [availableTimeSlots, setAvailableTimeSlots] = useState<string[] | null>(null);
   const [loadingSlots, setLoadingSlots] = useState(false);
   const [submitting, setSubmitting] = useState(false);
-
+  const router = useRouter();
   const { createReservation } = useBanquet();
   const { addReservation } = useReservations();
 
@@ -51,6 +50,7 @@ export default function BanquetLayout({ account, venueId }: BanquetLayoutProps) 
       return;
     }
     const data = await getAvailableBanquetSeats(account.spiritId, date, time);
+    console.log(data);
     setTables(data);
   };
 
@@ -113,6 +113,7 @@ export default function BanquetLayout({ account, venueId }: BanquetLayoutProps) 
       toast.success(
         `Reserva confirmada para el asiento ${selectedSeat} (${format(date, 'PPP')} ${time})`,
       );
+      router.refresh();
     } catch (e) {
       toast.error('Error al crear la reserva');
       console.error(e);
@@ -185,16 +186,16 @@ export default function BanquetLayout({ account, venueId }: BanquetLayoutProps) 
           </div>
           {/* @samuelColoradoCastrillon DECOMENTAR */}
 
-          {/* <ToggleGroup
+          <ToggleGroup
             type="single"
-            value={selectedSeat ?? undefined}
+            value={selectedSeat !== null ? String(selectedSeat) : undefined}
             onValueChange={(value) => setSelectedSeat((prev) => (prev === value ? null : value))}
             className="w-full grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-6 p-6"
           >
             {tables.map((table) => (
               <TableItem key={table.id} table={table} selectedDate={date} selectedTime={time} />
             ))}
-          </ToggleGroup> */}
+          </ToggleGroup>
 
           {/* Seat availability legend */}
           <div className="bottom-3 right-3 flex pl-6 gap-6 mb-4">

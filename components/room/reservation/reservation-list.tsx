@@ -1,82 +1,78 @@
 'use client';
 
-import * as React from 'react';
-import { useReservations } from '@/context/reservation-context';
 import { Button } from '@/components/ui/button';
-import { format } from 'date-fns';
-import { es } from 'date-fns/locale';
 import { Card } from '@/components/ui/card';
-import { Star, Clock } from 'lucide-react';
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogHeader,
   DialogTitle,
-  DialogDescription,
 } from '@/components/ui/dialog';
 import {
   Drawer,
+  DrawerClose,
   DrawerContent,
+  DrawerDescription,
+  DrawerFooter,
   DrawerHeader,
   DrawerTitle,
-  DrawerDescription,
-  DrawerClose,
-  DrawerFooter,
 } from '@/components/ui/drawer';
-import { useState } from 'react';
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
 import { useMediaQuery } from '@/hooks/use-media-query';
+import { getReservations, removeReservation, updateReservation } from '@/lib/api';
 import { DESKTOP_MIN_QUERY } from '@/lib/config';
+import { Reservation, Service, VenueAccount } from '@/lib/types';
+import { format } from 'date-fns';
+import { es } from 'date-fns/locale';
+import { Clock, Star } from 'lucide-react';
+import * as React from 'react';
+import { useState } from 'react';
 import { toast } from 'sonner';
-import { Reservation, Service } from '@/lib/types';
 import RedeemDialog from './redeem-interaction';
+import { BANQUET_SERVICE_DATA } from '@/lib/api/constants';
 
 interface ReservationListProps {
-  accountId: string;
+  account: VenueAccount;
 }
 
-export function ReservationList({ accountId }: ReservationListProps) {
+export function ReservationList({ account }: ReservationListProps) {
+  const accountId = account.id;
   const [redeemDialog, setRedeemDialog] = useState<string | null>(null);
-  const {
-    reservations: allReservations,
-    removeReservation,
-    clearReservations,
-    totalEilt,
-    updateReservation,
-  } = useReservations();
-  console.log('All Reservations:', allReservations);
-  // Filtrar reservaciones por accountId
-  const reservations = React.useMemo(() => {
-    // Only include reservations that belong to this account and have a service and account defined.
-    type ReservationWithServiceAndAccount = Reservation & {
-      service: Service;
-      account: NonNullable<Reservation['account']>;
+  const [reservations, setReservations] = useState<Reservation[] | null>(null);
+  const [reload, onReloadReservations] = useState(false);
+  React.useEffect(() => {
+    console.log('Reloading reservations...');
+    const fetchReservations = async () => {
+      const data = await getReservations({ accountId });
+      if (!data) {
+        toast.error('Error al cargar las reservaciones');
+        return;
+      }
+      setReservations(data);
     };
+    fetchReservations();
+  }, [accountId, reload]);
 
-    return allReservations.filter(
-      (reservation): reservation is ReservationWithServiceAndAccount =>
-        Boolean(reservation.service) && Boolean(reservation.account) && reservation.account.id === accountId,
-    );
-  }, [allReservations, accountId]);
   const [ratingDialog, setRatingDialog] = useState<string | null>(null);
-  type ReservationFromContext = Reservation & {
-    service: Service;
-    account: NonNullable<Reservation['account']>;
-  };
 
   // Función para redimir una reservación
-  const executeRedeem = (reservation: ReservationFromContext) => {
-    updateReservation(reservation.id, { isRedeemed: true });
-    toast.success(`¡Servicio "${reservation.service.name}" redimido exitosamente!`, {
+  const executeRedeem = async (reservation: Reservation) => {
+    await updateReservation(reservation.id, { isRedeemed: true });
+    if (!reservation.service) {
+      toast.error('Error al redimir la reservación');
+      return;
+    }
+    toast.success(`¡Servicio "${reservation?.service?.name}" redimido exitosamente!`, {
       description: 'Ya puedes calificar tu experiencia',
     });
-
+    
     // This will hide the RedeemDialog
     setRedeemDialog(null);
   };
 
   // ✅ 2. The function that CHECKS the time
-  const handleRedeem = (reservation: ReservationFromContext) => {
+  const handleRedeem = (reservation: Reservation) => {
     const now = new Date();
     const start = new Date(reservation.startTime);
     const end = new Date(reservation.endTime);
@@ -88,6 +84,8 @@ export function ReservationList({ accountId }: ReservationListProps) {
       // Otherwise, redeem directly
       executeRedeem(reservation);
     }
+    onReloadReservations((prev) => !prev);
+    
   };
 
   // Función para cancelar una reservación
@@ -96,6 +94,7 @@ export function ReservationList({ accountId }: ReservationListProps) {
     toast.success(`Servicio "${serviceName}" cancelado`, {
       description: 'La reservación ha sido eliminada exitosamente',
     });
+    onReloadReservations((prev) => !prev);
   };
 
   // Función para calificar una reservación
@@ -105,6 +104,7 @@ export function ReservationList({ accountId }: ReservationListProps) {
     toast.success('¡Gracias por tu calificación!', {
       description: 'Tu opinión nos ayuda a mejorar',
     });
+    onReloadReservations((prev) => !prev);
   };
 
   const RatingDialog = React.memo(({ reservationId }: { reservationId: string }) => {
@@ -187,7 +187,7 @@ export function ReservationList({ accountId }: ReservationListProps) {
 
   RatingDialog.displayName = 'RatingDialog';
 
-  if (reservations.length === 0) {
+  if (reservations && reservations.length === 0) {
     return (
       <div className="text-center py-12">
         <h3 className="text-lg font-medium text-gray-100">Sin reservaciones</h3>
@@ -199,118 +199,110 @@ export function ReservationList({ accountId }: ReservationListProps) {
   return (
     <div className="space-y-6">
       <div className="grid gap-4">
-        {reservations.map((reservation, index) => (
-          <Card
-            key={`reservation-${index}`}
-            className="group p-6 rounded-md border overflow-hidden shadow-md transition-all duration-200"
-            style={{
-              background: 'linear-gradient(180deg, var(--card), var(--dark))',
-              borderColor: 'var(--border)',
-              color: 'var(--card-foreground)',
-              boxShadow: 'var(--shadow)',
-            }}
-          >
-            <div className="relative space-y-4">
-              {/* Header con nombre y precio */}
-              <div className="flex justify-between items-center">
-                <h3 className="text-lg font-semibold" style={{ color: 'var(--gold)' }}>
-                  {reservation.service.name}
-                </h3>
-                <p className="text-lg font-semibold" style={{ color: 'var(--gold-light)' }}>
-                  {reservation.service.eiltRate} EILT
-                </p>
-              </div>
-
-              {/* Fecha y acciones */}
-              <div className="flex justify-between items-center">
-                <div className="flex items-center gap-2 text-sm text-gray-400">
-                  <Clock className="w-4 h-4" />
-                  <span>
-                    {format(new Date(reservation.startTime), "d 'de' MMMM, h:mm a", {
-                      locale: es,
-                    })}{' '}
-                    - {format(new Date(reservation.endTime), 'h:mm a', { locale: es })}.
-                  </span>
+        {reservations?.map((reservation, index) => {
+          const service: Service = reservation.seatId ? BANQUET_SERVICE_DATA as Service : reservation.service as Service;
+          return (
+            <Card
+              key={`reservation-${index}`}
+              className="group p-6 rounded-md border overflow-hidden shadow-md transition-all duration-200"
+              style={{
+                background: 'linear-gradient(180deg, var(--card), var(--dark))',
+                borderColor: 'var(--border)',
+                color: 'var(--card-foreground)',
+                boxShadow: 'var(--shadow)',
+              }}
+            >
+              <div className="relative space-y-4">
+                {/* Header con nombre y precio */}
+                <div className="flex justify-between items-center">
+                  <h3 className="text-lg font-semibold" style={{ color: 'var(--gold)' }}>
+                    {service.name}
+                  </h3>
+                  <p className="text-lg font-semibold" style={{ color: 'var(--gold-light)' }}>
+                    {service.eiltRate} EILT
+                  </p>
                 </div>
-                <div className="flex items-center gap-2">
-                  {!reservation.isRedeemed ? (
-                    <Button
-                      variant="default"
-                      className="bg-gold text-secondary transition-colors"
-                      onClick={() => handleRedeem(reservation)}
-                    >
-                      Redimir
-                    </Button>
-                  ) : (
-                    <span className="text-sm text-gray-400">Redimido</span>
-                  )}
-                  <Button
-                    variant="ghost"
-                    className="text-red-400 transition-colors"
-                    onClick={() => handleCancel(reservation.id, reservation.service.name)}
-                  >
-                    Cancelar
-                  </Button>
-                </div>
-              </div>
 
-              {/* Rating y descripción */}
-              <div className="space-y-3">
-                {reservation.isRedeemed && (
-                  <div className="flex items-center gap-2">
-                    {reservation.isRated ? (
-                      <div className="flex items-center">
-                        {Array.from({ length: reservation.rating || 0 }).map((_, i) => (
-                          <Star
-                            key={`reservation-${index}-star-${i}`}
-                            className="w-4 h-4 text-[var(--gold)]"
-                          />
-                        ))}
-                      </div>
-                    ) : (
-                      <Button
-                        variant="outline"
-                        className="text-sm border-gold/30 hover:border-gold/60"
-                        onClick={() => setRatingDialog(reservation.id)}
-                      >
-                        Calificar
-                      </Button>
-                    )}
+                {/* Fecha y acciones */}
+                <div className="flex justify-between items-center">
+                  <div className="flex items-center gap-2 text-sm text-gray-400">
+                    <Clock className="w-4 h-4" />
+                    <span>
+                      {format(new Date(reservation.startTime), "d 'de' MMMM, h:mm a", {
+                        locale: es,
+                      })}{' '}
+                      - {format(new Date(reservation.endTime), 'h:mm a', { locale: es })}.
+                    </span>
                   </div>
-                )}
-                <p className="text-sm" style={{ color: 'var(--card-foreground)' }}>
-                  {reservation.service.description}
-                </p>
-              </div>
-            </div>
-            <RatingDialog reservationId={reservation.id} />
-          </Card>
-        ))}
-      </div>
+                  <div className="flex items-center gap-2">
+                    {!reservation.isRedeemed ? (
+                      <Button
+                        variant="default"
+                        className="bg-gold text-secondary transition-colors"
+                        onClick={() => handleRedeem(reservation)}
+                      >
+                        Redimir
+                      </Button>
+                    ) : (
+                      <span className="text-sm text-gray-400">Redimido</span>
+                    )}
+                    <Button
+                      variant="ghost"
+                      className="text-red-400 transition-colors"
+                      onClick={() => handleCancel(reservation.id, service.name)}
+                    >
+                      Cancelar
+                    </Button>
+                  </div>
+                </div>
 
-      <div className="flex justify-between items-center border-t border-gold/20 pt-4">
-        <p className="text-xl font-semibold text-[var(--gold)]">Total: {totalEilt} EILT</p>
-        <Button
-          onClick={clearReservations}
-          variant="outline"
-          className="text-sm border-gold/30 hover:border-gold/60 hover:bg-gold/5 transition-all duration-200"
-        >
-          Eliminar todo
-        </Button>
+                {/* Rating y descripción */}
+                <div className="space-y-3">
+                  {reservation.isRedeemed && (
+                    <div className="flex items-center gap-2">
+                      {reservation.isRated ? (
+                        <div className="flex items-center">
+                          {Array.from({ length: reservation.rating || 0 }).map((_, i) => (
+                            <Star
+                              key={`reservation-${index}-star-${i}`}
+                              className="w-4 h-4 text-[var(--gold)]"
+                            />
+                          ))}
+                        </div>
+                      ) : (
+                        <Button
+                          variant="outline"
+                          className="text-sm border-gold/30 hover:border-gold/60"
+                          onClick={() => setRatingDialog(reservation.id)}
+                        >
+                          Calificar
+                        </Button>
+                      )}
+                    </div>
+                  )}
+                  <p className="text-sm" style={{ color: 'var(--card-foreground)' }}>
+                    {service.description}
+                  </p>
+                </div>
+              </div>
+              <RatingDialog reservationId={reservation.id} />
+            </Card>
+          );
+        })}
       </div>
 
       {/* ✅ ADD THIS RENDER LOGIC OUTSIDE THE MAP LOOP */}
       {(() => {
         // Find the full reservation object that matches the ID in our state
-        const activeReservation = reservations.find((r) => r.id === redeemDialog);
+        const activeReservation = reservations?.find((r) => r.id === redeemDialog);
 
         if (!activeReservation) {
           return null;
         }
         return (
           <RedeemDialog
-            spirit={activeReservation.account.spirit}
-            service={activeReservation.service}
+            spirit={account.spirit}
+            service={activeReservation.service as Service}
             songUrl={'/song.mp3'}
             onClose={() => executeRedeem(activeReservation)}
           />

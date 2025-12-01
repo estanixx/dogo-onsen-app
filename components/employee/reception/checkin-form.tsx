@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import { getAvailablePrivateVenues, getSpirit } from '@/lib/api/index';
+import { createVenueAccount, getAvailablePrivateVenues, getSpirit } from '@/lib/api/index';
 import SpiritSelect from './spirit-select';
 import { Label } from '@/components/ui/label';
 import { Calendar } from '@/components/ui/calendar';
@@ -28,6 +28,7 @@ import {
 import { useForm } from 'react-hook-form';
 import { int, z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { VenueAccount } from '@/lib/types';
 
 export type CheckInResult = {
   venueId: string;
@@ -112,7 +113,7 @@ export default function CheckInForm({ initialValues }: CheckInFormProps) {
     };
   }, [watchedCheckin, watchedCheckout]);
 
-  const onSubmit = (values: FormValues) => {
+  const onSubmit = async (values: FormValues) => {
     const spirit = getSpirit(values.id);
     if (!spirit) {
       toast.error('No se encontró el espíritu seleccionado.', { duration: 4000 });
@@ -122,7 +123,20 @@ export default function CheckInForm({ initialValues }: CheckInFormProps) {
     setIsSuccess(true);
 
     // Generate a new PIN. In the future this should be handled by the backend
-    const newPin = Math.floor(1000 + Math.random() * 9000).toString();
+    const account = await createVenueAccount({
+      spiritId: values.id,
+      privateVenueId: values.room,
+      startTime: values.checkin,
+      endTime: values.checkout,
+    });
+    if (!account) {
+      toast.error('Error al crear la cuenta de la habitación. Inténtalo de nuevo.', {
+        duration: 8000,
+      });
+      setIsSuccess(false);
+      return;
+    }
+    const newPin = account.pin;
     setPin(newPin);
 
     toast.success(`Habitación ${values.room} reservada con éxito. \nPIN de seguridad: ${newPin}`, {

@@ -14,8 +14,7 @@ import {
   SelectItem,
   SelectValue,
 } from '@/components/ui/select';
-import { getReservations } from '@/lib/api';
-import { TIME_SLOTS } from '@/lib/api/constants';
+import { getReservations, getTimeSlots } from '@/lib/api';
 import ReservationCard from './reservation-card';
 import { LoadingBox } from '@/components/shared/loading';
 import { format } from 'date-fns';
@@ -35,6 +34,16 @@ export default function ReservationSidebar({ service }: Props) {
   const [reservations, setReservations] = useState<Reservation[]>([]);
   const { setOpen } = useSidebar();
   const rootRef = useRef<HTMLElement | null>(null);
+  const [timeSlots, setTimeSlots] = useState<string[]>([]);
+
+  useEffect(() => {
+    const fetchTimeSlots = async () => {
+      // Fetch time slots from the API
+      const slots = await getTimeSlots();
+      setTimeSlots(slots);
+    };
+    fetchTimeSlots();
+  }, []);
 
   // Format date as YYYY-MM-DD for the API
   const dateStr = format(date, 'yyyy-MM-dd');
@@ -112,7 +121,7 @@ export default function ReservationSidebar({ service }: Props) {
             </SelectTrigger>
             <SelectContent>
               <SelectItem value=" ">(Todos)</SelectItem>
-              {TIME_SLOTS.map((t) => (
+              {timeSlots.map((t) => (
                 <SelectItem key={t} value={t}>
                   {t}
                 </SelectItem>

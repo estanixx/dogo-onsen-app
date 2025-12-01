@@ -21,6 +21,7 @@ import {
   getAvailableTimeSlotsForService } from '@/lib/api';
 import { Service, VenueAccount } from '@/lib/types';
 import { format } from 'date-fns';
+import { useRouter } from 'next/navigation';
 import * as React from 'react';
 import { toast } from 'sonner';
 
@@ -32,13 +33,12 @@ interface Props {
 }
 
 export default function ServiceBookConfirm({ service, open, setOpen, account }: Props) {
-  const { addReservation } = useReservations(); 
 
   const [date, setDate] = React.useState<Date>(new Date());
   const [time, setTime] = React.useState<string | null>(null);
   const [availableTimeSlots, setAvailableTimeSlots] = React.useState<string[] | null>(null);
   const [loading, setLoading] = React.useState(false);
-
+  const router = useRouter();
   React.useEffect(() => {
     setAvailableTimeSlots(null);
     getAvailableTimeSlotsForService(service.id, date).then((slots) => {
@@ -60,18 +60,15 @@ export default function ServiceBookConfirm({ service, open, setOpen, account }: 
         date,
         timeSlot: time,
       });
-      const fullReservation = { ...reservation, service };
-      // 👉 Se guarda globalmente (context + localStorage sincronizado)
 
       if (!reservation) {
         toast.error('No se pudo crear la reservación');
         return;
       }
-      // addReservation(fullReservation);
-      // toast.success(`Reservación confirmada: ${service.name} - ${format(date, 'PPP')} ${time}`, {
-      //   duration: 4000,
-      // }); @estanixx DECOMENTAR
-
+      toast.success(`Reservación confirmada: ${service.name} - ${format(date, 'PPP')} ${time}`, {
+        duration: 4000,
+      }); 
+      router.refresh();
       setOpen(false);
     } catch (error) {
       console.error(error);

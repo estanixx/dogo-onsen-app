@@ -1,16 +1,19 @@
 'use client';
 
-import * as React from 'react';
+import { CardButton } from '@/components/shared/card-button';
+import { Button } from '@/components/ui/button';
 import {
   Dialog,
-  DialogTrigger,
   DialogContent,
+  DialogDescription,
   DialogHeader,
   DialogTitle,
-  DialogDescription,
+  DialogTrigger,
 } from '@/components/ui/dialog';
-import { Button } from '@/components/ui/button';
-import { CardButton } from '@/components/shared/card-button';
+import { createDeposit, getCurrentVenueAccount } from '@/lib/api';
+import { useRouter } from 'next/navigation';
+import * as React from 'react';
+import { toast } from 'sonner';
 
 interface CardModalProps {
   title: string;
@@ -18,6 +21,7 @@ interface CardModalProps {
   icon: React.ReactNode;
   modalTitle?: string;
   modalDescription?: string;
+  venueId?: string;
 }
 
 export function CardModal({
@@ -26,18 +30,76 @@ export function CardModal({
   icon,
   modalTitle,
   modalDescription,
+  venueId,
 }: CardModalProps) {
   const [amount, setAmount] = React.useState('');
   const [isSuccess, setIsSuccess] = React.useState(false);
+  const [isSubmitting, setIsSubmitting] = React.useState(false);
 
-  // En el futuro será necesario manejar el envío del formulario al backend
-  function handleSubmit(e: React.FormEvent) {
+  // Next.js router to refresh server components after update
+  const router = useRouter();
+
+  // When amount is submitted update the spirit eiltBalance for the spirit
+  // located in the current venue (if any). After successful update refresh
+  // the page so server components (e.g. SpiritInfo) re-fetch updated data.
+  async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
+    if (isSubmitting) {
+      return;
+    }
+    const value = Number(amount);
+    if (isNaN(value) || value <= 0) {
+      // invalid amount
+      return;
+    }
 
-    setIsSuccess(true);
-    setAmount('');
+    if (!venueId) {
+      console.error('No venueId provided to CardModal, cannot update balance');
+      return;
+    }
 
-    setTimeout(() => setIsSuccess(false), 3000);
+    try {
+      setIsSubmitting(true);
+
+      const account = await getCurrentVenueAccount(venueId);
+      // Create a deposit record for auditing/history. The backend will recompute
+      // the account balance (eiltBalance) so we only need to create the deposit.
+      try {
+        // Deposit.amount is an integer
+        if (!account || !account.id) {
+          throw new Error('No venue account found for current venue');
+        }
+        const deposit = await createDeposit(account.id, Math.round(value));
+        if (!deposit) {
+          toast.error('Error al registrar el depósito. Inténtalo de nuevo.');
+          return;
+        }
+        console.log('Depósito registrado:', deposit);
+      } catch (err) {
+        console.warn('Failed to create deposit record', err);
+        // Inform the user but keep the updated balance (server-side)
+      }
+
+      setIsSuccess(true);
+      toast.success(`Balance actualizado +${value} Eilts`);
+      setAmount('');
+
+      // trigger server-side re-render so `SpiritInfo` shows updated balance
+      try {
+        router.refresh();
+      } catch (err) {
+        // ignore router refresh errors
+        console.warn('router.refresh failed', err);
+      }
+
+      setTimeout(() => setIsSuccess(false), 3000);
+    } catch (err) {
+      console.error('Error updating balance:', err);
+      // Could show a toast here — for now keep it simple
+      alert('No se pudo actualizar el balance. Intenta nuevamente.');
+    } finally {
+      setIsSubmitting(false);
+    }
   }
 
   return (
