@@ -1,11 +1,10 @@
 'use client';
 
-import * as React from 'react';
 import { Button } from '@/components/ui/button';
-import clsx from 'clsx';
 import { getSpiritType } from '@/lib/api';
-import { SpiritType } from '@/lib/types';
-import { toLowerCase } from 'zod';
+import clsx from 'clsx';
+import * as React from 'react';
+import { toast } from 'sonner';
 
 const dataURLtoFile = (dataurl: string, filename: string): File => {
   const arr = dataurl.split(',');
@@ -32,19 +31,20 @@ interface CameraCaptureProps {
   typeId: string;
   onCapture: (dataUrl: string) => void; // Para vista previa inmediata local
   onUploadComplete?: (s3Url: string, faces: DetectedFace[]) => void; // Para cuando el backend responda
-  onError?: (message: string) => void;
 }
 
 export default function CameraCapture({
   typeId,
   onCapture,
   onUploadComplete,
-  onError,
 }: CameraCaptureProps) {
   const videoRef = React.useRef<HTMLVideoElement | null>(null);
   const canvasRef = React.useRef<HTMLCanvasElement | null>(null);
   const [stream, setStream] = React.useState<MediaStream | null>(null);
   const [isUploading, setIsUploading] = React.useState(false);
+  // When true the 'Tomar foto' button is disabled after being clicked
+  // It will be re-enabled only if an error occurs during processing/upload
+  const [isTakeDisabled, setIsTakeDisabled] = React.useState(false);
 
   React.useEffect(() => {
     return () => {
@@ -65,7 +65,11 @@ export default function CameraCapture({
   };
 
   const take = async () => {
+    // Disable the take button immediately to prevent duplicates.
+    setIsTakeDisabled(true);
     if (!videoRef.current || !canvasRef.current) {
+      // If we don't have the elements we re-enable the button so user can retry
+      setIsTakeDisabled(false);
       return;
     }
     const video = videoRef.current;
@@ -88,9 +92,12 @@ export default function CameraCapture({
         const file = dataURLtoFile(dataUrl, `capture-${Date.now()}.png`);
 
         if (!typeId) {
-          console.error('ERROR CRÍTICO: No hay typeId seleccionado.');
-          alert('Error: No se ha seleccionado el tipo de espíritu.');
+          console.error('No hay typeId seleccionado.');
+          const message = 'Error: No se ha seleccionado el tipo de espíritu.';
+          toast.error(message);
           setIsUploading(false);
+          // Upload path failed — allow the user to take another photo
+          setIsTakeDisabled(false);
           return;
         }
         let templateName = '';
@@ -102,8 +109,11 @@ export default function CameraCapture({
           templateName = type.image;
         } catch (typeError) {
           console.error('Error obteniendo tipo de espíritu:', typeError);
-          alert('Error al identificar el tipo de espíritu.');
+          const message = 'Error al identificar el tipo de espíritu.';
+          toast.error(message);
           setIsUploading(false);
+          // Allow retry on error
+          setIsTakeDisabled(false);
           return;
         }
 
@@ -128,12 +138,16 @@ export default function CameraCapture({
           try {
             const errorData = await response.json();
             const mensajeBackend = errorData.detail || 'Error desconocido';
-            alert(`⚠️ Atención: ${mensajeBackend}`);
+            const message = `⚠️ Atención: ${mensajeBackend}`;
+            toast.error(message);
           } catch (parseError) {
             console.error('Error parseando respuesta de error:', parseError);
-            alert('Error 500: El servidor falló internamente.');
+            const message = 'Error 500: El servidor falló internamente.';
+            toast.error(message);
           }
           setIsUploading(false);
+          // Re-enable take button so user can try again after server error
+          setIsTakeDisabled(false);
           return;
         }
 
@@ -144,7 +158,10 @@ export default function CameraCapture({
         onUploadComplete(data.url, data.faces || []);
       } catch (error) {
         console.error('Error de red o inesperado:', error);
-        alert('Hubo un error de conexión al subir la imagen.');
+        const message = 'Hubo un error de conexión al subir la imagen.';
+        toast.error(message);
+        // Network/unexpected error — allow user to try again
+        setIsTakeDisabled(false);
       } finally {
         setIsUploading(false);
       }
@@ -157,7 +174,7 @@ export default function CameraCapture({
         <Button type="button" onClick={start} variant="outline">
           Abrir cámara
         </Button>
-        <Button type="button" onClick={take} variant="default">
+        <Button type="button" onClick={take} variant="default" disabled={isTakeDisabled}>
           Tomar foto
         </Button>
       </div>

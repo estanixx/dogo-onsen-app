@@ -58,7 +58,7 @@ export default function CheckInForm({ initialValues }: CheckInFormProps) {
   const schema = z
     .object({
       id: z.string().min(1, 'Selecciona un espíritu'),
-      room: z.string().min(1, 'Selecciona una habitación'),
+      room: z.string().min(1, 'Selecciona una habitación').nonempty('Selecciona una habitación'),
       checkin: z.date().refine((d) => d >= startOfDay(), {
         message: 'La fecha de entrada debe ser hoy o posterior',
       }),
@@ -97,9 +97,7 @@ export default function CheckInForm({ initialValues }: CheckInFormProps) {
           return;
         }
         const data = await getAvailablePrivateVenues(watchedCheckin, watchedCheckout);
-        if (mounted) {
-          setVenues(data.filter((v) => v.state === true));
-        }
+        setVenues(data);
       } catch (err) {
         console.error('Failed to load venues', err);
         if (mounted) {
@@ -250,6 +248,11 @@ export default function CheckInForm({ initialValues }: CheckInFormProps) {
                       <SelectValue placeholder="Selecciona una habitación" />
                     </SelectTrigger>
                     <SelectContent className="bg-[var(--dark)] text-[var(--smoke)]">
+                      {venues.length === 0 && (
+                        <SelectItem value=" " disabled>
+                          No hay habitaciones disponibles
+                        </SelectItem>
+                      )}
                       {venues.map((v) => (
                         <SelectItem key={v.id} value={v.id}>
                           Habitación {v.id}

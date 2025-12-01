@@ -92,6 +92,7 @@ export interface BanquetTable {
   id: string;
   capacity: 6;
   availableSeats: BanquetSeat[];
+  available: boolean;
   occupiants: Spirit[];
   state: boolean;
 }

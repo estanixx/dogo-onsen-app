@@ -37,8 +37,8 @@ export default function TableItem({ table, selectedDate, selectedTime }: TableSe
         {/* Asientos — 6 en total */}
         {table.availableSeats.map((seat: BanquetSeat) => {
           // Verificar si el asiento ya está reservado (para esta fecha y hora)
-          const isReserved = seat.reservationId !== '';
-          const isAvailable = seat.available;
+          const isReserved = seat.reservationId && seat.reservationId !== '';
+          const isAvailable = seat.available && table.available;
           const colorClass = clsx({
             'bg-destructive text-black': isReserved,
             'bg-secondary text-black': isAvailable,

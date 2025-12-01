@@ -16,10 +16,10 @@ import {
 } from '@/lib/api';
 import { BanquetTable, Reservation, VenueAccount } from '@/lib/types';
 import { format } from 'date-fns';
+import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
 import TableItem from './table-item';
-import { useRouter } from 'next/navigation';
 
 interface BanquetLayoutProps {
   account: VenueAccount;
@@ -189,7 +189,13 @@ export default function BanquetLayout({ account, venueId }: BanquetLayoutProps) 
           <ToggleGroup
             type="single"
             value={selectedSeat !== null ? String(selectedSeat) : undefined}
-            onValueChange={(value) => setSelectedSeat((prev) => (prev === value ? null : value))}
+            onValueChange={(value) =>
+              setSelectedSeat((prev) => {
+                // ToggleGroup delivers selected values as strings — parse to number
+                const parsed = value != null ? Number(value) : null;
+                return prev === parsed ? null : parsed;
+              })
+            }
             className="w-full grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-6 p-6"
           >
             {tables.map((table) => (

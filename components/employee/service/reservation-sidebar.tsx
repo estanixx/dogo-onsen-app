@@ -22,6 +22,7 @@ import { ScrollArea } from '@radix-ui/react-scroll-area';
 import { useSidebar } from '@/components/ui/sidebar';
 import { useRef } from 'react';
 import { X } from 'lucide-react';
+import { createDatetimeFromDateAndTime } from '@/lib/utils';
 
 type Props = {
   service: Service;
@@ -46,7 +47,7 @@ export default function ReservationSidebar({ service }: Props) {
   }, []);
 
   // Format date as YYYY-MM-DD for the API
-  const dateStr = format(date, 'yyyy-MM-dd');
+  const dateStr = format(date, 'yyyy/MM/dd');
 
   useEffect(() => {
     let mounted = true;

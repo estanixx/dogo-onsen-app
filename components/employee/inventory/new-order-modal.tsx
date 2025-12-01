@@ -1,24 +1,26 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { Button } from '@/components/ui/button';
 import {
   Dialog,
   DialogContent,
+  DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogFooter,
 } from '@/components/ui/dialog';
-import { Button } from '@/components/ui/button';
-import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
-import { toast } from 'sonner';
-import { createInventoryOrder, getInventoryItems } from '@/lib/api';
-import { InventoryItem } from '@/lib/types';
+import { Label } from '@/components/ui/label';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import { useEmployee } from '@/context/employee-context';
+import { createInventoryOrder, getInventoryItems } from '@/lib/api';
+import { InventoryItem, InventoryOrder } from '@/lib/types';
+import { useEffect, useState } from 'react';
+import { toast } from 'sonner';
 
 interface NewOrderModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
+  onOrderCreated?: (order: InventoryOrder) => void;
 }
 
 interface OrderItem {
@@ -26,10 +28,12 @@ interface OrderItem {
   quantity: number;
 }
 
-export function NewOrderModal({ open, onOpenChange }: NewOrderModalProps) {
+export function NewOrderModal({ open, onOpenChange, onOrderCreated }: NewOrderModalProps) {
   const [items, setItems] = useState<OrderItem[]>([{ productId: '', quantity: 1 }]);
   const [products, setProducts] = useState<InventoryItem[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [deliveryDate, setDeliveryDate] = useState<string | null>(null);
+  const { employeeProfile } = useEmployee();
 
   useEffect(() => {
     async function loadProducts() {
@@ -61,7 +65,16 @@ export function NewOrderModal({ open, onOpenChange }: NewOrderModalProps) {
   const handleSubmit = async () => {
     try {
       setIsLoading(true);
-      await createInventoryOrder(items);
+      const idEmployee = employeeProfile?.clerkId ?? employeeProfile?.id ?? 'unknown';
+      // deliveryDate should be an ISO string; the input uses datetime-local so we normalize
+      const payloadDelivery = deliveryDate
+        ? new Date(deliveryDate).toISOString()
+        : new Date().toISOString();
+      const order = await createInventoryOrder(items, {
+        idEmployee,
+        deliveryDate: payloadDelivery,
+      });
+      onOrderCreated?.(order);
       toast.success('Pedido creado correctamente');
       onOpenChange(false);
       setItems([{ productId: '', quantity: 1 }]);
@@ -92,6 +105,21 @@ export function NewOrderModal({ open, onOpenChange }: NewOrderModalProps) {
         </DialogHeader>
 
         <ScrollArea className="py-4 px-2 overflow-y-hidden max-h-[70vh]">
+          <div className="mb-4">
+            <Label
+              htmlFor="delivery-date"
+              className="text-sm font-bold tracking-wider text-[var(--smoke)]"
+            >
+              Fecha de entrega
+            </Label>
+            <input
+              id="delivery-date"
+              type="datetime-local"
+              value={deliveryDate ?? ''}
+              onChange={(e) => setDeliveryDate(e.target.value)}
+              className="w-full bg-background border border-white/20 rounded-md p-2 text-white"
+            />
+          </div>
           {items.map((item, index) => (
             <div key={index} className="my-4 grid grid-cols-[1fr,auto,auto] gap-4 items-end">
               <div>
@@ -167,6 +195,8 @@ export function NewOrderModal({ open, onOpenChange }: NewOrderModalProps) {
             className="bg-primary hover:bg-primary/80"
             disabled={
               isLoading ||
+              !deliveryDate ||
+              !employeeProfile ||
               items.some((item) => {
                 return !item.productId;
               })

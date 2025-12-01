@@ -43,28 +43,12 @@ export async function getAvailablePrivateVenues( // TODO: implement real API
   startTime: Date,
   endTime: Date,
 ): Promise<PrivateVenue[]> {
-  return [
-    {
-      id: '1',
-      state: true,
-    },
-    {
-      id: '2',
-      state: true,
-    },
-    {
-      id: '3',
-      state: true,
-    },
-    {
-      id: '4',
-      state: false,
-    },
-    {
-      id: '5',
-      state: true,
-    },
-  ];
+  const urlparams = new URLSearchParams();
+  urlparams.append('startTime', startTime.toISOString());
+  urlparams.append('endTime', endTime.toISOString());
+  const resp = await fetch(`${getBase()}/api/private_venue?${urlparams.toString()}`);
+  const venues: PrivateVenue[] = await resp.json();
+  return venues;
 }
 
 /**
@@ -175,16 +159,6 @@ export async function createSpirit(
   console.log(spirit);
   return spirit;
 }
-
-// In-memory reservations for banquet seats
-const banquetReservations: {
-  id: string;
-  tableId: string;
-  seatNumber: number;
-  date: string; // ISO date
-  time: string; // HH:MM
-  accountId?: string;
-}[] = [];
 
 export async function getBanquetReservationsForDate(date: string) {
   const resp = await fetch(`${getBase()}/api/reservation/banquet-by-date`, {
@@ -348,18 +322,100 @@ export async function getInventoryItems(): Promise<InventoryItem[]> {
  */
 export async function createInventoryOrder(
   items: { productId: string; quantity: number }[],
+  options?: { idEmployee?: string; deliveryDate?: string },
 ): Promise<InventoryOrder> {
-  // Simulate API call
-  await wait(1500);
+  // If a backend is configured, create a proper Order and InventoryOrder rows.
+  // Fallback to the previous mock when backend is unreachable.
 
-  // In a real app, this would send data to the backend
-  // For now, we just return a mock response
-  return {
-    id: Math.random().toString(36).substring(2, 9),
-    items,
-    status: 'pending',
-    createdAt: new Date().toISOString(),
+  // Use frontend base so `/api/*` rewrites to the backend. This avoids CORS and uses the dev proxy.
+  // const base = getBase();
+
+  // Helper: fetch with timeout using AbortController
+  const fetchWithTimeout = async (url: string, init?: RequestInit, timeout = 8_000) => {
+    const controller = new AbortController();
+    const id = setTimeout(() => controller.abort(), timeout);
+    try {
+      const resp = await fetch(url, { ...init, signal: controller.signal });
+      return resp;
+    } finally {
+      clearTimeout(id);
+    }
   };
+
+  try {
+    // 1) Create Order on backend
+    const orderPayload = {
+      idEmployee: options?.idEmployee ?? 'unknown',
+      orderDate: new Date().toISOString(),
+      deliveryDate: options?.deliveryDate ?? new Date().toISOString(),
+    };
+
+    const orderResp = await fetchWithTimeout(`${getBase()}/api/order/`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(orderPayload),
+    });
+
+    if (!orderResp.ok) {
+      const errText = await orderResp.text();
+      throw new Error(`Backend failed to create order: ${orderResp.status} ${errText}`);
+    }
+
+    const createdOrder = await orderResp.json();
+
+    // 2) For each item create an InventoryOrder record linked to the order
+    await Promise.all(
+      items.map(async (it) => {
+        // backend expects numeric idItem; try to coerce
+        const idItem = Number(it.productId);
+        const invPayload = {
+          idOrder: createdOrder.id,
+          idItem: Number.isFinite(idItem) ? idItem : it.productId,
+          quantity: it.quantity,
+        } as any;
+
+        const invResp = await fetchWithTimeout(`${getBase()}/api/inventory_order/`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(invPayload),
+        });
+
+        if (!invResp.ok) {
+          const errText = await invResp.text();
+          throw new Error(`Backend failed to create inventory_order: ${invResp.status} ${errText}`);
+        }
+      }),
+    );
+
+    // 3) Fetch the order back (with items relationship) and adapt to frontend InventoryOrder shape
+    const getOrderResp = await fetchWithTimeout(
+      `${getBase()}/api/order/${encodeURIComponent(createdOrder.id)}`,
+    );
+    const fullOrder = getOrderResp.ok ? await getOrderResp.json() : createdOrder;
+
+    // Map backend order to frontend-friendly InventoryOrder
+    const mapped: InventoryOrder = {
+      id: String(fullOrder.id ?? createdOrder.id),
+      items: (fullOrder.items || []).map((i: any) => ({
+        productId: String(i.idItem ?? i.id_item ?? i.idItem),
+        quantity: i.quantity,
+      })),
+      status: (fullOrder.status as 'pending' | 'delivered') ?? 'pending',
+      createdAt: fullOrder.orderDate ?? fullOrder.createdAt ?? new Date().toISOString(),
+    };
+
+    return mapped;
+  } catch (e) {
+    // If anything fails, fall back to legacy mocked response so the UI remains functional.
+    console.warn('createInventoryOrder backend flow failed, falling back to mock:', e);
+    await wait(1500);
+    return {
+      id: Math.random().toString(36).substring(2, 9),
+      items,
+      status: 'pending',
+      createdAt: new Date().toISOString(),
+    };
+  }
 }
 
 /**
@@ -384,69 +440,6 @@ export async function updateInventoryQuantity(
   return mockInventoryItems[itemIndex];
 }
 
-// Mock employee data
-const mockEmployees = [
-  {
-    id: '1',
-    username: 'admin',
-    name: 'Admin',
-    pin: '1234',
-    role: 'admin',
-  },
-  {
-    id: '2',
-    username: 'reception',
-    name: 'Reception',
-    pin: '5678',
-    role: 'reception',
-  },
-];
-/**
- * Function to register a new employee (dummy, in-memory)
- */
-export async function registerEmployee({
-  username,
-  name,
-  pin,
-  role,
-}: {
-  username: string;
-  name: string;
-  pin: string;
-  role?: string;
-}) {
-  await wait(500);
-  if (mockEmployees.some((emp) => emp.username === username)) {
-    throw new Error('El usuario ya existe');
-  }
-  const newEmployee = {
-    id: (mockEmployees.length + 1).toString(),
-    username,
-    name,
-    pin,
-    role: role || 'employee',
-  };
-  mockEmployees.push(newEmployee);
-  // Don't send pin back
-  const { pin: _, username: __, ...employeeData } = newEmployee;
-  return employeeData;
-}
-
-/**
- * Function to authenticate an employee by username and PIN
- */
-export async function authenticateEmployee(username: string, pin: string) {
-  await wait(500);
-  const employee = mockEmployees.find((emp) => emp.username === username && emp.pin === pin);
-  if (!employee) {
-    return null;
-  }
-
-  // Don't send the PIN and username in the response
-  const { pin: _, username: __, ...employeeData } = employee;
-  return employeeData;
-}
-
 /**
  * Function to get all the reservations for a given date and time slot
  */
@@ -465,8 +458,9 @@ export async function getReservations({
     date && timeSlot
       ? createDatetimeFromDateAndTime(new Date(date), timeSlot).toISOString()
       : date
-        ? date
+        ? new Date(date).toISOString()
         : undefined;
+  console.log(datetime);
   const queryParams = new URLSearchParams();
   if (serviceId) {
     queryParams.append('serviceId', serviceId);

@@ -48,7 +48,6 @@ export function createDatetimeFromDateAndTime(date: Date, timeString: string): D
   ) {
     throw new Error(`Invalid time values in: ${timeString}`);
   }
-
   const combined = new Date(date);
   combined.setHours(hours, minutes, seconds, 0);
   return combined;
