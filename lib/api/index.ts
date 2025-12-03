@@ -3,6 +3,7 @@ import {
   Deposit,
   InventoryItem,
   InventoryOrder,
+  Order,
   PrivateVenue,
   Reservation,
   Service,
@@ -318,19 +319,12 @@ export async function getInventoryItems(): Promise<InventoryItem[]> {
 }
 
 /**
- * Function to create a new inventory order
+ * Function to create a new order and inventory orders
  */
-export async function createInventoryOrder(
-  items: { productId: string; quantity: number }[],
-  options?: { idEmployee?: string; deliveryDate?: string },
-): Promise<InventoryOrder> {
-  // If a backend is configured, create a proper Order and InventoryOrder rows.
-  // Fallback to the previous mock when backend is unreachable.
-
-  // Use frontend base so `/api/*` rewrites to the backend. This avoids CORS and uses the dev proxy.
-  // const base = getBase();
-
-  // Helper: fetch with timeout using AbortController
+export async function createOrder(
+  items: { idOrder: string; idItem: number; quantity: number }[],
+  options?: { idEmployee?: string; orderDate?: string; deliveryDate?: string },
+): Promise<Order> {
   const fetchWithTimeout = async (url: string, init?: RequestInit, timeout = 8_000) => {
     const controller = new AbortController();
     const id = setTimeout(() => controller.abort(), timeout);
@@ -346,7 +340,7 @@ export async function createInventoryOrder(
     // 1) Create Order on backend
     const orderPayload = {
       idEmployee: options?.idEmployee ?? 'unknown',
-      orderDate: new Date().toISOString(),
+      orderDate: options?.orderDate ?? new Date().toISOString(),
       deliveryDate: options?.deliveryDate ?? new Date().toISOString(),
     };
 
@@ -366,13 +360,11 @@ export async function createInventoryOrder(
     // 2) For each item create an InventoryOrder record linked to the order
     await Promise.all(
       items.map(async (it) => {
-        // backend expects numeric idItem; try to coerce
-        const idItem = Number(it.productId);
         const invPayload = {
           idOrder: createdOrder.id,
-          idItem: Number.isFinite(idItem) ? idItem : it.productId,
+          idItem: it.idItem,
           quantity: it.quantity,
-        } as any;
+        } as InventoryOrder;
 
         const invResp = await fetchWithTimeout(`${getBase()}/api/inventory_order/`, {
           method: 'POST',
@@ -387,33 +379,33 @@ export async function createInventoryOrder(
       }),
     );
 
-    // 3) Fetch the order back (with items relationship) and adapt to frontend InventoryOrder shape
+    // 3) Fetch the order back and map to Order shape
     const getOrderResp = await fetchWithTimeout(
       `${getBase()}/api/order/${encodeURIComponent(createdOrder.id)}`,
     );
     const fullOrder = getOrderResp.ok ? await getOrderResp.json() : createdOrder;
 
-    // Map backend order to frontend-friendly InventoryOrder
-    const mapped: InventoryOrder = {
+    // Map backend order to frontend Order type
+    const mapped: Order = {
       id: String(fullOrder.id ?? createdOrder.id),
-      items: (fullOrder.items || []).map((i: any) => ({
-        productId: String(i.idItem ?? i.id_item ?? i.idItem),
+      items: (fullOrder.items || []).map((i: InventoryOrder) => ({
+        idOrder: String(fullOrder.id),
+        idItem: i.idItem,
         quantity: i.quantity,
       })),
-      status: (fullOrder.status as 'pending' | 'delivered') ?? 'pending',
-      createdAt: fullOrder.orderDate ?? fullOrder.createdAt ?? new Date().toISOString(),
+      orderDate: fullOrder.orderDate ?? new Date().toISOString(),
+      deliveryDate: fullOrder.deliveryDate ?? new Date().toISOString(),
     };
 
     return mapped;
   } catch (e) {
-    // If anything fails, fall back to legacy mocked response so the UI remains functional.
-    console.warn('createInventoryOrder backend flow failed, falling back to mock:', e);
+    console.warn('createOrder backend flow failed, falling back to mock:', e);
     await wait(1500);
     return {
       id: Math.random().toString(36).substring(2, 9),
       items,
-      status: 'pending',
-      createdAt: new Date().toISOString(),
+      orderDate: options?.orderDate ?? new Date().toISOString(),
+      deliveryDate: options?.deliveryDate ?? new Date().toISOString(),
     };
   }
 }
@@ -460,7 +452,7 @@ export async function getReservations({
       : date
         ? new Date(date).toISOString()
         : undefined;
-  console.log(datetime);
+
   const queryParams = new URLSearchParams();
   if (serviceId) {
     queryParams.append('serviceId', serviceId);
@@ -510,6 +502,20 @@ export async function getBanquetTables(): Promise<BanquetTable[]> {
   return tables;
 }
 
+/**
+ * Fetch orders from backend (raw response). Backend will already filter active orders
+ * when the server-side service is configured to do so. We return the raw backend
+ * payload so callers can inspect `orderDate` and `deliveryDate`.
+ */
+export async function getOrdersRaw(): Promise<Order[]> {
+  const resp = await fetch(`${getBase()}/api/order/`);
+  if (!resp.ok) {
+    return [];
+  }
+  const orders = await resp.json();
+  return orders;
+}
+
 export async function createService(service: Service): Promise<Service | null> {
   const resp = await fetch(`${getBase()}/api/service/`, {
     method: 'POST',
@@ -537,14 +543,6 @@ export async function createServiceReservation({
   timeSlot: string;
 }): Promise<Reservation | null> {
   const startTime = createDatetimeFromDateAndTime(date, timeSlot);
-  console.log(
-    JSON.stringify({
-      serviceId,
-      accountId,
-      startTime,
-      endTime: new Date(startTime.getTime() + 60 * 60 * 1000),
-    }),
-  );
   const resp = await fetch(`${getBase()}/api/reservation`, {
     method: 'POST',
     headers: {

@@ -141,14 +141,21 @@ export interface InventoryItem {
 /**
  * Inventory Order - Represents an order for inventory items
  */
-export interface InventoryOrder {
+export interface Order {
   id: string;
   items: {
-    productId: string;
+    idOrder: string;
+    idItem: number;
     quantity: number;
   }[];
-  status: 'pending' | 'delivered';
-  createdAt: string;
+  orderDate: string;
+  deliveryDate: string;
+}
+
+export interface InventoryOrder {
+  idOrder: string;
+  idItem: number;
+  quantity: number;
 }
 
 export type EmployeeRole = 'reception' | 'banquet' | 'inventory' | 'services' | 'admin';

@@ -191,7 +191,7 @@ export default function BanquetLayout({ account, venueId }: BanquetLayoutProps) 
             onValueChange={(value) =>
               setSelectedSeat((prev) => {
                 // ToggleGroup delivers selected values as strings — parse to number
-                const parsed = value != null ? Number(value) : null;
+                const parsed = value !== null ? Number(value) : null;
                 return prev === parsed ? null : parsed;
               })
             }

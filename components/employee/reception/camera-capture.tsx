@@ -31,12 +31,14 @@ interface CameraCaptureProps {
   typeId: string;
   onCapture: (dataUrl: string) => void; // Para vista previa inmediata local
   onUploadComplete?: (s3Url: string, faces: DetectedFace[]) => void; // Para cuando el backend responda
+  onError?: (message: string) => void; // Para manejar errores
 }
 
 export default function CameraCapture({
   typeId,
   onCapture,
   onUploadComplete,
+  onError,
 }: CameraCaptureProps) {
   const videoRef = React.useRef<HTMLVideoElement | null>(null);
   const canvasRef = React.useRef<HTMLCanvasElement | null>(null);

@@ -34,7 +34,7 @@ export function ServiceDialog({ service, account }: ServiceDialogProps) {
     setServiceDialogOpen(false);
     setConfirmDialogOpen(true);
   };
-  const available = service.eiltRate <= account.eiltBalance; // @estanixx Acá hay otro error en el build
+  const available = service.eiltRate <= (account.eiltBalance ?? 0); // account.eiltBalance puede ser undefined
   const isBanquet = service.name.toLowerCase().includes('banquete');
 
   return (
