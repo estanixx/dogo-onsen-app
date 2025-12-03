@@ -1,30 +1,31 @@
 'use client';
 
-import * as React from 'react';
 import { Button } from '@/components/ui/button';
-import { useMediaQuery } from '@/hooks/use-media-query';
-import { DESKTOP_MIN_QUERY } from '@/lib/config';
 import {
   Dialog,
-  DialogTrigger,
   DialogContent,
+  DialogDescription,
   DialogHeader,
   DialogTitle,
-  DialogDescription,
+  DialogTrigger,
 } from '@/components/ui/dialog';
 import {
   Drawer,
-  DrawerTrigger,
+  DrawerClose,
   DrawerContent,
-  DrawerHeader,
-  DrawerTitle,
   DrawerDescription,
   DrawerFooter,
-  DrawerClose,
+  DrawerHeader,
+  DrawerTitle,
+  DrawerTrigger,
 } from '@/components/ui/drawer';
-import SpiritForm from './spirit-form';
+
+import { useMediaQuery } from '@/hooks/use-media-query';
+import { DESKTOP_MIN_QUERY } from '@/lib/config';
 import clsx from 'clsx';
-import { Spirit } from '@/lib/types';
+import * as React from 'react';
+import SpiritForm from './spirit-form';
+import { ScrollArea } from '@radix-ui/react-scroll-area';
 
 interface SpiritSelectProps {
   id: string;
@@ -56,15 +57,23 @@ export default function SpiritSelect({ id, setId }: SpiritSelectProps) {
   return (
     <Drawer open={open} onOpenChange={setOpen}>
       <DrawerTrigger asChild>{btn}</DrawerTrigger>
-      <DrawerContent className={clsx(sharedClass, 'px-4')}>
-        <DrawerHeader>
+      <DrawerContent
+        className={clsx(sharedClass, 'px-4 max-h-[100vh] flex flex-col overflow-hidden')}
+      >
+        <DrawerHeader className="flex-shrink-0">
           <DrawerTitle>Buscar / Crear Espíritu</DrawerTitle>
           <DrawerDescription>
             Ingrese el número de identificación para buscar o crear un registro.
           </DrawerDescription>
         </DrawerHeader>
-        <SpiritForm id={id} setId={setId} setOpen={setOpen} />
-        <DrawerFooter>
+
+        <ScrollArea className="flex-1 overflow-auto">
+          <div className="px-0 pb-4">
+            <SpiritForm id={id} setId={setId} setOpen={setOpen} />
+          </div>
+        </ScrollArea>
+
+        <DrawerFooter className="flex-shrink-0">
           <DrawerClose asChild>
             <Button variant="outline">Cerrar</Button>
           </DrawerClose>

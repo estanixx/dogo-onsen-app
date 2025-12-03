@@ -1,3 +1,5 @@
+import { number } from "zod";
+
 /**
  * Spirit Types - Represents the different categories of spirits
  */
@@ -12,6 +14,7 @@ export interface SpiritType {
  * Spirit - Represents a guest entity in the system
  */
 export interface Spirit {
+  currentlyInVenue?: boolean;
   id: string;
   name: string;
   typeId: string;
@@ -181,4 +184,16 @@ export interface EmployeeAuthState {
   isEmployeeAuthenticated: boolean;
   isEmployeeLoading: boolean;
   hasApprovedAccess: boolean;
+}
+
+
+export interface DashboardData {
+  today_occupancy_rate: number;
+  today_reservations_per_service: {
+    service: Service;
+    reservation_count: number;
+  }[];
+  stock_alerts: number;
+  pending_orders: number;
+  today_table_availability: (BanquetTable & { availableSeats: number })[];
 }

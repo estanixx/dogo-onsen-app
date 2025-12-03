@@ -1,5 +1,6 @@
 import {
   BanquetTable,
+  DashboardData,
   Deposit,
   InventoryItem,
   InventoryOrder,
@@ -588,9 +589,16 @@ export async function createVenueAccount({
       endTime,
     }),
   });
+
+  const createdAccount: VenueAccount = await resp.json();
+  return createdAccount;
+}
+
+export async function getDashboardData(): Promise<DashboardData | null> {
+  const resp = await fetch(`${getBase()}/api/dashboard`);
+  const data: any = await resp.json();
   if (!resp.ok) {
     return null;
   }
-  const createdAccount: VenueAccount = await resp.json();
-  return createdAccount;
+  return data;
 }

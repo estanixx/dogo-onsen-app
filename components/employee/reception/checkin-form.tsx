@@ -75,7 +75,7 @@ export default function CheckInForm({ initialValues }: CheckInFormProps) {
     resolver: zodResolver(schema),
     defaultValues: {
       id: initialValues?.id ?? '',
-      room: initialValues?.venueId ?? '',
+      room: initialValues?.venueId ? String(initialValues.venueId) : '',
       checkin: initialValues?.checkin ?? startOfDay(),
       checkout: initialValues?.checkout ?? startOfDay(),
     },
@@ -123,10 +123,15 @@ export default function CheckInForm({ initialValues }: CheckInFormProps) {
     // Generate a new PIN. In the future this should be handled by the backend
     const account = await createVenueAccount({
       spiritId: values.id,
-      privateVenueId: values.room,
+      privateVenueId: String(Number(values.room)),
       startTime: values.checkin,
       endTime: values.checkout,
     });
+    if(account.detail){
+      toast.error(account.detail, { duration: 8000 });
+      setIsSuccess(false);
+      return;
+    }
     if (!account) {
       toast.error('Error al crear la cuenta de la habitación. Inténtalo de nuevo.', {
         duration: 8000,
@@ -184,6 +189,7 @@ export default function CheckInForm({ initialValues }: CheckInFormProps) {
                   <PopoverContent className="w-auto overflow-hidden p-0" align="start">
                     <Calendar
                       mode="single"
+                      hidden={{ before: new Date() }}
                       selected={field.value}
                       onSelect={(d) => {
                         if (d) {
@@ -218,6 +224,7 @@ export default function CheckInForm({ initialValues }: CheckInFormProps) {
                   <PopoverContent className="w-auto overflow-hidden p-0" align="start">
                     <Calendar
                       mode="single"
+                      hidden={{ before: new Date() }}
                       selected={field.value}
                       onSelect={(d) => {
                         if (d) {
@@ -240,24 +247,25 @@ export default function CheckInForm({ initialValues }: CheckInFormProps) {
               <FormItem>
                 <FormLabel className="text-lg">Habitación</FormLabel>
                 <FormControl>
-                  <Select value={field.value} onValueChange={field.onChange}>
+                  <Select  onValueChange={field.onChange}>
                     <SelectTrigger
                       id="room"
-                      className="px-3 py-2 w-full rounded-md bg-dark border border-gold/20 focus:outline-none focus:border-gold-light text-smoke"
+                      className="px-3 py-2 w-full rounded-md bg-dark border border-gold/20 focus:outline-none focus:border-gold-light text-white"
                     >
                       <SelectValue placeholder="Selecciona una habitación" />
                     </SelectTrigger>
-                    <SelectContent className="bg-[var(--dark)] text-[var(--smoke)]">
-                      {venues.length === 0 && (
-                        <SelectItem value=" " disabled>
+                    <SelectContent className="bg-[var(--dark)] text-white">
+                      {venues.length === 0 ? (
+                        <span className='text-sm flex justify-center items-center w-full h-8'>
                           No hay habitaciones disponibles
-                        </SelectItem>
-                      )}
-                      {venues.map((v) => (
-                        <SelectItem key={v.id} value={v.id}>
+                        </span>
+                      ) : (
+                      venues.map((v) => (
+                        <SelectItem key={v.id} value={v.id.toString()} className='text-white'>
                           Habitación {v.id}
                         </SelectItem>
-                      ))}
+                      ))
+                      )}
                     </SelectContent>
                   </Select>
                 </FormControl>

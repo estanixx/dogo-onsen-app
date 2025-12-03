@@ -9,6 +9,7 @@ interface SpiritCardProps {
 }
 
 const SpiritCard: React.FC<SpiritCardProps> = ({ spirit }) => {
+  const currentlyInVenue = spirit.currentlyInVenue;
   const active = spirit.active;
   const unactive = !spirit.active;
   return (
@@ -29,16 +30,28 @@ const SpiritCard: React.FC<SpiritCardProps> = ({ spirit }) => {
         <H3 className="font-medium text-center lg:text-left">{spirit.name}</H3>
         <P className="text-sm">Tipo: {spirit.type?.name}</P>
         {/* Balance is computed on the venue account - not present on Spirit here */}
-        {active && (
-          <Badge variant="secondary" className="self-end">
-            Activo
-          </Badge>
-        )}
-        {unactive && (
-          <Badge variant="destructive" className="self-end">
-            Inactivo
-          </Badge>
-        )}
+        <div className="flex gap-1 flex-col">
+          {active && (
+            <Badge variant="secondary" className="self-end">
+              Activo
+            </Badge>
+          )}
+          {unactive && (
+            <Badge variant="destructive" className="self-end">
+              Inactivo
+            </Badge>
+          )}
+          {currentlyInVenue !== undefined &&
+            (currentlyInVenue ? (
+              <Badge variant="success" className="self-end">
+                Actualmente en el onsen
+              </Badge>
+            ) : (
+              <Badge variant="destructive" className="self-end">
+                No está en el onsen
+              </Badge>
+            ))}
+        </div>
       </span>
     </Card>
   );
