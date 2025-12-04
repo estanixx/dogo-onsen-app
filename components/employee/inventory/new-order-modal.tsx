@@ -29,7 +29,6 @@ export function NewOrderModal({ open, onOpenChange, onOrderCreated }: NewOrderMo
   const [items, setItems] = useState<InventoryOrder[]>([{ idOrder: 1, idItem: 1, quantity: 1 }]);
   const [products, setProducts] = useState<Item[]>([]);
   const [isLoading, setIsLoading] = useState(false);
-  const [deliveryDate, setDeliveryDate] = useState<string | null>(null);
   const { employeeProfile } = useEmployee();
 
   const hasInvalidItems = items.some(
@@ -92,7 +91,6 @@ export function NewOrderModal({ open, onOpenChange, onOrderCreated }: NewOrderMo
       toast.success('Pedido creado correctamente');
       onOpenChange(false);
       setItems([{ idOrder: 1, idItem: 1, quantity: 1 }]);
-      setDeliveryDate(null);
     } catch (error) {
       console.error('Error creating order:', error);
       toast.error('Error al crear el pedido');

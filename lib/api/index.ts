@@ -2,9 +2,9 @@ import {
   BanquetTable,
   DashboardData,
   Deposit,
-  InventoryItem,
   InventoryOrder,
   Item,
+  ItemIntake,
   Order,
   PrivateVenue,
   Reservation,
@@ -77,7 +77,7 @@ export async function getVenueAccountById(venueId: string): Promise<VenueAccount
 /**
  * Function to get spirit details by ID
  */
-export async function getSpirit(spiritId: string): Promise<Spirit | null> {
+export async function getSpirit(spiritId: number): Promise<Spirit | null> {
   const resp = await fetch(`${getBase()}/api/spirit/${spiritId}`);
   const spirit: Spirit | null = await resp.json();
   if (!resp.ok) {
@@ -92,7 +92,6 @@ export async function getSpirit(spiritId: string): Promise<Spirit | null> {
 export async function getSpiritType(typeId: string): Promise<SpiritType | null> {
   const resp = await fetch(`${getBase()}/api/spirit_type/${typeId}`);
   const type: SpiritType | null = await resp.json();
-  console.log(type, typeId);
   return type;
 }
 
@@ -137,7 +136,7 @@ export async function getAvailableTimeSlotsForBanquet(
 }
 
 export async function createSpirit(
-  // id: string,
+  id: number,
   name: string,
   typeId: string,
   image?: string,
@@ -150,10 +149,9 @@ export async function createSpirit(
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({
-      // id,
+      id,
       name,
       typeId,
-      type: (await getSpiritType(typeId)) as SpiritType,
       individualRecord: new Date().toISOString(),
       image,
     }),
@@ -195,14 +193,6 @@ export async function createBanquetReservation({
 }) {
   // Combine date (YYYY-MM-DD) and time (HH:mm)
   const startTime = createDatetimeFromDateAndTime(date, time);
-  console.log(
-    JSON.stringify({
-      seatId,
-      startTime,
-      endTime: new Date(startTime.getTime() + 60 * 60 * 1000),
-      accountId,
-    }),
-  );
   const resp = await fetch(`${getBase()}/api/reservation/`, {
     method: 'POST',
     headers: {
@@ -562,6 +552,28 @@ export async function createService(service: Service): Promise<Service | null> {
   return createdService;
 }
 
+/**
+ * Create an item intake (assign items to a service or seat)
+ */
+export async function createItemIntake(intake: {
+  itemId: number;
+  quantity: number;
+  serviceId?: string;
+  seatId?: number | null;
+}): Promise<ItemIntake | null> {
+  const resp = await fetch(`${getBase()}/api/item_intake/`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(intake),
+  });
+  if (!resp.ok) {
+    console.warn('createItemIntake failed', resp.status, resp.statusText);
+    return null;
+  }
+  const created = await resp.json();
+  return created ?? null;
+}
+
 export async function createServiceReservation({
   serviceId,
   accountId,
@@ -602,7 +614,7 @@ export async function createVenueAccount({
   startTime,
   endTime,
 }: {
-  spiritId: string;
+  spiritId: number;
   privateVenueId: string;
   startTime: Date;
   endTime: Date;

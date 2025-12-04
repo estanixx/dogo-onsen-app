@@ -27,13 +27,27 @@ export default function ServicesManagementPage() {
     }
   };
 
-  const handleCreateService = async (serviceData: Omit<Service, 'id' | 'rating'>) => {
+  const handleCreateService = async (
+    serviceData: Omit<Service, 'id' | 'rating'>,
+    items: { itemId: number; quantity: number }[],
+  ) => {
     // Por ahora solo simulamos la creación
     const service = await createService(serviceData as Service);
     console.log('Servicio creado:', service);
     if (!service) {
       toast.error('Error al crear el servicio. Inténtalo de nuevo.');
       return;
+    }
+    // Create item intakes linking the created service and the items
+    try {
+      const { createItemIntake } = await import('@/lib/api');
+      for (const it of items) {
+        await createItemIntake({ itemId: it.itemId, quantity: it.quantity, serviceId: service.id });
+      }
+    } catch (e) {
+      console.warn('Failed to create item intakes for service', e);
+      // Not fatal: service was created; inform user
+      toast.error('Servicio creado pero falló asignar items.');
     }
     toast.success('Servicio creado exitosamente.');
     setServices((prev) => [service, ...prev]);
@@ -53,7 +67,7 @@ export default function ServicesManagementPage() {
   return (
     <AuthRequired>
       <DogoHeader title="Servicios" className="-mt-16" />
-      <div className="border-2 border-white rounded-lg text-foreground mb-5">
+      <div className="border-2 border-white rounded-lg text-foreground mb-5 overflow-auto">
         <div className="flex flex-col gap-8 p-6">
           {/* Header Section */}
           <div className="flex flex-col gap-2">

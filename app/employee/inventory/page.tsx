@@ -48,11 +48,6 @@ export default function InventoryPage() {
     return order.items?.every((item) => item.redeemed === true) ?? false;
   };
 
-  // Temporarily allow redeeming any order for testing
-  // const canRedeemOrder = (order: Order) => {
-  //   return !isOrderRedeemed(order);
-  // };
-
   useEffect(() => {
     let mounted = true;
 

@@ -38,8 +38,8 @@ export default function FeastPage() {
     <AuthRequired>
       <DogoHeader title="Reserva de Banquete" className="-mt-16" />
       <DogoSection className="border-2 border-white rounded-lg object-cover flex w-full text-white p-6 overflow-x-auto">
-        <form className="w-full space-y-6 pb-12">
-          <span className="flex gap-3 mb-6 justify-center flex-wrap">
+        <form className="w-full space-y-6">
+          <span className="flex gap-3 mb-6 justify-center items-center flex-wrap">
             <H4 className="block text-sm text-[var(--gold)]">Número de Habitación</H4>
             <Input
               placeholder="Ingrese el número de habitación"

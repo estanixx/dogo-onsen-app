@@ -124,7 +124,7 @@ export default function BanquetLayout({ account, venueId }: BanquetLayoutProps) 
   };
 
   return (
-    <div className="w-full space-y-6 pb-12">
+    <div className="w-full space-y-6 pb-0">
       {/* Date & time selection */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pl-6">
         {/* Date */}
@@ -195,7 +195,7 @@ export default function BanquetLayout({ account, venueId }: BanquetLayoutProps) 
                 return prev === parsed ? null : parsed;
               })
             }
-            className="w-full grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-6 p-6"
+            className="w-full grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-6 p-6 mb-0"
           >
             {tables.map((table) => (
               <TableItem key={table.id} table={table} selectedDate={date} selectedTime={time} />

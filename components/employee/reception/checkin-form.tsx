@@ -33,7 +33,7 @@ import { VenueAccount } from '@/lib/types';
 export type CheckInResult = {
   venueId: string;
   pin: string;
-  id: string;
+  id: number;
   checkin: Date;
   checkout: Date;
 };
@@ -57,7 +57,7 @@ export default function CheckInForm({ initialValues }: CheckInFormProps) {
 
   const schema = z
     .object({
-      id: z.string().min(1, 'Selecciona un espíritu'),
+      id: z.int().min(1, 'Selecciona un espíritu'),
       room: z.string().min(1, 'Selecciona una habitación').nonempty('Selecciona una habitación'),
       checkin: z.date().refine((d) => d >= startOfDay(), {
         message: 'La fecha de entrada debe ser hoy o posterior',
@@ -74,7 +74,7 @@ export default function CheckInForm({ initialValues }: CheckInFormProps) {
   const form = useForm<FormValues>({
     resolver: zodResolver(schema),
     defaultValues: {
-      id: initialValues?.id ?? '',
+      id: isNaN(initialValues?.id || 0) ? initialValues?.id : 0,
       room: initialValues?.venueId ? String(initialValues.venueId) : '',
       checkin: initialValues?.checkin ?? startOfDay(),
       checkout: initialValues?.checkout ?? startOfDay(),
@@ -84,7 +84,7 @@ export default function CheckInForm({ initialValues }: CheckInFormProps) {
   const { control, watch, setValue, reset } = form;
 
   const clearForm = () =>
-    reset({ id: '', room: '', checkin: startOfDay(), checkout: startOfDay() });
+    reset({ id: 0, room: '', checkin: startOfDay(), checkout: startOfDay() });
 
   const watchedCheckin = watch('checkin');
   const watchedCheckout = watch('checkout');
@@ -127,7 +127,7 @@ export default function CheckInForm({ initialValues }: CheckInFormProps) {
       startTime: values.checkin,
       endTime: values.checkout,
     });
-    if(account.detail){
+    if(account && account?.detail){
       toast.error(account.detail, { duration: 8000 });
       setIsSuccess(false);
       return;

@@ -26,8 +26,8 @@ import { useSpirit } from '@/context/spirit-context';
 import { toast } from 'sonner';
 
 interface SpiritSelectProps {
-  id: string;
-  setId: (id: string) => void;
+  id: number;
+  setId: (id: number) => void;
   setOpen: (open: boolean) => void;
 }
 
@@ -67,14 +67,14 @@ export default function SpiritForm({ id, setId, setOpen }: SpiritSelectProps) {
   const onSubmit = async (values: CreateSpiritValues) => {
     // TODO: persist new spirit to server
     try {
-      const created: Spirit = await createSpirit(values.name, values.typeId, values.image);
+      const created: Spirit = await createSpirit(id, values.name, values.typeId, values.image);
       setSpirit(created);
       (setSpirits as unknown as React.Dispatch<React.SetStateAction<Spirit[]>>)((prev) =>
         prev ? [...prev, created] : [created],
       );
       setCreating(false);
       // optionally set the id input to the new spirit id
-      setId(created.id);
+      setId(parseInt(created.id));
       toast.success('Espíritu creado con éxito', { duration: 4000 });
     } catch (error) {
       toast.error('Error al crear el espíritu', { duration: 4000 });
@@ -89,7 +89,7 @@ export default function SpiritForm({ id, setId, setOpen }: SpiritSelectProps) {
     <div className="flex flex-col gap-4">
       <div className="flex flex-col gap-2">
         <Label htmlFor="id">Número de identificación</Label>
-        <Input id="id" value={id} onChange={(e) => setId(e.target.value)} placeholder="Ej. 007" />
+        <Input type="number" id="id" value={id} onChange={(e) => setId(parseInt(e.target.value))} placeholder="Ej. 007" />
         <div className="flex gap-2">
           <Button onClick={lookup} disabled={!id || loading}>
             Buscar

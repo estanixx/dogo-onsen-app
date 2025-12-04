@@ -28,7 +28,7 @@ import SpiritForm from './spirit-form';
 import { ScrollArea } from '@radix-ui/react-scroll-area';
 
 interface SpiritSelectProps {
-  id: string;
+  id: number;
   setId: (id: string) => void;
 }
 

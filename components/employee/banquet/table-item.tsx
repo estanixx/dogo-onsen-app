@@ -30,7 +30,7 @@ export default function TableItem({ table, selectedDate, selectedTime }: TableSe
         )}
       >
         {/* Mesa (rectángulo central) */}
-        <div className="w-32 h-20 bg-gray-700 rounded-lg flex items-center justify-center text-white font-semibold">
+        <div className="w-22 h-20 bg-gray-700 rounded-lg flex items-center justify-center text-white font-semibold">
           <MdTableRestaurant className="size-10" /> <span className="text-xs mt-6">{table.id}</span>
         </div>
 

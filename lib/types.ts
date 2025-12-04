@@ -1,5 +1,3 @@
-import { number } from "zod";
-
 /**
  * Spirit Types - Represents the different categories of spirits
  */
@@ -133,6 +131,14 @@ export interface Item {
   unit?: string;
 }
 
+export interface ItemIntake {
+  id?: number;
+  itemId: number;
+  serviceId?: string;
+  seatId?: number | null;
+  quantity: number;
+}
+
 /**
  * Inventory Item - Represents items in the inventory system
  */
@@ -184,7 +190,6 @@ export interface EmployeeAuthState {
   isEmployeeLoading: boolean;
   hasApprovedAccess: boolean;
 }
-
 
 export interface DashboardData {
   today_occupancy_rate: number;
