@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogTitle,
@@ -12,10 +13,11 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { useEmployee } from '@/context/employee-context';
-import { createOrder, getInventoryItems } from '@/lib/api';
-import { InventoryItem, InventoryOrder, Order } from '@/lib/types';
+import { createOrder, getItems } from '@/lib/api';
+import { InventoryOrder, Order, Item } from '@/lib/types';
 import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
+import { AlertCircle } from 'lucide-react';
 
 interface NewOrderModalProps {
   open: boolean;
@@ -24,16 +26,20 @@ interface NewOrderModalProps {
 }
 
 export function NewOrderModal({ open, onOpenChange, onOrderCreated }: NewOrderModalProps) {
-  const [items, setItems] = useState<InventoryOrder[]>([{ idOrder: '', idItem: 1, quantity: 1 }]);
-  const [products, setProducts] = useState<InventoryItem[]>([]);
+  const [items, setItems] = useState<InventoryOrder[]>([{ idOrder: 1, idItem: 1, quantity: 1 }]);
+  const [products, setProducts] = useState<Item[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [deliveryDate, setDeliveryDate] = useState<string | null>(null);
   const { employeeProfile } = useEmployee();
 
+  const hasInvalidItems = items.some(
+    (item) => !item.idItem || !item.quantity || item.quantity <= 0,
+  );
+
   useEffect(() => {
     async function loadProducts() {
       if (open) {
-        const items = await getInventoryItems();
+        const items = await getItems();
         setProducts(items);
       }
     }
@@ -42,7 +48,15 @@ export function NewOrderModal({ open, onOpenChange, onOrderCreated }: NewOrderMo
   }, [open]);
 
   const handleAddItem = () => {
-    setItems([...items, { idOrder: '', idItem: 1, quantity: 1 }]);
+    // Find first available product not already in items
+    const usedIds = new Set(items.map((it) => Number(it.idItem)));
+    const firstAvailable = products.find((p) => !usedIds.has(Number(p.id)));
+    const defaultIdItem = firstAvailable
+      ? Number(firstAvailable.id)
+      : products[0]?.id
+        ? Number(products[0].id)
+        : 1;
+    setItems([...items, { idOrder: 1, idItem: defaultIdItem, quantity: 1 }]);
   };
 
   const handleRemoveItem = (index: number) => {
@@ -61,48 +75,23 @@ export function NewOrderModal({ open, onOpenChange, onOrderCreated }: NewOrderMo
     try {
       setIsLoading(true);
       const idEmployee = employeeProfile?.clerkId ?? employeeProfile?.id ?? 'unknown';
-      // Normalize orderDate/deliveryDate using timezone GMT-5
-      const TZ_OFFSET_HOURS = -5; // GMT-5
-      // Compute the current date in the target timezone by offsetting now
-      const targetNow = new Date(Date.now() + TZ_OFFSET_HOURS * 60 * 60 * 1000);
-      const y = targetNow.getUTCFullYear();
-      const m = targetNow.getUTCMonth();
-      const d = targetNow.getUTCDate();
-
-      // Instant (UTC) corresponding to target timezone's YYYY-MM-DD 00:00
-      const startOfTodayMillis = Date.UTC(y, m, d, 0, 0, 0) ;
-      const startOfToday = new Date(startOfTodayMillis);
-
-      // Tomorrow's date parts in target timezone
-      const tomorrowDate = new Date(Date.UTC(y, m, d + 1, 0, 0, 0));
-      const ty = tomorrowDate.getUTCFullYear();
-      const tm = tomorrowDate.getUTCMonth();
-      const td = tomorrowDate.getUTCDate();
-
-      // Instant (UTC) corresponding to target timezone's tomorrow 23:59
-      const endOfTomorrowMillis = Date.UTC(ty, tm, td, 23, 59, 0) ;
-      const endOfTomorrow = new Date(endOfTomorrowMillis);
-
-      
-      const payloadOrderDate = startOfToday.toISOString();
-      const payloadDelivery = endOfTomorrow.toISOString();
 
       const order = await createOrder(
         items.map((item) => ({
-          idOrder: '',
-          idItem: item.idItem,
+          idOrder: 0, // Placeholder, backend assigns the real ID
+          idItem: Number(item.idItem),
           quantity: item.quantity,
         })),
         {
           idEmployee,
-          orderDate: payloadOrderDate,
-          deliveryDate: payloadDelivery,
+          orderDate: new Date().toISOString(),
+          deliveryDate: new Date().toISOString(), // Backend will normalize this
         },
       );
       onOrderCreated?.(order);
       toast.success('Pedido creado correctamente');
       onOpenChange(false);
-      setItems([{ idOrder: '', idItem: 1, quantity: 1 }]);
+      setItems([{ idOrder: 1, idItem: 1, quantity: 1 }]);
       setDeliveryDate(null);
     } catch (error) {
       console.error('Error creating order:', error);
@@ -128,6 +117,9 @@ export function NewOrderModal({ open, onOpenChange, onOrderCreated }: NewOrderMo
           <DialogTitle className="text-xl font-serif text-primary">
             Realizar pedido a Howl
           </DialogTitle>
+          <DialogDescription className="text-sm text-[var(--smoke)]/70">
+            Selecciona los productos y cantidades que deseas ordenar
+          </DialogDescription>
         </DialogHeader>
 
         <ScrollArea className="py-4 px-2 overflow-y-hidden max-h-[70vh]">
@@ -143,14 +135,18 @@ export function NewOrderModal({ open, onOpenChange, onOrderCreated }: NewOrderMo
                 <select
                   id={`product-${index}`}
                   className="w-full bg-background border border-white/20 rounded-md p-2 text-white"
-                  value={item.idItem}
-                  onChange={(e) => handleItemChange(index, 'idItem', e.target.value)}
+                  value={item.idItem || ''}
+                  onChange={(e) => handleItemChange(index, 'idItem', parseInt(e.target.value, 10))}
                 >
                   <option value="">Seleccionar producto</option>
                   {products.map((product) => {
+                    const productId = Number(product.id);
+                    const isUsed = items.some(
+                      (it, idx) => idx !== index && Number(it.idItem) === productId,
+                    );
                     return (
-                      <option key={product.id} value={product.id}>
-                        {product.name} ({product.quantity} en inventario)
+                      <option key={product.id} value={product.id} disabled={isUsed}>
+                        {product.name} {isUsed ? '(Ya seleccionado)' : ''}
                       </option>
                     );
                   })}
@@ -169,7 +165,7 @@ export function NewOrderModal({ open, onOpenChange, onOrderCreated }: NewOrderMo
                   type="number"
                   required
                   min={1}
-                  value={item.quantity}
+                  value={item.quantity || ''}
                   onChange={(e) => handleItemChange(index, 'quantity', parseInt(e.target.value))}
                   className="
                     px-3 py-2 rounded-md border text-[var(--smoke)]
@@ -192,10 +188,23 @@ export function NewOrderModal({ open, onOpenChange, onOrderCreated }: NewOrderMo
             </div>
           ))}
 
-          <Button type="button" variant="outline" onClick={handleAddItem} className="w-full">
+          <Button
+            type="button"
+            variant="outline"
+            onClick={handleAddItem}
+            className="w-full"
+            disabled={items.length >= products.length}
+          >
             Agregar producto
           </Button>
         </ScrollArea>
+
+        {hasInvalidItems && (
+          <div className="flex items-center gap-2 p-3 bg-red-900/20 border border-red-500/50 rounded-md text-red-400 text-sm">
+            <AlertCircle size={18} className="flex-shrink-0" />
+            <span>Por favor completa todos los productos y cantidades válidas (mínimo 1)</span>
+          </div>
+        )}
 
         <DialogFooter>
           <Button variant="outline" onClick={() => onOpenChange(false)} className="md:mr-2">
@@ -204,13 +213,7 @@ export function NewOrderModal({ open, onOpenChange, onOrderCreated }: NewOrderMo
           <Button
             onClick={handleSubmit}
             className="bg-primary hover:bg-primary/80"
-            disabled={
-              isLoading ||
-              !employeeProfile ||
-              items.some((item) => {
-                return !item.idItem;
-              })
-            }
+            disabled={isLoading || !employeeProfile || hasInvalidItems}
           >
             {isLoading ? 'Enviando...' : 'Realizar pedido'}
           </Button>

@@ -3,6 +3,7 @@ import {
   Deposit,
   InventoryItem,
   InventoryOrder,
+  Item,
   Order,
   PrivateVenue,
   Reservation,
@@ -299,111 +300,88 @@ export async function getDepositsForAccount(accountId: string): Promise<Deposit[
   return deposits;
 }
 
-// Mock data for inventory
-const mockInventoryItems: InventoryItem[] = [
-  { id: '1', name: 'Toallas', quantity: 45, unit: 'unidades' },
-  { id: '2', name: 'Sales de baño', quantity: 15, unit: 'kg' },
-  { id: '3', name: 'Jabón líquido', quantity: 8, unit: 'litros' },
-  { id: '4', name: 'Incienso', quantity: 30, unit: 'paquetes' },
-  { id: '5', name: 'Velas aromáticas', quantity: 25, unit: 'unidades' },
-  { id: '6', name: 'Té verde', quantity: 5, unit: 'kg' },
-];
+/**
+ * Function to get a single item by its ID from the backend
+ */
+export async function getItems(): Promise<Item[]> {
+  const resp = await fetch(`${getBase()}/api/item/`);
+  if (!resp.ok) {
+    throw new Error('Failed to fetch items');
+  }
+  const items: Item[] = await resp.json();
+  return items;
+}
 
 /**
- * Function to get all inventory items
+ * Function to get a single item by its ID from the backend
  */
-export async function getInventoryItems(): Promise<InventoryItem[]> {
-  // Simulate API call
-  await wait(1000);
-  return mockInventoryItems;
+export async function getItem(
+  itemId: number,
+): Promise<{ id: number; name: string; image?: string } | null> {
+  const resp = await fetch(`${getBase()}/api/item/${itemId}`);
+  if (!resp.ok) {
+    return null;
+  }
+  const item = await resp.json();
+  return item;
 }
 
 /**
  * Function to create a new order and inventory orders
  */
+
 export async function createOrder(
-  items: { idOrder: string; idItem: number; quantity: number }[],
+  items: { idItem: number; quantity: number }[],
   options?: { idEmployee?: string; orderDate?: string; deliveryDate?: string },
 ): Promise<Order> {
-  const fetchWithTimeout = async (url: string, init?: RequestInit, timeout = 8_000) => {
+  const FETCH_TIMEOUT_MS = 5000;
+  const baseUrl = getBase();
+
+  // Helper for fetch with timeout
+  const fetchWithTimeout = async (url: string, init?: RequestInit) => {
     const controller = new AbortController();
-    const id = setTimeout(() => controller.abort(), timeout);
+    const timer = setTimeout(() => controller.abort(), FETCH_TIMEOUT_MS);
     try {
-      const resp = await fetch(url, { ...init, signal: controller.signal });
-      return resp;
+      return await fetch(url, { ...init, signal: controller.signal });
     } finally {
-      clearTimeout(id);
+      clearTimeout(timer);
     }
   };
 
   try {
-    // 1) Create Order on backend
-    const orderPayload = {
-      idEmployee: options?.idEmployee ?? 'unknown',
-      orderDate: options?.orderDate ?? new Date().toISOString(),
-      deliveryDate: options?.deliveryDate ?? new Date().toISOString(),
+    // Unified backend endpoint: create order and lines atomically
+    const payload = {
+      order: {
+        idEmployee: options?.idEmployee ?? 'unknown',
+        orderDate: options?.orderDate ?? new Date().toISOString(),
+        deliveryDate: options?.deliveryDate ?? new Date().toISOString(),
+      },
+      items: items.map((it) => ({ idItem: it.idItem, quantity: it.quantity })),
     };
-
-    const orderResp = await fetchWithTimeout(`${getBase()}/api/order/`, {
+    const resp = await fetchWithTimeout(`${baseUrl}/api/order/with_items`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(orderPayload),
+      body: JSON.stringify(payload),
     });
 
-    if (!orderResp.ok) {
-      const errText = await orderResp.text();
-      throw new Error(`Backend failed to create order: ${orderResp.status} ${errText}`);
+    if (!resp.ok) {
+      const errText = await resp.text();
+      throw new Error(`Order + items creation failed: ${resp.status} ${errText}`);
     }
 
-    const createdOrder = await orderResp.json();
-
-    // 2) For each item create an InventoryOrder record linked to the order
-    await Promise.all(
-      items.map(async (it) => {
-        const invPayload = {
-          idOrder: createdOrder.id,
-          idItem: it.idItem,
-          quantity: it.quantity,
-        } as InventoryOrder;
-
-        const invResp = await fetchWithTimeout(`${getBase()}/api/inventory_order/`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(invPayload),
-        });
-
-        if (!invResp.ok) {
-          const errText = await invResp.text();
-          throw new Error(`Backend failed to create inventory_order: ${invResp.status} ${errText}`);
-        }
-      }),
-    );
-
-    // 3) Fetch the order back and map to Order shape
-    const getOrderResp = await fetchWithTimeout(
-      `${getBase()}/api/order/${encodeURIComponent(createdOrder.id)}`,
-    );
-    const fullOrder = getOrderResp.ok ? await getOrderResp.json() : createdOrder;
-
-    // Map backend order to frontend Order type
-    const mapped: Order = {
-      id: String(fullOrder.id ?? createdOrder.id),
-      items: (fullOrder.items || []).map((i: InventoryOrder) => ({
-        idOrder: String(fullOrder.id),
-        idItem: i.idItem,
-        quantity: i.quantity,
-      })),
-      orderDate: fullOrder.orderDate ?? new Date().toISOString(),
-      deliveryDate: fullOrder.deliveryDate ?? new Date().toISOString(),
-    };
-
-    return mapped;
+    const createdOrder: Order = await resp.json();
+    return createdOrder;
   } catch (e) {
+    // FALLBACK logic if backend fails
     console.warn('createOrder backend flow failed, falling back to mock:', e);
+
+    // Optional delay to simulate backend lag during fallback
     await wait(1500);
+
+    const fallbackId = Math.floor(Math.random() * 1000000);
     return {
-      id: Math.random().toString(36).substring(2, 9),
-      items,
+      id: fallbackId,
+      items: items.map((it) => ({ idOrder: fallbackId, idItem: it.idItem, quantity: it.quantity })),
       orderDate: options?.orderDate ?? new Date().toISOString(),
       deliveryDate: options?.deliveryDate ?? new Date().toISOString(),
     };
@@ -413,24 +391,24 @@ export async function createOrder(
 /**
  * Function to update inventory quantities
  */
-export async function updateInventoryQuantity(
-  itemId: string,
-  newQuantity: number,
-): Promise<InventoryItem> {
-  // Simulate API call
-  await wait(800);
+// export async function updateInventoryQuantity(
+//   itemId: string,
+//   newQuantity: number,
+// ): Promise<InventoryItem> {
+//   // Simulate API call
+//   await wait(800);
 
-  // Find the item in our mock data
-  const itemIndex = mockInventoryItems.findIndex((item) => item.id === itemId);
-  if (itemIndex === -1) {
-    throw new Error('Item not found');
-  }
+//   // Find the item in our mock data
+//   const itemIndex = mockInventoryItems.findIndex((item) => item.id === itemId);
+//   if (itemIndex === -1) {
+//     throw new Error('Item not found');
+//   }
 
-  // Update the quantity
-  mockInventoryItems[itemIndex].quantity = newQuantity;
+//   // Update the quantity
+//   mockInventoryItems[itemIndex].quantity = newQuantity;
 
-  return mockInventoryItems[itemIndex];
-}
+//   return mockInventoryItems[itemIndex];
+// }
 
 /**
  * Function to get all the reservations for a given date and time slot
@@ -503,17 +481,69 @@ export async function getBanquetTables(): Promise<BanquetTable[]> {
 }
 
 /**
+ * Fetch inventory orders from backend.
+ */
+export async function getInventoryOrders(): Promise<InventoryOrder[]> {
+  try {
+    const resp = await fetch(`${getBase()}/api/inventory_order/`);
+    if (!resp.ok) {
+      console.warn(`getInventoryOrders: ${resp.status} ${resp.statusText}`);
+      return [];
+    }
+    const lines = await resp.json();
+    return lines;
+  } catch (error) {
+    console.error('Error fetching inventory orders:', error);
+    return [];
+  }
+}
+
+/**
  * Fetch orders from backend (raw response). Backend will already filter active orders
  * when the server-side service is configured to do so. We return the raw backend
  * payload so callers can inspect `orderDate` and `deliveryDate`.
  */
 export async function getOrdersRaw(): Promise<Order[]> {
-  const resp = await fetch(`${getBase()}/api/order/`);
-  if (!resp.ok) {
+  try {
+    const resp = await fetch(`${getBase()}/api/order/`);
+    if (!resp.ok) {
+      console.warn(`getOrdersRaw: ${resp.status} ${resp.statusText}`);
+      return [];
+    }
+    const orders = await resp.json();
+    return orders;
+  } catch (error) {
+    console.error('Error fetching orders:', error);
     return [];
   }
-  const orders = await resp.json();
-  return orders;
+}
+
+/**
+ * Enrich orders with their items by fetching all inventory orders and grouping by idOrder.
+ */
+export async function enrichOrdersWithItems(orders: Order[]): Promise<Order[]> {
+  try {
+    const allLines = await getInventoryOrders();
+    const linesByOrder: Record<number, InventoryOrder[]> = {};
+    allLines.forEach((line) => {
+      const oid = typeof line.idOrder === 'string' ? parseInt(line.idOrder, 10) : line.idOrder;
+      if (!linesByOrder[oid]) {
+        linesByOrder[oid] = [];
+      }
+      linesByOrder[oid].push(line);
+    });
+    return orders.map((o) => ({
+      ...o,
+      items: linesByOrder[o.id] || [],
+    }));
+  } catch (error) {
+    console.error('Error enriching orders:', error);
+    // Return orders with empty items if enrichment fails
+    return orders.map((o) => ({
+      ...o,
+      items: o.items || [],
+    }));
+  }
 }
 
 export async function createService(service: Service): Promise<Service | null> {
@@ -593,4 +623,21 @@ export async function createVenueAccount({
   }
   const createdAccount: VenueAccount = await resp.json();
   return createdAccount;
+}
+
+/**
+ * Function to redeem an order (mark all inventory orders as redeemed)
+ */
+export async function redeemOrder(orderId: number): Promise<Order | null> {
+  const resp = await fetch(`${getBase()}/api/order/${orderId}/redeem`, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  });
+  if (!resp.ok) {
+    return null;
+  }
+  const updatedOrder: Order = await resp.json();
+  return updatedOrder;
 }

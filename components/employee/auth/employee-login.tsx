@@ -12,8 +12,8 @@ export function EmployeeLogin() {
     <div className="flex items-center gap-3">
       <SignedIn>
         <div className="flex items-center gap-3">
-          <div className="flex flex-col text-right">
-            <span className="text-[var(--gold)] font-semibold leading-tight pb-1">
+          <div className="flex flex-col text-right items-end">
+            <span className="text-[var(--gold)] font-semibold leading-tight pb-1 pl-5">
               {employeeProfile?.fullName || 'Empleado'}
             </span>
             <Badge

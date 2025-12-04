@@ -30,7 +30,7 @@ export default function Navbar() {
       <div className="flex items-center space-x-3">
         <Link href="/" className="flex items-center space-x-3">
           <DogoIcon className="fill-primary w-8 h-8 sm:w-10 sm:h-10" />
-          <h1 className="tracking-[2px] text-xl sm:text-2xl text-primary font-semibold">
+          <h1 className="tracking-[2px] text-xl sm:text-2xl text-primary font-semibold pr-5">
             Dogo Onsen
           </h1>
         </Link>

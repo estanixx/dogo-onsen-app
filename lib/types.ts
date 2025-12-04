@@ -126,6 +126,8 @@ export interface Item {
   id: string;
   name: string;
   image?: string;
+  quantity?: number;
+  unit?: string;
 }
 
 /**
@@ -142,20 +144,17 @@ export interface InventoryItem {
  * Inventory Order - Represents an order for inventory items
  */
 export interface Order {
-  id: string;
-  items: {
-    idOrder: string;
-    idItem: number;
-    quantity: number;
-  }[];
+  id: number;
+  items: InventoryOrder[];
   orderDate: string;
   deliveryDate: string;
 }
 
 export interface InventoryOrder {
-  idOrder: string;
+  idOrder: number;
   idItem: number;
   quantity: number;
+  redeemed?: boolean;
 }
 
 export type EmployeeRole = 'reception' | 'banquet' | 'inventory' | 'services' | 'admin';

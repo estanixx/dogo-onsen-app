@@ -12,22 +12,22 @@ import {
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Plus } from 'lucide-react';
-import { getInventoryItems } from '@/lib/api';
-import { InventoryItem } from '@/lib/types';
+import { getItems } from '@/lib/api';
+import { Item } from '@/lib/types';
 
 interface InventoryTableProps {
   onAddOrder?: () => void;
 }
 
 export function InventoryTable({ onAddOrder }: InventoryTableProps) {
-  const [inventoryItems, setInventoryItems] = useState<InventoryItem[]>([]);
+  const [inventoryItems, setInventoryItems] = useState<Item[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
 
   useEffect(() => {
     async function loadInventory() {
       try {
-        const items = await getInventoryItems();
+        const items = await getItems();
         setInventoryItems(items);
       } catch (error) {
         console.error('Error loading inventory:', error);
@@ -96,14 +96,14 @@ export function InventoryTable({ onAddOrder }: InventoryTableProps) {
                         </TableCell>
                         <TableCell
                           className={`text-white whitespace-nowrap ${
-                            item.quantity < 12 ? 'text-destructive font-bold' : ''
+                            (item.quantity ?? 0) < 12 ? 'text-destructive font-bold' : ''
                           }`}
                         >
-                          {item.quantity}
+                          {item.quantity ?? 0}
                         </TableCell>
                         <TableCell className="text-white whitespace-nowrap">{item.unit}</TableCell>
                         <TableCell className="text-white whitespace-nowrap">
-                          {item.quantity < 12 ? (
+                          {(item.quantity ?? 0) < 12 ? (
                             <span className="text-destructive font-bold">Bajo inventario</span>
                           ) : (
                             <span className="text-secondary">Suficiente</span>
