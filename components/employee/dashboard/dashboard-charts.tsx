@@ -1,42 +1,45 @@
 'use client';
 
 import { DogoSection } from '@/components/shared/dogo-ui';
-import { Bar } from 'react-chartjs-2';
 import {
-  Chart as ChartJS,
-  CategoryScale,
-  LinearScale,
   BarElement,
+  CategoryScale,
+  Chart as ChartJS,
+  Legend,
+  LinearScale,
   Title,
   Tooltip,
-  Legend,
 } from 'chart.js';
+import { Bar } from 'react-chartjs-2';
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
-export function DashboardCharts() {
-  const data = {
-    labels: ['Banquete', 'Baños públicos', 'Baños privados', 'Habitaciones'],
+type DashboardData = any;
+
+export function DashboardCharts({ data }: { data?: DashboardData | null }) {
+  const services = data?.today_reservations_per_service ?? [];
+
+  const labels = services.map((s: any) => s.service?.name ?? 'Servicio');
+  const values = services.map((s: any) => s.reservations_count ?? s.reservation_count ?? 0);
+
+  const chartData = {
+    labels,
     datasets: [
       {
-        label: 'Ocupación por zona',
-        data: [15, 25, 18, 8],
-        backgroundColor: [
-          'rgba(255, 99, 132, 0.5)',
-          'rgba(54, 162, 235, 0.5)',
-          'rgba(75, 192, 192, 0.5)',
-          'rgba(255, 206, 86, 0.5)',
-        ],
-        borderColor: [
-          'rgba(255, 99, 132, 1)',
-          'rgba(54, 162, 235, 1)',
-          'rgba(75, 192, 192, 1)',
-          'rgba(255, 206, 86, 1)',
-        ],
+        label: 'Reservas',
+        data: values,
+        backgroundColor: labels.map(
+          (_: string, i: number) =>
+            `rgba(${(i * 50) % 255}, ${(i * 80) % 255}, ${(i * 120) % 255}, 0.5)`,
+        ),
+        borderColor: labels.map(
+          (_: string, i: number) =>
+            `rgba(${(i * 50) % 255}, ${(i * 80) % 255}, ${(i * 120) % 255}, 1)`,
+        ),
         borderWidth: 1,
       },
     ],
-  }; // Datos mockeados para los gráficos
+  };
 
   const options = {
     responsive: true,
@@ -62,8 +65,8 @@ export function DashboardCharts() {
 
   return (
     <DogoSection className="col-span-1">
-      <h2 className="text-xl font-serif text-[var(--gold)] mb-4">Ocupación por zona</h2>
-      <Bar data={data} options={options} />
+      <h2 className="text-xl font-serif text-[var(--gold)] mb-4">Reservas por servicio</h2>
+      <Bar data={chartData} options={options} />
     </DogoSection>
   );
 }
