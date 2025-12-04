@@ -11,7 +11,7 @@ describe('Sidebar cookie behavior', () => {
     // `useIsMobile` reads `window.innerWidth` in an effect, so set it before render.
     // Desktop breakpoint is 1150 in `lib/config.ts`, so use 1200 here.
     // Also dispatch a resize event after rendering if needed by the hook.
-    (window as any).innerWidth = 1200;
+    (window as any).innerWidth = 1200; // eslint-disable-line @typescript-eslint/no-explicit-any
     render(
       <SidebarProvider>
         <SidebarTrigger />

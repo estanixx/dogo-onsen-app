@@ -45,7 +45,6 @@ export default function SpiritForm({ id, setId, setOpen }: SpiritSelectProps) {
   const [spirit, setSpirit] = React.useState<Spirit | null>(null);
   const [types, setTypes] = React.useState<SpiritType[]>([]);
   const [creating, setCreating] = React.useState(false);
-  const [previewImage, setPreviewImage] = React.useState<string | null>(null);
 
   React.useEffect(() => {
     getAllSpiritTypes().then(setTypes);
@@ -74,9 +73,9 @@ export default function SpiritForm({ id, setId, setOpen }: SpiritSelectProps) {
       );
       setCreating(false);
       // optionally set the id input to the new spirit id
-      setId(parseInt(created.id));
+      setId(created.id);
       toast.success('Espíritu creado con éxito', { duration: 4000 });
-    } catch (error) {
+    } catch {
       toast.error('Error al crear el espíritu', { duration: 4000 });
     }
   };
@@ -89,7 +88,13 @@ export default function SpiritForm({ id, setId, setOpen }: SpiritSelectProps) {
     <div className="flex flex-col gap-4">
       <div className="flex flex-col gap-2">
         <Label htmlFor="id">Número de identificación</Label>
-        <Input type="number" id="id" value={id} onChange={(e) => setId(parseInt(e.target.value))} placeholder="Ej. 007" />
+        <Input
+          type="number"
+          id="id"
+          value={id}
+          onChange={(e) => setId(parseInt(e.target.value))}
+          placeholder="Ej. 007"
+        />
         <div className="flex gap-2">
           <Button onClick={lookup} disabled={!id || loading}>
             Buscar
@@ -105,7 +110,9 @@ export default function SpiritForm({ id, setId, setOpen }: SpiritSelectProps) {
             <label className="block text-sm">Nombre</label>
             <Input placeholder="Nombre" {...form.register('name')} />
             {form.formState.errors.name && (
-              <p className="text-sm text-red-500">{(form.formState.errors.name as any).message}</p>
+              <p className="text-sm text-red-500">
+                {(form.formState.errors.name as { message: string }).message}
+              </p>
             )}
           </div>
 
@@ -129,7 +136,7 @@ export default function SpiritForm({ id, setId, setOpen }: SpiritSelectProps) {
                 </Select>
                 {form.formState.errors.typeId && (
                   <p className="text-sm text-red-500">
-                    {(form.formState.errors.typeId as any).message}
+                    {(form.formState.errors.typeId as { message: string }).message}
                   </p>
                 )}
               </div>
@@ -164,9 +171,7 @@ export default function SpiritForm({ id, setId, setOpen }: SpiritSelectProps) {
               <CameraCapture
                 typeId={form.watch('typeId')}
                 // 1. Preview local rápido (opcional)
-                onCapture={(localUrl) => {
-                  console.log('Capturando...');
-                }}
+                onCapture={() => {}}
                 // 2. AQUÍ ESTÁ EL CAMBIO IMPORTANTE:
                 onUploadComplete={(s3Url, faces) => {
                   // En lugar de setFinalImageUrl, le decimos al form que actualice el campo 'image'

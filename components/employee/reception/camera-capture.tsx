@@ -34,16 +34,11 @@ interface CameraCaptureProps {
   onError?: (message: string) => void; // Para manejar errores
 }
 
-export default function CameraCapture({
-  typeId,
-  onCapture,
-  onUploadComplete,
-  onError,
-}: CameraCaptureProps) {
+export default function CameraCapture({ typeId, onCapture, onUploadComplete }: CameraCaptureProps) {
   const videoRef = React.useRef<HTMLVideoElement | null>(null);
   const canvasRef = React.useRef<HTMLCanvasElement | null>(null);
   const [stream, setStream] = React.useState<MediaStream | null>(null);
-  const [isUploading, setIsUploading] = React.useState(false);
+  const [, setIsUploading] = React.useState(false);
   // When true the 'Tomar foto' button is disabled after being clicked
   // It will be re-enabled only if an error occurs during processing/upload
   const [isTakeDisabled, setIsTakeDisabled] = React.useState(false);
@@ -127,7 +122,6 @@ export default function CameraCapture({
         formData.append('template_filename', templateName);
 
         // Debugging (Opcional)
-        console.log(`Enviando: File=${file.size}bytes, Template=${templateName}`);
 
         // 5. Llamada ÚNICA al API
         const response = await fetch(`http://localhost:8004/files/upload-image-with-faces`, {

@@ -142,7 +142,6 @@ export async function createSpirit(
   image?: string,
 ): Promise<Spirit> {
   // Simulate creating a new spirit
-  console.log(image);
   const resp = await fetch(`${getBase()}/api/spirit/`, {
     method: 'POST',
     headers: {
@@ -157,7 +156,6 @@ export async function createSpirit(
     }),
   });
   const spirit: Spirit = await resp.json();
-  console.log(spirit);
   return spirit;
 }
 
@@ -228,7 +226,6 @@ export async function getAvailableBanquetSeats(
     }),
   });
   const seats: BanquetTable[] = await resp.json();
-  console.log('Response from banquet seats API:', seats);
   return seats;
 }
 
@@ -618,7 +615,7 @@ export async function createVenueAccount({
   privateVenueId: string;
   startTime: Date;
   endTime: Date;
-}): Promise<VenueAccount | null> {
+}): Promise<VenueAccount | { detail: string } | null> {
   const resp = await fetch(`${getBase()}/api/venue_account/`, {
     method: 'POST',
     headers: {

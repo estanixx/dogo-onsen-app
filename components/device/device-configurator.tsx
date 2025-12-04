@@ -14,7 +14,7 @@ export function DeviceConfigurator({ configureDevice }: DeviceConfiguratorProps)
   const { user, isLoaded } = useUser();
   const { loginAsAdmin } = useAdmin();
   const router = useRouter();
-  const [isProcessing, setIsProcessing] = useState(false);
+  const [, setIsProcessing] = useState(false);
 
   const handleSelectDevice = async (type: 'employee' | 'room') => {
     setIsProcessing(true);

@@ -5,7 +5,6 @@ import { P } from '@/components/shared/typography';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { useSpirit } from '@/context/spirit-context';
 import { getAllSpirits } from '@/lib/api';
-import { Spirit } from '@/lib/types';
 import { useEffect, useState } from 'react';
 
 export default function SpiritGrid() {
@@ -19,7 +18,7 @@ export default function SpiritGrid() {
       setState('loaded');
     };
     fetchData();
-  }, []);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <div className="">

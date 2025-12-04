@@ -29,7 +29,7 @@ import { ScrollArea } from '@radix-ui/react-scroll-area';
 
 interface SpiritSelectProps {
   id: number;
-  setId: (id: string) => void;
+  setId: (id: number) => void;
 }
 
 export default function SpiritSelect({ id, setId }: SpiritSelectProps) {

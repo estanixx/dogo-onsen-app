@@ -12,7 +12,7 @@ interface ServiceCardProps {
 }
 
 export function ServiceCard({ service, onSelect }: ServiceCardProps) {
-  const [open, setOpen] = React.useState(false);
+  const [, setOpen] = React.useState(false);
 
   const handleOpen = () => {
     setOpen(true);

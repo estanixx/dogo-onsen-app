@@ -53,7 +53,6 @@ const SpiritCard: React.FC<SpiritCardProps> = ({ spirit }) => {
             ))}
         </div>
       </span>
-      
     </Card>
   );
 };

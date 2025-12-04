@@ -1,7 +1,7 @@
 'use client';
 
 import { Spirit } from '@/lib/types';
-import React, { createContext, useContext, useEffect, useState, ReactNode } from 'react';
+import React, { createContext, useContext, useState, ReactNode } from 'react';
 
 const SpiritContext = createContext<{
   spirits: Spirit[] | null;

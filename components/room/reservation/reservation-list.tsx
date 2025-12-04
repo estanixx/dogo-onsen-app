@@ -21,6 +21,7 @@ import {
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
 import { useMediaQuery } from '@/hooks/use-media-query';
 import { getReservations, removeReservation, updateReservation } from '@/lib/api';
+import { BANQUET_SERVICE_DATA } from '@/lib/api/constants';
 import { DESKTOP_MIN_QUERY } from '@/lib/config';
 import { Reservation, Service, VenueAccount } from '@/lib/types';
 import { format } from 'date-fns';
@@ -30,7 +31,6 @@ import * as React from 'react';
 import { useState } from 'react';
 import { toast } from 'sonner';
 import RedeemDialog from './redeem-interaction';
-import { BANQUET_SERVICE_DATA } from '@/lib/api/constants';
 
 interface ReservationListProps {
   account: VenueAccount;
@@ -42,7 +42,6 @@ export function ReservationList({ account }: ReservationListProps) {
   const [reservations, setReservations] = useState<Reservation[] | null>(null);
   const [reload, onReloadReservations] = useState(false);
   React.useEffect(() => {
-    console.log('Reloading reservations...');
     const fetchReservations = async () => {
       const data = await getReservations({ accountId });
       if (!data) {
@@ -249,8 +248,17 @@ export function ReservationList({ account }: ReservationListProps) {
                     )}
                     <Button
                       variant="ghost"
-                      className="text-red-400 transition-colors"
-                      onClick={() => handleCancel(reservation.id, service.name)}
+                      className={`transition-colors ${reservation.isRedeemed ? 'text-gray-500 cursor-not-allowed opacity-60' : 'text-red-400 hover:text-red-500'}`}
+                      onClick={() =>
+                        !reservation.isRedeemed && handleCancel(reservation.id, service.name)
+                      }
+                      disabled={reservation.isRedeemed}
+                      aria-disabled={reservation.isRedeemed}
+                      title={
+                        reservation.isRedeemed
+                          ? 'No se puede cancelar. Ya fue redimida.'
+                          : 'Cancelar reservación'
+                      }
                     >
                       Cancelar
                     </Button>

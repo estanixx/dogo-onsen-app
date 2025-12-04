@@ -1,6 +1,7 @@
 'use client';
 
 import { DogoSection } from '@/components/shared/dogo-ui';
+import { DashboardData } from '@/lib/types';
 import {
   BarElement,
   CategoryScale,
@@ -14,13 +15,11 @@ import { Bar } from 'react-chartjs-2';
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
-type DashboardData = any;
-
 export function DashboardCharts({ data }: { data?: DashboardData | null }) {
   const services = data?.today_reservations_per_service ?? [];
 
-  const labels = services.map((s: any) => s.service?.name ?? 'Servicio');
-  const values = services.map((s: any) => s.reservations_count ?? s.reservation_count ?? 0);
+  const labels = services.map((s) => s.service?.name ?? 'Servicio');
+  const values = services.map((s) => s.reservation_count ?? 0);
 
   const chartData = {
     labels,

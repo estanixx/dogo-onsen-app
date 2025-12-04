@@ -6,7 +6,7 @@
     "dev": "next dev --turbopack",
     "build": "next build --turbopack",
     "start": "next start",
-    "lint": "eslint",
+    "lint": "tsc --noEmit --pretty && eslint . --ext .js,.jsx,.ts,.tsx",
     "test": "vitest",
     "test:watch": "vitest --watch",
     "format": "prettier --write \"**/*.{js,jsx,ts,tsx,json,css,md}\"",

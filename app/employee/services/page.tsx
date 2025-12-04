@@ -6,9 +6,9 @@ import { Button } from '@/components/ui/button';
 import { ServiceCreateForm } from '@/components/employee/service/service-create-form';
 import { Service } from '@/lib/types';
 import { AuthRequired } from '@/components/employee/auth/auth-required';
-import { DogoSection, DogoHeader } from '@/components/shared/dogo-ui';
+import { DogoHeader } from '@/components/shared/dogo-ui';
 import { createService, getAvailableServices } from '@/lib/api';
-import { LoadingBar, LoadingBox } from '@/components/shared/loading';
+import { LoadingBox } from '@/components/shared/loading';
 import { ServiceCard } from '@/components/employee/service/service-card';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { SidebarProvider, Sidebar, SidebarContent } from '@/components/ui/sidebar';
@@ -33,7 +33,6 @@ export default function ServicesManagementPage() {
   ) => {
     // Por ahora solo simulamos la creación
     const service = await createService(serviceData as Service);
-    console.log('Servicio creado:', service);
     if (!service) {
       toast.error('Error al crear el servicio. Inténtalo de nuevo.');
       return;

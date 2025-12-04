@@ -30,6 +30,7 @@ export function SyncDeviceConfig({ config }: { config: DeviceConfig }) {
         }
       } catch (e) {
         // ignore network errors
+        console.warn('Failed to sync device config from server', e);
       }
     }
 

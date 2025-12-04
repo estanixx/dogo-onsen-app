@@ -1,13 +1,12 @@
 'use client';
 
 import { DogoSection } from '@/components/shared/dogo-ui';
+import { DashboardData } from '@/lib/types';
 import { Bell, Truck } from 'lucide-react';
 
-type DashboardData = any;
-
 export function DashboardAlerts({ data }: { data?: DashboardData | null }) {
-  const stock = data?.stock_alerts ?? data?.stockAlerts ?? 0;
-  const pending = data?.pending_orders ?? data?.pendingOrders ?? 0;
+  const stock = data?.stock_alerts ?? 0;
+  const pending = data?.pending_orders ?? 0;
 
   return (
     <DogoSection className="col-span-1">

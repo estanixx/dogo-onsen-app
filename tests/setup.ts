@@ -13,8 +13,8 @@ import 'whatwg-fetch';
 
 // Asegura que React esté disponible como global para módulos que dependen de un identificador global `React`
 import * as React from 'react';
-(globalThis as any).React = React;
-(global as any).React = React;
+(globalThis as any).React = React; //eslint-disable-line @typescript-eslint/no-explicit-any
+(global as any).React = React; //eslint-disable-line @typescript-eslint/no-explicit-any
 
 // Polyfill de `matchMedia` para jsdom (usado por `use-mobile` y hooks similares)
 if (typeof window !== 'undefined' && typeof window.matchMedia !== 'function') {
@@ -39,7 +39,7 @@ if (typeof window !== 'undefined' && typeof window.matchMedia !== 'function') {
 // El mock aquí evita que las pruebas necesiten montar el proveedor real.
 import { vi } from 'vitest';
 vi.mock('@clerk/nextjs', () => {
-  const React = require('react');
+  const React = require('react'); //eslint-disable-line
   return {
     useUser: () => ({
       user: { id: 'test-user', publicMetadata: { role: 'admin' } },

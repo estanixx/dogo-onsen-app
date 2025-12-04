@@ -13,7 +13,7 @@ export interface SpiritType {
  */
 export interface Spirit {
   currentlyInVenue?: boolean;
-  id: string;
+  id: number;
   name: string;
   typeId: string;
   type: SpiritType;

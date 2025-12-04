@@ -74,7 +74,6 @@ export function CardModal({
           toast.error('Error al registrar el depósito. Inténtalo de nuevo.');
           return;
         }
-        console.log('Depósito registrado:', deposit);
       } catch (err) {
         console.warn('Failed to create deposit record', err);
         // Inform the user but keep the updated balance (server-side)

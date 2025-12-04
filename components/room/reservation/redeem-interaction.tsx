@@ -20,8 +20,6 @@ export default function RedeemDialog({ spirit, service, songUrl, onClose }: Rede
   // const spiritImage = spirit.ima;
   const [currentSpiritSrc, setCurrentSpiritSrc] = useState(spirit.image || SPIRIT_FALLBACK_URL);
 
-  console.log(spirit.image);
-
   useEffect(() => {
     setCurrentSpiritSrc(spirit.image || SPIRIT_FALLBACK_URL);
   }, [spirit]);

@@ -3,20 +3,19 @@
 import { DogoSection } from '@/components/shared/dogo-ui';
 import { P } from '@/components/shared/typography';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import { DashboardData } from '@/lib/types';
 import { Home } from 'lucide-react';
 import { MdTableRestaurant } from 'react-icons/md';
 
-type DashboardData = any;
-
 export function DashboardStats({ data }: { data?: DashboardData | null }) {
-  const occupancy = data?.today_occupancy_rate ?? data?.todayOccupancyRate ?? 0;
+  const occupancy = data?.today_occupancy_rate ?? 0;
   const tables = data?.today_table_availability ?? [];
 
   // Normalize tables to have id, capacity and availableSeats
-  const normTables = (tables as any[]).map((t) => ({
+  const normTables = tables.map((t) => ({
     id: t.id,
-    capacity: t.capacity ?? t.capacity ?? 6,
-    availableSeats: t.availableSeats ?? (t.capacity ? t.capacity - (t.takenSeats ?? 0) : 0),
+    capacity: t.capacity ?? 6,
+    availableSeats: t.availableSeats ?? 0,
   }));
 
   return (

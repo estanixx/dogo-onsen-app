@@ -5,7 +5,6 @@ interface TimeSlotSelectorProps {
   availableTimeSlots: string[];
 }
 export default function TimeSlotSelector({
-  selected,
   onSelect,
   availableTimeSlots: timeSlots,
 }: TimeSlotSelectorProps) {

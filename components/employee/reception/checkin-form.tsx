@@ -3,11 +3,9 @@
 import React, { useEffect, useState } from 'react';
 import { createVenueAccount, getAvailablePrivateVenues, getSpirit } from '@/lib/api/index';
 import SpiritSelect from './spirit-select';
-import { Label } from '@/components/ui/label';
 import { Calendar } from '@/components/ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { ChevronDownIcon } from 'lucide-react';
-import { P } from '@/components/shared/typography';
 import { Button } from '@/components/ui/button';
 import {
   Select,
@@ -26,7 +24,7 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { useForm } from 'react-hook-form';
-import { int, z } from 'zod';
+import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { VenueAccount } from '@/lib/types';
 
@@ -41,7 +39,7 @@ interface CheckInFormProps {
   initialValues?: Partial<CheckInResult>;
 }
 export default function CheckInForm({ initialValues }: CheckInFormProps) {
-  const [pin, setPin] = useState<string | null>(null);
+  const [, setPin] = useState<string | null>(null);
 
   // Get available venues
   const [venues, setVenues] = useState<{ id: string; state: boolean }[]>([]);
@@ -81,10 +79,9 @@ export default function CheckInForm({ initialValues }: CheckInFormProps) {
     },
   });
 
-  const { control, watch, setValue, reset } = form;
+  const { control, watch, reset } = form;
 
-  const clearForm = () =>
-    reset({ id: 0, room: '', checkin: startOfDay(), checkout: startOfDay() });
+  const clearForm = () => reset({ id: 0, room: '', checkin: startOfDay(), checkout: startOfDay() });
 
   const watchedCheckin = watch('checkin');
   const watchedCheckout = watch('checkout');
@@ -126,9 +123,9 @@ export default function CheckInForm({ initialValues }: CheckInFormProps) {
       privateVenueId: String(Number(values.room)),
       startTime: values.checkin,
       endTime: values.checkout,
-    });
-    if(account && account?.detail){
-      toast.error(account.detail, { duration: 8000 });
+    }) ;
+    if (account && (account as {detail: string})?.detail) {
+      toast.error((account as {detail: string}).detail, { duration: 8000 });
       setIsSuccess(false);
       return;
     }
@@ -139,7 +136,7 @@ export default function CheckInForm({ initialValues }: CheckInFormProps) {
       setIsSuccess(false);
       return;
     }
-    const newPin = account.pin;
+    const newPin = (account as VenueAccount).pin;
     setPin(newPin);
 
     toast.success(`Habitación ${values.room} reservada con éxito. \nPIN de seguridad: ${newPin}`, {
@@ -163,7 +160,7 @@ export default function CheckInForm({ initialValues }: CheckInFormProps) {
               <FormItem className="truncate">
                 <FormLabel className="text-lg w-full">Seleccionar Espíritu</FormLabel>
                 <FormControl>
-                  <SpiritSelect id={field.value} setId={(v: string) => field.onChange(v)} />
+                  <SpiritSelect id={field.value} setId={(v: number) => field.onChange(v)} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -247,7 +244,7 @@ export default function CheckInForm({ initialValues }: CheckInFormProps) {
               <FormItem>
                 <FormLabel className="text-lg">Habitación</FormLabel>
                 <FormControl>
-                  <Select  onValueChange={field.onChange}>
+                  <Select onValueChange={field.onChange}>
                     <SelectTrigger
                       id="room"
                       className="px-3 py-2 w-full rounded-md bg-dark border border-gold/20 focus:outline-none focus:border-gold-light text-white"
@@ -256,15 +253,15 @@ export default function CheckInForm({ initialValues }: CheckInFormProps) {
                     </SelectTrigger>
                     <SelectContent className="bg-[var(--dark)] text-white">
                       {venues.length === 0 ? (
-                        <span className='text-sm flex justify-center items-center w-full h-8'>
+                        <span className="text-sm flex justify-center items-center w-full h-8">
                           No hay habitaciones disponibles
                         </span>
                       ) : (
-                      venues.map((v) => (
-                        <SelectItem key={v.id} value={v.id.toString()} className='text-white'>
-                          Habitación {v.id}
-                        </SelectItem>
-                      ))
+                        venues.map((v) => (
+                          <SelectItem key={v.id} value={v.id.toString()} className="text-white">
+                            Habitación {v.id}
+                          </SelectItem>
+                        ))
                       )}
                     </SelectContent>
                   </Select>

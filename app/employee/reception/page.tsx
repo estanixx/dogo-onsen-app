@@ -6,8 +6,6 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import SpiritGrid from '@/components/employee/reception/spirit-grid';
 
 import { AuthRequired } from '@/components/employee/auth/auth-required';
-import { Spirit } from '@/lib/types';
-import { useState } from 'react';
 
 export default function CheckInPage() {
   return (

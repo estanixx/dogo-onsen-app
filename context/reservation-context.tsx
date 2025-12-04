@@ -1,7 +1,7 @@
 'use client';
 
 import React, { createContext, useContext, useEffect, useState } from 'react';
-import { Reservation, Service } from '@/lib/types';
+import { Reservation } from '@/lib/types';
 
 interface ReservationContextType {
   reservations: Reservation[];
@@ -52,11 +52,7 @@ export function ReservationProvider({ children }: { children: React.ReactNode })
 
   const removeReservation = (id: string) => {
     setReservations((prev) => {
-      console.log('Removing reservation:', id);
-      console.log('Previous reservations:', prev);
-
       const updated = prev.filter((r) => r.id !== id);
-      console.log('Updated reservations:', updated);
 
       localStorage.setItem('reservations', JSON.stringify(updated));
       return updated;

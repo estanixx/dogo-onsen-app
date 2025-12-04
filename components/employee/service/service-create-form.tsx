@@ -160,13 +160,19 @@ export function ServiceCreateForm({ open, onOpenChange, onSubmit }: ServiceCreat
                   <div className="flex-1 min-w-0">
                     <select
                       value={row.itemId ?? ''}
-                      onChange={(e) => updateRow(idx, { itemId: e.target.value ? Number(e.target.value) : undefined })}
+                      onChange={(e) =>
+                        updateRow(idx, {
+                          itemId: e.target.value ? Number(e.target.value) : undefined,
+                        })
+                      }
                       className="w-full p-2 rounded border bg-[var(--dark-light)] truncate"
                     >
                       <option value="">Seleccionar item...</option>
                       {availableItems?.map((it) => {
                         const selectedIds = rows.map((r) => String(r.itemId ?? ''));
-                        const isSelectedElsewhere = selectedIds.includes(String(it.id)) && String(row.itemId) !== String(it.id);
+                        const isSelectedElsewhere =
+                          selectedIds.includes(String(it.id)) &&
+                          String(row.itemId) !== String(it.id);
                         return (
                           <option key={it.id} value={Number(it.id)} disabled={isSelectedElsewhere}>
                             {it.name} {it.unit ? `(${it.unit})` : ''}
@@ -193,7 +199,9 @@ export function ServiceCreateForm({ open, onOpenChange, onSubmit }: ServiceCreat
                 type="button"
                 onClick={addRow}
                 variant="outline"
-                disabled={!availableItems || (availableItems && rows.length >= availableItems.length)}
+                disabled={
+                  !availableItems || (availableItems && rows.length >= availableItems.length)
+                }
               >
                 Agregar item
               </Button>

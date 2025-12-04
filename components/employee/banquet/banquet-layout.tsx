@@ -6,7 +6,6 @@ import { H4, P } from '@/components/shared/typography';
 import { Button } from '@/components/ui/button';
 import { Calendar } from '@/components/ui/calendar';
 import { ToggleGroup } from '@/components/ui/toggle-group';
-import { useBanquet } from '@/context/banquet-context';
 import { useReservations } from '@/context/reservation-context';
 import {
   // bookService, DECOMENTAR @samuelColoradoCastrillon
@@ -35,7 +34,6 @@ export default function BanquetLayout({ account, venueId }: BanquetLayoutProps) 
   const [loadingSlots, setLoadingSlots] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const router = useRouter();
-  const { createReservation } = useBanquet();
   const { addReservation } = useReservations();
 
   const clearSelection = () => {
@@ -50,7 +48,6 @@ export default function BanquetLayout({ account, venueId }: BanquetLayoutProps) 
       return;
     }
     const data = await getAvailableBanquetSeats(account.spiritId, date, time);
-    console.log(data);
     setTables(data);
   };
 
@@ -58,7 +55,7 @@ export default function BanquetLayout({ account, venueId }: BanquetLayoutProps) 
   // Load banquet tables
   useEffect(() => {
     fetchBanquetSeats();
-  }, [date, time, submitting]);
+  }, [date, time, submitting]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Load available time slots when date changes
   useEffect(() => {
@@ -76,7 +73,7 @@ export default function BanquetLayout({ account, venueId }: BanquetLayoutProps) 
       }
     };
     fetchSlots();
-  }, [date]);
+  }, [date]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const canConfirm = !!selectedSeat && !!date && !!time && !submitting;
 
@@ -95,7 +92,6 @@ export default function BanquetLayout({ account, venueId }: BanquetLayoutProps) 
 
     setSubmitting(true);
     try {
-      selectedSeat;
       const reservation = await createBanquetReservation({
         seatId: selectedSeat,
         date,

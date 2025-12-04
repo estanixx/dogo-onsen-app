@@ -10,9 +10,9 @@ const updateReservationMock = vi.fn();
 const removeReservationMock = vi.fn();
 
 vi.mock('@/lib/api', () => ({
-  getReservations: (...args: any[]) => getReservationsMock(...args),
-  updateReservation: (...args: any[]) => updateReservationMock(...args),
-  removeReservation: (...args: any[]) => removeReservationMock(...args),
+  getReservations: (...args: any[]) => getReservationsMock(...args), // eslint-disable-line @typescript-eslint/no-explicit-any
+  updateReservation: (...args: any[]) => updateReservationMock(...args), // eslint-disable-line @typescript-eslint/no-explicit-any
+  removeReservation: (...args: any[]) => removeReservationMock(...args), // eslint-disable-line @typescript-eslint/no-explicit-any
 }));
 
 // Mock hooks
@@ -30,9 +30,13 @@ vi.mock('sonner', () => ({
 
 const mockAccount: VenueAccount = {
   id: 'acc1',
-  spirit: 'spirit1',
+  spirit: {name: 'spirit1', id: 1, typeId: '1', image: '', individualRecord: '', type: {id: '1', name: 'Type1', dangerScore: 1, image: ''}},
   venueId: 'venue1',
-  balance: 100,
+  eiltBalance: 100,
+  spiritId: 'spirit1',
+  startTime: new Date(),
+  endTime: new Date(),
+  pin: '1234',
 };
 
 const mockReservations = [

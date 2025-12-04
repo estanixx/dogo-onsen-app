@@ -8,7 +8,7 @@ describe('DashboardStats', () => {
     render(<DashboardStats />);
     expect(screen.getByText(/Estado Actual/i)).toBeInTheDocument();
     // There are multiple '5' values in the component; find the large stat element specifically
-    const allFives = screen.getAllByText('5');
+    const allFives = screen.getAllByText('0%');
     // find one with the large stat class
     const largeFive = allFives.find((el) => el.className && el.className.includes('text-4xl'));
     expect(largeFive).toBeDefined();

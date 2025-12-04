@@ -22,7 +22,6 @@ import { ScrollArea } from '@radix-ui/react-scroll-area';
 import { useSidebar } from '@/components/ui/sidebar';
 import { useRef } from 'react';
 import { X } from 'lucide-react';
-import { createDatetimeFromDateAndTime } from '@/lib/utils';
 
 type Props = {
   service: Service;

@@ -3,7 +3,6 @@
 import { DogoCard, DogoButton } from '@/components/shared/dogo-ui';
 import { Input } from '@/components/ui/input';
 import { getCurrentVenueAccount } from '@/lib/api';
-import { VenueAccount } from '@/lib/types';
 import React from 'react';
 import { MdOutlineMeetingRoom } from 'react-icons/md';
 import { VscKey } from 'react-icons/vsc';

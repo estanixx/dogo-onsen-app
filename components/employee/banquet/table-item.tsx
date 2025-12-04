@@ -4,9 +4,7 @@ import { Card } from '@/components/ui/card';
 import { ToggleGroupItem } from '@/components/ui/toggle-group';
 import { BanquetSeat, BanquetTable } from '@/lib/types';
 import { cn } from '@/lib/utils';
-import { useBanquet } from '@/context/banquet-context';
 import { MdTableRestaurant } from 'react-icons/md';
-import { PiChairFill } from 'react-icons/pi';
 import clsx from 'clsx';
 
 interface TableSelectorProps {
@@ -15,11 +13,8 @@ interface TableSelectorProps {
   selectedTime: string | null;
 }
 
-export default function TableItem({ table, selectedDate, selectedTime }: TableSelectorProps) {
-  const { reservations } = useBanquet();
-
+export default function TableItem({ table, selectedTime }: TableSelectorProps) {
   // Convertir la fecha seleccionada a YYYY-MM-DD
-  const dateString = selectedDate?.toISOString().split('T')[0];
 
   return (
     <div className="relative">
