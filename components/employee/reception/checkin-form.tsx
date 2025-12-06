@@ -123,9 +123,9 @@ export default function CheckInForm({ initialValues }: CheckInFormProps) {
       privateVenueId: String(Number(values.room)),
       startTime: values.checkin,
       endTime: values.checkout,
-    }) ;
-    if (account && (account as {detail: string})?.detail) {
-      toast.error((account as {detail: string}).detail, { duration: 8000 });
+    });
+    if (account && (account as { detail: string })?.detail) {
+      toast.error((account as { detail: string }).detail, { duration: 8000 });
       setIsSuccess(false);
       return;
     }

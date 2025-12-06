@@ -22,7 +22,4 @@ describe('ServiceCreateForm', () => {
     fireEvent.click(submit);
     expect(onSubmit).not.toHaveBeenCalled();
   });
-
-
-
 });

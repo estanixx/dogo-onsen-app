@@ -30,7 +30,14 @@ vi.mock('sonner', () => ({
 
 const mockAccount: VenueAccount = {
   id: 'acc1',
-  spirit: {name: 'spirit1', id: 1, typeId: '1', image: '', individualRecord: '', type: {id: '1', name: 'Type1', dangerScore: 1, image: ''}},
+  spirit: {
+    name: 'spirit1',
+    id: 1,
+    typeId: '1',
+    image: '',
+    individualRecord: '',
+    type: { id: '1', name: 'Type1', dangerScore: 1, image: '' },
+  },
   venueId: 'venue1',
   eiltBalance: 100,
   spiritId: 'spirit1',

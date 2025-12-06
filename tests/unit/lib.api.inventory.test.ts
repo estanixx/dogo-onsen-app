@@ -5,4 +5,3 @@ describe('Inventory helpers', () => {
     expect(true).toBeTruthy();
   });
 });
-
