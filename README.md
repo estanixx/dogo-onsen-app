@@ -105,6 +105,8 @@ What tests were added:
 - Component tests (device configurator, sidebar cookie behavior, admin page interactions)
 - API helper tests under `tests/unit` for `lib/api` (timeslots, inventory, index)
 - Small integration-style tests for forms and dashboard components
+- `home-page.test.tsx` — RF-001: Device configuration (employee/room mode selection, cookie persistence)
+- `reservation-list.test.tsx` — RF-012: Reservation states including rated state display
 
 How to add tests:
 
@@ -115,11 +117,30 @@ CI (GitHub Actions)
 
 - A workflow has been added to run frontend tests on push and PRs: `dogo-onsen-app/.github/workflows/frontend-tests.yml` (uses Node 20 and runs `npx vitest --run`).
 
+E2E Tests
+
+End-to-end tests live under `tests/e2e/` and use Playwright.
+
+- `usability.spec.ts` — RNF-003/RNF-007: Usability requirements
+  - UI load time validation (<3 seconds)
+  - 3-step reservation flow (select service → pick timeslot → confirm)
+  - 90-second task completion threshold
+  - Touch-friendly button sizing (≥44px)
+  - High contrast text readability
+
+Run E2E tests:
+```bash
+npx playwright test
+```
+
 Performance tests
 
 Performance tests use [k6](https://k6.io/) to validate API latency and throughput.
 
 - **Location**: `tests/performance/load_test.js`
+- **Scenarios**:
+  - Read load: Validates RNF-001 (p95 < 300ms for read operations)
+  - Write load: Validates RNF-002 (p95 < 400ms for write operations)
 - **Run locally**:
   ```bash
   # Ensure backend is running on port 8004 and frontend on 3000

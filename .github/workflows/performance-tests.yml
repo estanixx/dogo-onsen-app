@@ -24,15 +24,22 @@ jobs:
         run: npm ci
 
       - name: Build Application
+        env:
+          NEXT_PUBLIC_BACKEND_URL: http://localhost:3000
+          NEXT_PUBLIC_BASE_URL: http://localhost:3000
+          NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: ${{ secrets.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY }}
         run: npm run build
 
       - name: Start Application
+        env:
+          NEXT_PUBLIC_BACKEND_URL: http://localhost:3000
+          NEXT_PUBLIC_BASE_URL: http://localhost:3000
         run: |
           # Start Next.js in background
           npm start -- -p 3000 &
           # Wait for server to be ready
           echo "Waiting for server to start..."
-          sleep 10
+          sleep 15
 
       - name: Setup k6
         uses: grafana/setup-k6-action@v1
