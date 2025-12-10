@@ -31,5 +31,5 @@ export default function FrontendObservability() {
     return;
   }, []);
 
-  return;
+  return <></>;
 }

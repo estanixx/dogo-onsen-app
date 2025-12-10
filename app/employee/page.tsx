@@ -5,6 +5,8 @@ import { DashboardStats } from '@/components/employee/dashboard/dashboard-stats'
 import { DogoHeader } from '@/components/shared/dogo-ui';
 import { getDashboardData } from '@/lib/api';
 
+export const dynamic = 'force-dynamic';
+
 export default async function EmployeePage() {
   const dashboardData = await getDashboardData();
   return (
