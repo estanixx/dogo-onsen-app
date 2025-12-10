@@ -9,7 +9,6 @@ import clsx from 'clsx';
 
 interface TableSelectorProps {
   table: BanquetTable;
-  selectedDate: Date;
   selectedTime: string | null;
 }
 
@@ -32,11 +31,11 @@ export default function TableItem({ table, selectedTime }: TableSelectorProps) {
         {/* Asientos — 6 en total */}
         {table.availableSeats.map((seat: BanquetSeat) => {
           // Verificar si el asiento ya está reservado (para esta fecha y hora)
-          const isReserved = seat.reservationId && seat.reservationId !== '';
+          const isReserved = !!(seat.reservationId && seat.reservationId !== '');
           const isAvailable = seat.available && table.available;
           const colorClass = clsx({
             'bg-destructive text-black': isReserved,
-            'bg-secondary text-black': isAvailable,
+            'bg-secondary text-black': isAvailable && !isReserved,
             'bg-primary text-white': !isAvailable && !isReserved,
           });
 
@@ -59,7 +58,7 @@ export default function TableItem({ table, selectedTime }: TableSelectorProps) {
                 positions[seat.seatNumber],
                 'data-[state=on]:bg-primary data-[state=on]:text-black',
               )}
-              disabled={!isAvailable || !selectedTime}
+              disabled={!isAvailable || !selectedTime || isReserved }
             >
               {seat.seatNumber}
             </ToggleGroupItem>

@@ -1,0 +1,64 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`TableItem > matches snapshot when no time selected (all seat buttons disabled) 1`] = `
+<div>
+  <div
+    class="relative"
+  >
+    <div
+      class="flex items-center justify-center bg-gray-900 border border-gray-600 rounded-2xl p-10 shadow-lg transition h-52 relative opacity-100"
+      data-slot="card"
+    >
+      <div
+        class="w-22 h-20 bg-gray-700 rounded-lg flex items-center justify-center text-white font-semibold"
+      >
+        <svg
+          class="size-10"
+          fill="currentColor"
+          height="1em"
+          stroke="currentColor"
+          stroke-width="0"
+          viewBox="0 0 24 24"
+          width="1em"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M0 0h24v24H0z"
+            fill="none"
+          />
+          <path
+            d="m21.96 9.73-1.43-5a.996.996 0 0 0-.96-.73H4.43c-.45 0-.84.3-.96.73l-1.43 5c-.18.63.3 1.27.96 1.27h2.2L4 20h2l.67-5h10.67l.66 5h2l-1.2-9H21c.66 0 1.14-.64.96-1.27zM6.93 13l.27-2h9.6l.27 2H6.93z"
+          />
+        </svg>
+         
+        <span
+          class="text-xs mt-6"
+        >
+          12
+        </span>
+      </div>
+      <button
+        class="w-10 h-7 rounded-md border flex items-center justify-center text-xs font-bold transition-all bg-secondary text-black absolute top-4 left-6 data-[state=on]:bg-primary data-[state=on]:text-black"
+        data-value="101"
+        disabled=""
+      >
+        1
+      </button>
+      <button
+        class="w-10 h-7 rounded-md border flex items-center justify-center text-xs font-bold transition-all bg-primary text-white absolute top-4 right-6 data-[state=on]:bg-primary data-[state=on]:text-black"
+        data-value="102"
+        disabled=""
+      >
+        2
+      </button>
+      <button
+        class="w-10 h-7 rounded-md border flex items-center justify-center text-xs font-bold transition-all bg-destructive text-black absolute top-1/2 -translate-y-1/2 right-2 data-[state=on]:bg-primary data-[state=on]:text-black"
+        data-value="103"
+        disabled=""
+      >
+        3
+      </button>
+    </div>
+  </div>
+</div>
+`;
