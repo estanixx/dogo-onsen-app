@@ -3,6 +3,7 @@ import { Toaster } from '@/components/ui/sonner';
 import './globals.css';
 import { Inter, Noto_Serif_JP } from 'next/font/google';
 import Providers from './providers';
+import FrontendObservability from '@/components/frontend-observability';
 
 const inter = Inter({
   subsets: ['latin'],
@@ -26,6 +27,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <html lang="es" className={`${inter.variable} ${notoSerifJP.variable}`}>
         <body className="overflow-y-auto font-base">
           <Providers>
+            <FrontendObservability />
             {children}
             <Toaster />
           </Providers>
