@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 import { clerkMiddleware, createRouteMatcher } from '@clerk/nextjs/server';
+import { trace } from '@opentelemetry/api';
 
 type DeviceConfig = {
   type?: 'room' | 'employee';
@@ -11,10 +12,31 @@ const PUBLIC_PATHS = ['/', '/room/config', '/sign-in', '/sign-up'];
 const isEmployeeRoute = createRouteMatcher(['/employee(.*)']);
 const isAdminRoute = createRouteMatcher(['/employee/admin(.*)']);
 
-export default clerkMiddleware(async (auth, request) => {
-  const { pathname } = request.nextUrl;
+/**
+ * Add Grafana observability headers to response
+ */
+function addObservabilityHeaders(response: NextResponse): void {
+  const current = trace.getActiveSpan();
+  
+  if (current) {
+    response.headers.set(
+      'server-timing',
+      `traceparent;desc="00-${current.spanContext().traceId}-${current.spanContext().spanId}-01"`
+    );
+  }
+}
+
+/**
+ * Handle authentication logic for employee and admin routes
+ */
+async function handleAuthentication(
+  auth: any,
+  request: NextRequest,
+  pathname: string
+): Promise<NextResponse | null> {
   const authState = await auth();
 
+  // Protect employee routes
   if (isEmployeeRoute(request)) {
     if (!authState.userId) {
       return authState.redirectToSignIn({ returnBackUrl: request.url });
@@ -30,13 +52,22 @@ export default clerkMiddleware(async (auth, request) => {
     // Check for admin token in cookies
     const adminToken = request.cookies.get('dogo-admin-token')?.value;
     if (!adminToken) {
-      // Redirect to home if no admin token
       return NextResponse.redirect(new URL('/', request.url));
     }
   }
 
+  return null;
+}
+
+/**
+ * Handle device configuration logic for rooms and employees
+ */
+function handleDeviceConfiguration(
+  request: NextRequest,
+  pathname: string
+): NextResponse | null {
   if (PUBLIC_PATHS.includes(pathname)) {
-    return NextResponse.next();
+    return null;
   }
 
   const deviceConfig = readDeviceConfig(request);
@@ -59,7 +90,30 @@ export default clerkMiddleware(async (auth, request) => {
     return NextResponse.redirect(new URL('/employee', request.url));
   }
 
-  return NextResponse.next();
+  return null;
+}
+
+export default clerkMiddleware(async (auth, request) => {
+  const { pathname } = request.nextUrl;
+
+  // Handle authentication
+  const authResponse = await handleAuthentication(auth, request, pathname);
+  if (authResponse) {
+    addObservabilityHeaders(authResponse);
+    return authResponse;
+  }
+
+  // Handle device configuration
+  const deviceResponse = handleDeviceConfiguration(request, pathname);
+  if (deviceResponse) {
+    addObservabilityHeaders(deviceResponse);
+    return deviceResponse;
+  }
+
+  // Default response with observability headers
+  const response = NextResponse.next();
+  addObservabilityHeaders(response);
+  return response;
 });
 
 function readDeviceConfig(request: NextRequest): DeviceConfig | null {
