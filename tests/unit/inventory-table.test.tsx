@@ -66,6 +66,6 @@ describe('InventoryTable', () => {
     render(<InventoryTable />);
     await waitFor(() => expect(mockGetItems).toHaveBeenCalled());
 
-    expect(screen.getByText(/Bajo inventario/i)).toBeInTheDocument();
+    expect(await screen.findByText(/Bajo inventario/i)).toBeInTheDocument();
   });
 });
