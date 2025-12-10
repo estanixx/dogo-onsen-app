@@ -23,17 +23,33 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Verify environment variables
+        run: |
+          echo "Checking required environment variables..."
+          if [ -z "${{ secrets.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY }}" ]; then
+            echo "Error: NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY is not set"
+            exit 1
+          fi
+          if [ -z "${{ secrets.CLERK_SECRET_KEY }}" ]; then
+            echo "Error: CLERK_SECRET_KEY is not set"
+            exit 1
+          fi
+          echo "All required secrets are present"
+
       - name: Build Application
         env:
           NEXT_PUBLIC_BACKEND_URL: http://localhost:3000
           NEXT_PUBLIC_BASE_URL: http://localhost:3000
           NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: ${{ secrets.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY }}
+          CLERK_SECRET_KEY: ${{ secrets.CLERK_SECRET_KEY }}
         run: npm run build
 
       - name: Start Application
         env:
           NEXT_PUBLIC_BACKEND_URL: http://localhost:3000
           NEXT_PUBLIC_BASE_URL: http://localhost:3000
+          NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: ${{ secrets.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY }}
+          CLERK_SECRET_KEY: ${{ secrets.CLERK_SECRET_KEY }}
         run: |
           # Start Next.js in background
           npm start -- -p 3000 &

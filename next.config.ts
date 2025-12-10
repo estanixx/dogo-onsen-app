@@ -1,12 +1,13 @@
 import type { NextConfig } from 'next';
-import { BACKEND_BASE_URL } from './lib/api/constants';
+
 const nextConfig: NextConfig = {
   /* config options here */
   async rewrites() {
+    const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL ?? 'http://localhost:8004';
     return [
       {
         source: '/api/:path*',
-        destination: `${BACKEND_BASE_URL}/:path*`,
+        destination: `${backendUrl}/:path*`,
       },
     ];
   },
@@ -22,7 +23,6 @@ const nextConfig: NextConfig = {
       },
     ],
   },
-
 };
 
 export default nextConfig;
