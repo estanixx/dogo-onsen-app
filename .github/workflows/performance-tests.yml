@@ -35,6 +35,20 @@ jobs:
             echo "Error: CLERK_SECRET_KEY is not set"
             exit 1
           fi
+          if [ -z "${{ secrets.K6_CLOUD_TOKEN }}" ]; then
+            echo "Error: K6_CLOUD_TOKEN is not set"
+            exit 1
+          else
+            echo "K6_CLOUD_TOKEN present: yes"
+          fi
+
+          if [ -z "${{ secrets.K6_CLOUD_PROJECT_ID }}" ]; then
+            echo "Error: K6_CLOUD_PROJECT_ID is not set"
+            exit 1
+          else
+            echo "K6_CLOUD_PROJECT_ID present: yes"
+          fi
+
           echo "All required secrets are present"
 
       - name: Build Application
@@ -69,4 +83,3 @@ jobs:
           BASE_URL: http://localhost:3000
         with:
           path: tests/performance/load_test.js
-          cloud-run-locally: true
