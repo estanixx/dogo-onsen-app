@@ -62,7 +62,9 @@ export async function getAvailablePrivateVenues( // TODO: implement real API
     urlparams.append('startTime', startTime.toISOString());
     urlparams.append('endTime', endTime.toISOString());
     const resp = await fetch(`${getBase()}/private_venue?${urlparams.toString()}`);
-    if (!resp.ok) return [];
+    if (!resp.ok) {
+      return [];
+    }
     const venues: PrivateVenue[] = await resp.json();
     return venues;
   } catch (error) {
@@ -115,7 +117,9 @@ export async function getSpiritType(typeId: string): Promise<SpiritType | null> 
 export async function getAllSpiritTypes(): Promise<SpiritType[]> {
   try {
     const resp = await fetch(`${getBase()}/spirit_type/`);
-    if (!resp.ok) return [];
+    if (!resp.ok) {
+      return [];
+    }
     const types: SpiritType[] = await resp.json();
     return types;
   } catch (error) {
@@ -135,7 +139,9 @@ export async function getAvailableTimeSlotsForService(
     const resp = await fetch(
       `${getBase()}/service/${serviceId}/available_time_slots?date=${date.toISOString()}`,
     );
-    if (!resp.ok) return [];
+    if (!resp.ok) {
+      return [];
+    }
     const slots: string[] = await resp.json();
     return slots;
   } catch (error) {
@@ -147,7 +153,9 @@ export async function getAvailableTimeSlotsForService(
 export async function getTimeSlots(): Promise<string[]> {
   try {
     const resp = await fetch(`${getBase()}/time-slots`);
-    if (!resp.ok) return [];
+    if (!resp.ok) {
+      return [];
+    }
     const slots: string[] = await resp.json();
     return slots;
   } catch (error) {
@@ -167,7 +175,9 @@ export async function getAvailableTimeSlotsForBanquet(
     const resp = await fetch(
       `${getBase()}/banquet/${spiritId}/available_time_slots?date=${date.toISOString()}`,
     );
-    if (!resp.ok) return [];
+    if (!resp.ok) {
+      return [];
+    }
     const slots: string[] = await resp.json();
     return slots;
   } catch (error) {
@@ -209,7 +219,9 @@ export async function getBanquetReservationsForDate(date: string) {
       },
       body: JSON.stringify({ date }),
     });
-    if (!resp.ok) return [];
+    if (!resp.ok) {
+      return [];
+    }
     const reservations: {
       id: string;
       tableId: string;
@@ -274,7 +286,9 @@ export async function getAvailableBanquetSeats(
         datetime: datetime,
       }),
     });
-    if (!resp.ok) return [];
+    if (!resp.ok) {
+      return [];
+    }
     const seats: BanquetTable[] = await resp.json();
     return seats;
   } catch (error) {
@@ -510,7 +524,9 @@ export async function getReservations({
       queryParams.append('datetime', datetime);
     }
     const resp = await fetch(`${getBase()}/reservation?${queryParams.toString()}`);
-    if (!resp.ok) return [];
+    if (!resp.ok) {
+      return [];
+    }
     const reservations: Reservation[] = await resp.json();
     return reservations;
   } catch (error) {
@@ -550,7 +566,9 @@ export async function removeReservation(id: string): Promise<boolean> {
 export async function getBanquetTables(): Promise<BanquetTable[]> {
   try {
     const resp = await fetch(`${getBase()}/banquet/table`);
-    if (!resp.ok) return [];
+    if (!resp.ok) {
+      return [];
+    }
     const tables: BanquetTable[] = await resp.json();
     return tables;
   } catch (error) {

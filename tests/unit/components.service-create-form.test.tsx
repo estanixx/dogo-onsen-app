@@ -64,7 +64,6 @@ describe('ServiceCreateForm', () => {
     expect(onSubmit).not.toHaveBeenCalled();
   });
 
-  
   it('shows error when removing the only row and submitting', async () => {
     const onSubmit = vi.fn(() => Promise.resolve());
     const onOpenChange = vi.fn();

@@ -15,7 +15,7 @@ export const options = {
   ext: {
     loadimpact: {
       projectID: 6059886, // REPLACE THIS with your actual Project ID
-      name: "Dogo Onsen Perf", // Name of the test run in the UI
+      name: 'Dogo Onsen Perf', // Name of the test run in the UI
     },
   },
   scenarios: {

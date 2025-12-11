@@ -59,13 +59,10 @@ export function createDatetimeFromDateAndTime(date: Date, timeString: string): D
  * @param insufficientItems - List of items that don't have enough stock
  * @returns Human-readable message about availability
  */
-export function getServiceAvailabilityMessage(
-  isAvailable: boolean,
-): string {
+export function getServiceAvailabilityMessage(isAvailable: boolean): string {
   if (isAvailable) {
     return 'SERVICIO DISPONIBLE';
   }
 
   return 'SERVICIO NO DISPONIBLE';
 }
-
