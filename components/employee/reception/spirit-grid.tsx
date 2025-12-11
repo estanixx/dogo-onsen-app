@@ -13,12 +13,17 @@ export default function SpiritGrid() {
   useEffect(() => {
     setState('loading');
     const fetchData = async () => {
-      const data = await getAllSpirits();
-      setSpirits(data);
-      setState('loaded');
+      try {
+        const data = await getAllSpirits();
+        setSpirits(data);
+        setState('loaded');
+      } catch (error) {
+        console.error('Failed to load spirits:', error);
+        setState('error');
+      }
     };
     fetchData();
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [setSpirits]); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <div className="">

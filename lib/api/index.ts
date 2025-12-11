@@ -25,12 +25,24 @@ const getBase = () => {
  * Returns a list of services with their details
  */
 export async function getAvailableServices(query?: string): Promise<Service[]> {
-  const queryParam = query ? `?q=${encodeURIComponent(query)}` : '';
-  // Use an absolute URL so this works both in browser and on the server.
-  const base = getBase();
-  const resp = await fetch(`${base}/service${queryParam}`);
-  const all: Service[] = await resp.json();
-  return all;
+  try {
+    const queryParam = query ? `?q=${encodeURIComponent(query)}` : '';
+    // Use an absolute URL so this works both in browser and on the server.
+    const base = getBase();
+    console.log(`Fetching services from: ${base}/service${queryParam}`);
+    const resp = await fetch(`${base}/service${queryParam}`);
+
+    if (!resp.ok) {
+      console.error(`Failed to fetch services: ${resp.status} ${resp.statusText}`);
+      return [];
+    }
+
+    const all: Service[] = await resp.json();
+    return all;
+  } catch (error) {
+    console.error('Error fetching services:', error);
+    return [];
+  }
 }
 
 export async function getServiceById(id: string): Promise<Service | null> {
@@ -233,9 +245,22 @@ export async function getAvailableBanquetSeats(
  * Function to get all the registered spirits
  */
 export async function getAllSpirits(): Promise<Spirit[]> {
-  const resp = await fetch(`${getBase()}/spirit/`);
-  const spirits: Spirit[] = await resp.json();
-  return spirits;
+  try {
+    const base = getBase();
+    console.log(`Fetching spirits from: ${base}/spirit/`);
+    const resp = await fetch(`${base}/spirit/`);
+
+    if (!resp.ok) {
+      console.error(`Failed to fetch spirits: ${resp.status} ${resp.statusText}`);
+      return [];
+    }
+
+    const spirits: Spirit[] = await resp.json();
+    return spirits;
+  } catch (error) {
+    console.error('Error fetching spirits:', error);
+    return [];
+  }
 }
 
 /**
@@ -664,9 +689,7 @@ export async function redeemOrder(orderId: number): Promise<Order | null> {
  * @param serviceId - The ID of the service to check
  * @returns Object with isAvailable flag and details about missing items
  */
-export async function verifyServiceItemAvailability(
-  serviceId: string,
-): Promise<{
+export async function verifyServiceItemAvailability(serviceId: string): Promise<{
   isAvailable: boolean;
   insufficientItems: Array<{
     itemId: number;
@@ -679,14 +702,14 @@ export async function verifyServiceItemAvailability(
   try {
     const base = getBase();
     const url = `${base}/service/${serviceId}/check-availability`;
-    
+
     const resp = await fetch(url, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
       },
     });
-    
+
     if (!resp.ok) {
       const errorText = await resp.text();
       console.error(`[API] Error checking availability: ${resp.status}`);
@@ -700,4 +723,3 @@ export async function verifyServiceItemAvailability(
     return null;
   }
 }
-

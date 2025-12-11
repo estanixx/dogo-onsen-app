@@ -20,6 +20,7 @@ export default function ServicesManagementPage() {
   const [services, setServices] = useState<Service[]>([]);
   const [loading, setLoading] = useState(true);
   const [service, setService] = useState<Service | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
   const setSidebarOpen = (open: boolean) => {
     if (!open) {
@@ -55,10 +56,17 @@ export default function ServicesManagementPage() {
 
   useEffect(() => {
     setLoading(true);
+    setError(null);
     const fetchServices = async () => {
-      const availableServices = await getAvailableServices();
-      setServices(availableServices);
-      setLoading(false);
+      try {
+        const availableServices = await getAvailableServices();
+        setServices(availableServices);
+      } catch (err) {
+        console.error('Failed to load services:', err);
+        setError('No se pudieron cargar los servicios. Por favor, intente más tarde.');
+      } finally {
+        setLoading(false);
+      }
     };
     fetchServices();
   }, []);
@@ -110,6 +118,13 @@ export default function ServicesManagementPage() {
                   <LoadingBox className="text-white col-span-full h-72">
                     Cargando servicios...
                   </LoadingBox>
+                ) : error ? (
+                  <div className="col-span-full flex flex-col items-center justify-center gap-4 rounded-xl border border-dashed border-red-500/30 bg-red-500/5 backdrop-blur-sm p-12 text-center text-red-500">
+                    <p>{error}</p>
+                    <Button variant="outline" onClick={() => window.location.reload()}>
+                      Reintentar
+                    </Button>
+                  </div>
                 ) : services.length === 0 ? (
                   <div className="col-span-full flex flex-col items-center justify-center gap-4 rounded-xl border border-dashed border-gold/30 bg-card/30 backdrop-blur-sm p-12 text-center">
                     <div className="rounded-full bg-gold/10 p-4">
