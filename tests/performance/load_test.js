@@ -14,8 +14,8 @@ import { randomString } from 'https://jslib.k6.io/k6-utils/1.2.0/index.js';
 export const options = {
   ext: {
     loadimpact: {
-      projectID: 1465788, // REPLACE THIS with your actual Project ID
-      name: "Dogo Onsen Performance Test", // Name of the test run in the UI
+      projectID: 6059886, // REPLACE THIS with your actual Project ID
+      name: "Dogo Onsen Perf", // Name of the test run in the UI
     },
   },
   scenarios: {
