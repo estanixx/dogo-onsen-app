@@ -18,8 +18,10 @@ import {
   // bookService, @estanixx decomentar
   createServiceReservation,
   getAvailableTimeSlotsForService,
+  verifyServiceItemAvailability,
 } from '@/lib/api';
 import { Service, VenueAccount } from '@/lib/types';
+import { getServiceAvailabilityMessage } from '@/lib/utils';
 import { format } from 'date-fns';
 import { useRouter } from 'next/navigation';
 import * as React from 'react';
@@ -37,7 +39,36 @@ export default function ServiceBookConfirm({ service, open, setOpen, account }: 
   const [time, setTime] = React.useState<string | null>(null);
   const [availableTimeSlots, setAvailableTimeSlots] = React.useState<string[] | null>(null);
   const [loading, setLoading] = React.useState(false);
+  const [itemAvailability, setItemAvailability] = React.useState<{
+    isAvailable: boolean;
+    insufficientItems: Array<{ itemName: string; requiredQuantity: number; availableQuantity: number }>;
+    message: string;
+  } | null>(null);
+  const [checkingItems, setCheckingItems] = React.useState(false);
   const router = useRouter();
+  // Check item availability when component opens
+  React.useEffect(() => {
+    if (!open) {
+      return;
+    }
+    
+    const checkItems = async () => {
+      setCheckingItems(true);
+      try {
+        const availability = await verifyServiceItemAvailability(service.id);
+        if (availability) {
+          setItemAvailability(availability);
+        }
+      } catch (error) {
+        console.error('Error checking item availability:', error);
+      } finally {
+        setCheckingItems(false);
+      }
+    };
+    
+    checkItems();
+  }, [service.id, open]);
+
   React.useEffect(() => {
     setAvailableTimeSlots(null);
     getAvailableTimeSlotsForService(service.id, date).then((slots) => {
@@ -45,7 +76,7 @@ export default function ServiceBookConfirm({ service, open, setOpen, account }: 
     });
   }, [service.id, date]);
 
-  const canConfirm = !!date && !!time && !loading;
+  const canConfirm = !!date && !!time && !loading && itemAvailability?.isAvailable;
 
   const handleConfirm = async () => {
     if (!time) {
@@ -103,9 +134,28 @@ export default function ServiceBookConfirm({ service, open, setOpen, account }: 
               <H2>{service.name}</H2>
             </DialogTitle>
             <DialogDescription asChild>
-              <P>
-                Precio: <strong>{service.eiltRate} EILT</strong>
-              </P>
+              <div>
+                <P>
+                  Precio: <strong>{service.eiltRate} EILT</strong>
+                </P>
+                {checkingItems && (
+                  <P className="text-xs text-muted-foreground mt-2">
+                    Verificando disponibilidad de items...
+                  </P>
+                )}
+                {itemAvailability && (
+                  <P className={`text-xs mt-2 ${
+                    itemAvailability.isAvailable
+                      ? 'text-green-400'
+                      : 'text-destructive'
+                  }`}>
+                    {getServiceAvailabilityMessage(
+                      itemAvailability.isAvailable,
+                      itemAvailability.insufficientItems,
+                    )}
+                  </P>
+                )}
+              </div>
             </DialogDescription>
           </DialogHeader>
 

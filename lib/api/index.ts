@@ -634,7 +634,7 @@ export async function createVenueAccount({
 }
 
 export async function getDashboardData(): Promise<DashboardData | null> {
-  console.log(`${getBase()}/dashboard`)
+  console.log(`${getBase()}/dashboard`);
   const resp = await fetch(`${getBase()}/dashboard`);
   const data: DashboardData = await resp.json();
   if (!resp.ok) {
@@ -659,3 +659,42 @@ export async function redeemOrder(orderId: number): Promise<Order | null> {
   const updatedOrder: Order = await resp.json();
   return updatedOrder;
 }
+
+/**
+ * Verify if a service has sufficient stock to fulfill a reservation
+ * @param serviceId - The ID of the service to check
+ * @returns Object with isAvailable flag and details about missing items
+ */
+export async function verifyServiceItemAvailability(
+  serviceId: string,
+): Promise<{
+  isAvailable: boolean;
+  insufficientItems: Array<{
+    itemId: number;
+    itemName: string;
+    requiredQuantity: number;
+    availableQuantity: number;
+  }>;
+  message: string;
+} | null> {
+  try {
+    const resp = await fetch(`${getBase()}/api/service/${serviceId}/check-availability`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+
+    if (!resp.ok) {
+      console.warn(`verifyServiceItemAvailability: ${resp.status} ${resp.statusText}`);
+      return null;
+    }
+
+    const result = await resp.json();
+    return result;
+  } catch (error) {
+    console.error('Error verifying service item availability:', error);
+    return null;
+  }
+}
+

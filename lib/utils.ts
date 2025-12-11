@@ -52,3 +52,33 @@ export function createDatetimeFromDateAndTime(date: Date, timeString: string): D
   combined.setHours(hours, minutes, seconds, 0);
   return combined;
 }
+
+/**
+ * Check if a service can be booked based on item availability
+ * @param isAvailable - Whether all required items are in stock
+ * @param insufficientItems - List of items that don't have enough stock
+ * @returns Human-readable message about availability
+ */
+export function getServiceAvailabilityMessage(
+  isAvailable: boolean,
+  insufficientItems: Array<{
+    itemName: string;
+    requiredQuantity: number;
+    availableQuantity: number;
+  }>,
+): string {
+  if (isAvailable) {
+    return 'Todos los items están disponibles';
+  }
+
+  if (insufficientItems.length === 0) {
+    return 'No hay items disponibles para este servicio';
+  }
+
+  const itemList = insufficientItems
+    .map((item) => `${item.itemName} (necesita: ${item.requiredQuantity}, disponible: ${item.availableQuantity})`)
+    .join(', ');
+
+  return `Items insuficientes: ${itemList}`;
+}
+

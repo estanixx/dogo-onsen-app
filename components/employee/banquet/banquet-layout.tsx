@@ -13,7 +13,9 @@ import {
   getAvailableBanquetSeats,
   getAvailableTimeSlotsForBanquet,
   getServiceById,
+  verifyServiceItemAvailability,
 } from '@/lib/api';
+import { getServiceAvailabilityMessage } from '@/lib/utils';
 import { BanquetTable, Reservation, VenueAccount } from '@/lib/types';
 import { format } from 'date-fns';
 import { useRouter } from 'next/navigation';
@@ -35,6 +37,12 @@ export default function BanquetLayout({ account, venueId }: BanquetLayoutProps) 
   const [availableTimeSlots, setAvailableTimeSlots] = useState<string[] | null>(null);
   const [loadingSlots, setLoadingSlots] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+  const [itemAvailability, setItemAvailability] = useState<{
+    isAvailable: boolean;
+    insufficientItems: Array<{ itemName: string; requiredQuantity: number; availableQuantity: number }>;
+    message: string;
+  } | null>(null);
+  const [checkingItems, setCheckingItems] = useState(false);
   const router = useRouter();
   const { addReservation } = useReservations();
 
@@ -54,6 +62,28 @@ export default function BanquetLayout({ account, venueId }: BanquetLayoutProps) 
   };
 
   useEffect(clearSelection, [venueId]);
+
+  // Check item availability for banquet when component mounts
+  useEffect(() => {
+    const checkItems = async () => {
+      setCheckingItems(true);
+      try {
+        // Assuming there's a banquet service ID or we check a default banquet items service
+        // You may need to adjust this to match your actual banquet service ID
+        const availability = await verifyServiceItemAvailability('banquet');
+        if (availability) {
+          setItemAvailability(availability);
+        }
+      } catch (error) {
+        console.error('Error checking banquet item availability:', error);
+      } finally {
+        setCheckingItems(false);
+      }
+    };
+
+    checkItems();
+  }, []);
+
   // Load banquet tables
   useEffect(() => {
     fetchBanquetSeats();
@@ -77,7 +107,7 @@ export default function BanquetLayout({ account, venueId }: BanquetLayoutProps) 
     fetchSlots();
   }, [date]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  const canConfirm = !!selectedSeat && !!date && !!time && !submitting;
+  const canConfirm = !!selectedSeat && !!date && !!time && !submitting && itemAvailability?.isAvailable;
 
   const onDateSelect = (selectedDate: Date | undefined) => {
     if (selectedDate) {
@@ -187,12 +217,28 @@ export default function BanquetLayout({ account, venueId }: BanquetLayoutProps) 
 
       {date && time ? (
         <>
-          {/* Table grid */}
-
-          <div className="flex justify-between items-center mb-4 ml-6">
+          {/* Item availability status */}
+          <div className="flex justify-between items-center mb-4 ml-6 gap-4">
             <h2 className="text-2xl font-serif tracking-wide text-[var(--gold)] border-b-2 border-[var(--gold)]/20 pb-1">
               Escoger asiento
             </h2>
+            {checkingItems && (
+              <P className="text-xs text-muted-foreground">
+                Verificando disponibilidad de items...
+              </P>
+            )}
+            {itemAvailability && (
+              <P className={`text-xs ${
+                itemAvailability.isAvailable
+                  ? 'text-green-400'
+                  : 'text-destructive'
+              }`}>
+                {getServiceAvailabilityMessage(
+                  itemAvailability.isAvailable,
+                  itemAvailability.insufficientItems,
+                )}
+              </P>
+            )}
           </div>
 
           <ToggleGroup
