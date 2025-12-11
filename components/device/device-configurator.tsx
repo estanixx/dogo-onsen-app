@@ -19,14 +19,11 @@ export function DeviceConfigurator({ configureDevice }: DeviceConfiguratorProps)
   const handleSelectDevice = async (type: 'employee' | 'room') => {
     setIsProcessing(true);
 
-    // Normal flow
-    try {
-      await configureDevice(type);
-    } finally {
-      setIsProcessing(false);
-    }
-
     // If employee device selected and user is admin, handle admin login
+    console.log('Selected device type:', type);
+    console.log('User loaded:', isLoaded);
+    console.log('User info:', user);
+    await configureDevice(type);
     if (type === 'employee' && isLoaded && user) {
       const metadata =
         typeof user.publicMetadata === 'object' && user.publicMetadata !== null
@@ -37,8 +34,8 @@ export function DeviceConfigurator({ configureDevice }: DeviceConfiguratorProps)
           // Login as admin and get token
           await loginAsAdmin(user.id);
           // Redirect to admin dashboard
-          router.push('/employee/admin');
-          return;
+          setIsProcessing(false);
+          router.push('/employee');
         } catch (error) {
           console.error('Admin login failed:', error);
           alert(`Admin login failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
@@ -46,6 +43,10 @@ export function DeviceConfigurator({ configureDevice }: DeviceConfiguratorProps)
           return;
         }
       }
+    } else if (type === 'room') {
+      // For room devices, redirect to room config
+      setIsProcessing(false);
+      router.push('/room/config');
     }
   };
 

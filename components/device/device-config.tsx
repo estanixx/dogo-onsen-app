@@ -17,7 +17,7 @@ export function SyncDeviceConfig({ config }: { config: DeviceConfig }) {
     // from the backend (cookie is httpOnly). This keeps localStorage in sync.
     async function syncFromServer() {
       try {
-        const resp = await fetch('/api/device-config');
+        const resp = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/device-config`);
         if (resp.status === 204) {
           return;
         }
