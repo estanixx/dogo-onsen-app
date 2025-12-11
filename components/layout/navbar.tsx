@@ -22,6 +22,7 @@ export default function Navbar() {
     { name: 'Banquete', href: '/employee/banquet' },
     { name: 'Inventario', href: '/employee/inventory' },
     { name: 'Servicios', href: '/employee/services' },
+    { name: 'Admin', href: '/employee/admin' },
   ];
 
   return (
