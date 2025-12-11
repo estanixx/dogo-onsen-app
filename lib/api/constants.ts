@@ -1,4 +1,3 @@
-export const BACKEND_BASE_URL = process.env.NEXT_PUBLIC_BACKEND_URL ?? 'http://localhost:8004';
 export const BANQUET_SERVICE_DATA = {
   name: 'Banquet Service',
   description: 'Premium banquet service for special occasions.',

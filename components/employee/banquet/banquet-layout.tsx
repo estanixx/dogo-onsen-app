@@ -12,6 +12,7 @@ import {
   createBanquetReservation,
   getAvailableBanquetSeats,
   getAvailableTimeSlotsForBanquet,
+  getServiceById,
 } from '@/lib/api';
 import { BanquetTable, Reservation, VenueAccount } from '@/lib/types';
 import { format } from 'date-fns';
@@ -26,6 +27,7 @@ interface BanquetLayoutProps {
 }
 
 export default function BanquetLayout({ account, venueId }: BanquetLayoutProps) {
+  console.log(account);
   const [tables, setTables] = useState<BanquetTable[]>([]);
   const [selectedSeat, setSelectedSeat] = useState<number | null>(null);
   const [date, setDate] = useState<Date | null>(null);
@@ -92,6 +94,17 @@ export default function BanquetLayout({ account, venueId }: BanquetLayoutProps) 
 
     setSubmitting(true);
     try {
+      const banquetService = await getServiceById('banquete');
+      if (!banquetService) {
+        toast.error('Error al crear la reserva');
+        setSubmitting(false);
+        return;
+      }
+      if (account.eiltBalance && banquetService.eiltRate > account.eiltBalance) {
+        toast.error('Saldo insuficiente para reservar el banquete');
+        setSubmitting(false);
+        return;
+      }
       const reservation = await createBanquetReservation({
         seatId: selectedSeat,
         date,
@@ -106,10 +119,11 @@ export default function BanquetLayout({ account, venueId }: BanquetLayoutProps) 
 
       // Also register in general reservation context
       addReservation(reservation as Reservation);
+
       toast.success(
         `Reserva confirmada para el asiento ${selectedSeat} (${format(date, 'PPP')} ${time})`,
       );
-      router.refresh();
+      router.push('/employee');
     } catch (e) {
       toast.error('Error al crear la reserva');
       console.error(e);

@@ -1,3 +1,4 @@
+'use server';
 import {
   BanquetTable,
   DashboardData,
@@ -16,9 +17,7 @@ import {
 import { createDatetimeFromDateAndTime, wait } from '../utils';
 
 const getBase = () => {
-  return typeof window !== 'undefined'
-    ? window.location.origin
-    : (process.env.NEXT_PUBLIC_BASE_URL ?? 'http://localhost:3000');
+  return (process.env.NEXT_PUBLIC_BACKEND_URL ?? 'http://localhost:8004');
 };
 
 /**
@@ -29,7 +28,7 @@ export async function getAvailableServices(query?: string): Promise<Service[]> {
   const queryParam = query ? `?q=${encodeURIComponent(query)}` : '';
   // Use an absolute URL so this works both in browser and on the server.
   const base = getBase();
-  const resp = await fetch(`${base}/api/service${queryParam}`);
+  const resp = await fetch(`${base}/service${queryParam}`);
   const all: Service[] = await resp.json();
   return all;
 }
@@ -37,7 +36,7 @@ export async function getAvailableServices(query?: string): Promise<Service[]> {
 export async function getServiceById(id: string): Promise<Service | null> {
   // Use an absolute URL so this works both in browser and on the server.
   const base = getBase();
-  const resp = await fetch(`${base}/api/service/${id}`);
+  const resp = await fetch(`${base}/service/${id}`);
   const all: Service | null = await resp.json();
   return all;
 }
@@ -49,7 +48,7 @@ export async function getAvailablePrivateVenues( // TODO: implement real API
   const urlparams = new URLSearchParams();
   urlparams.append('startTime', startTime.toISOString());
   urlparams.append('endTime', endTime.toISOString());
-  const resp = await fetch(`${getBase()}/api/private_venue?${urlparams.toString()}`);
+  const resp = await fetch(`${getBase()}/private_venue?${urlparams.toString()}`);
   const venues: PrivateVenue[] = await resp.json();
   return venues;
 }
@@ -59,14 +58,14 @@ export async function getAvailablePrivateVenues( // TODO: implement real API
  * Returns account details including spirit ID and time information
  */
 export async function getCurrentVenueAccount(roomId: string): Promise<VenueAccount | null> {
-  const resp = await fetch(`${getBase()}/api/venue_account/room/${roomId}`);
+  const resp = await fetch(`${getBase()}/venue_account/room/${roomId}`);
   const account: VenueAccount | null = await resp.json();
   return account;
 }
 /** * Function to get venue account details by ID
  */
 export async function getVenueAccountById(venueId: string): Promise<VenueAccount | null> {
-  const resp = await fetch(`${getBase()}/api/venue_account/${venueId}`);
+  const resp = await fetch(`${getBase()}/venue_account/${venueId}`);
   if (!resp.ok) {
     return null;
   }
@@ -78,7 +77,7 @@ export async function getVenueAccountById(venueId: string): Promise<VenueAccount
  * Function to get spirit details by ID
  */
 export async function getSpirit(spiritId: number): Promise<Spirit | null> {
-  const resp = await fetch(`${getBase()}/api/spirit/${spiritId}`);
+  const resp = await fetch(`${getBase()}/spirit/${spiritId}`);
   const spirit: Spirit | null = await resp.json();
   if (!resp.ok) {
     return null;
@@ -90,13 +89,13 @@ export async function getSpirit(spiritId: number): Promise<Spirit | null> {
  * Function to get spirit type details by ID
  */
 export async function getSpiritType(typeId: string): Promise<SpiritType | null> {
-  const resp = await fetch(`${getBase()}/api/spirit_type/${typeId}`);
+  const resp = await fetch(`${getBase()}/spirit_type/${typeId}`);
   const type: SpiritType | null = await resp.json();
   return type;
 }
 
 export async function getAllSpiritTypes(): Promise<SpiritType[]> {
-  const resp = await fetch(`${getBase()}/api/spirit_type/`);
+  const resp = await fetch(`${getBase()}/spirit_type/`);
   const types: SpiritType[] = await resp.json();
   return types;
 }
@@ -109,14 +108,14 @@ export async function getAvailableTimeSlotsForService(
   date: Date,
 ): Promise<string[]> {
   const resp = await fetch(
-    `${getBase()}/api/service/${serviceId}/available_time_slots?date=${date.toISOString()}`,
+    `${getBase()}/service/${serviceId}/available_time_slots?date=${date.toISOString()}`,
   );
   const slots: string[] = await resp.json();
   return slots;
 }
 
 export async function getTimeSlots(): Promise<string[]> {
-  const resp = await fetch(`${getBase()}/api/time-slots`);
+  const resp = await fetch(`${getBase()}/time-slots`);
   const slots: string[] = await resp.json();
   return slots;
 }
@@ -129,7 +128,7 @@ export async function getAvailableTimeSlotsForBanquet(
   date: Date,
 ): Promise<string[]> {
   const resp = await fetch(
-    `${getBase()}/api/banquet/${spiritId}/available_time_slots?date=${date.toISOString()}`,
+    `${getBase()}/banquet/${spiritId}/available_time_slots?date=${date.toISOString()}`,
   );
   const slots: string[] = await resp.json();
   return slots;
@@ -142,7 +141,7 @@ export async function createSpirit(
   image?: string,
 ): Promise<Spirit> {
   // Simulate creating a new spirit
-  const resp = await fetch(`${getBase()}/api/spirit/`, {
+  const resp = await fetch(`${getBase()}/spirit/`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -160,7 +159,7 @@ export async function createSpirit(
 }
 
 export async function getBanquetReservationsForDate(date: string) {
-  const resp = await fetch(`${getBase()}/api/reservation/banquet-by-date`, {
+  const resp = await fetch(`${getBase()}/reservation/banquet-by-date`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -191,13 +190,14 @@ export async function createBanquetReservation({
 }) {
   // Combine date (YYYY-MM-DD) and time (HH:mm)
   const startTime = createDatetimeFromDateAndTime(date, time);
-  const resp = await fetch(`${getBase()}/api/reservation/`, {
+  const resp = await fetch(`${getBase()}/reservation/`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({
       seatId,
+      serviceId: 'banquete',
       startTime,
       endTime: new Date(startTime.getTime() + 60 * 60 * 1000),
       accountId,
@@ -216,7 +216,7 @@ export async function getAvailableBanquetSeats(
   time: string,
 ): Promise<BanquetTable[]> {
   const datetime = createDatetimeFromDateAndTime(date, time);
-  const resp = await fetch(`${getBase()}/api/banquet/table/available/${spiritId}`, {
+  const resp = await fetch(`${getBase()}/banquet/table/available/${spiritId}`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -233,19 +233,19 @@ export async function getAvailableBanquetSeats(
  * Function to get all the registered spirits
  */
 export async function getAllSpirits(): Promise<Spirit[]> {
-  const resp = await fetch(`${getBase()}/api/spirit/`);
+  const resp = await fetch(`${getBase()}/spirit/`);
   const spirits: Spirit[] = await resp.json();
   return spirits;
 }
 
 /**
- * Update a spirit with partial data (uses PUT /api/spirit/{id})
+ * Update a spirit with partial data (uses PUT /spirit/{id})
  */
 export async function updateSpirit(
   spiritId: string,
   update: Partial<Spirit>,
 ): Promise<Spirit | null> {
-  const resp = await fetch(`${getBase()}/api/spirit/${spiritId}`, {
+  const resp = await fetch(`${getBase()}/spirit/${spiritId}`, {
     method: 'PUT',
     headers: {
       'Content-Type': 'application/json',
@@ -263,7 +263,7 @@ export async function updateSpirit(
  * Create a deposit record for a venue account
  */
 export async function createDeposit(accountId: string, amount: number): Promise<Deposit> {
-  const resp = await fetch(`${getBase()}/api/deposit/`, {
+  const resp = await fetch(`${getBase()}/deposit/`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
@@ -280,7 +280,7 @@ export async function createDeposit(accountId: string, amount: number): Promise<
 }
 
 export async function getDepositsForAccount(accountId: string): Promise<Deposit[]> {
-  const resp = await fetch(`${getBase()}/api/deposit/account/${encodeURIComponent(accountId)}`);
+  const resp = await fetch(`${getBase()}/deposit/account/${encodeURIComponent(accountId)}`);
   if (!resp.ok) {
     throw new Error('Failed to fetch deposits for account');
   }
@@ -292,7 +292,7 @@ export async function getDepositsForAccount(accountId: string): Promise<Deposit[
  * Function to get a single item by its ID from the backend
  */
 export async function getItems(): Promise<Item[]> {
-  const resp = await fetch(`${getBase()}/api/item/`);
+  const resp = await fetch(`${getBase()}/item/`);
   if (!resp.ok) {
     throw new Error('Failed to fetch items');
   }
@@ -306,7 +306,7 @@ export async function getItems(): Promise<Item[]> {
 export async function getItem(
   itemId: number,
 ): Promise<{ id: number; name: string; image?: string } | null> {
-  const resp = await fetch(`${getBase()}/api/item/${itemId}`);
+  const resp = await fetch(`${getBase()}/item/${itemId}`);
   if (!resp.ok) {
     return null;
   }
@@ -346,7 +346,7 @@ export async function createOrder(
       },
       items: items.map((it) => ({ idItem: it.idItem, quantity: it.quantity })),
     };
-    const resp = await fetchWithTimeout(`${baseUrl}/api/order/with_items`, {
+    const resp = await fetchWithTimeout(`${baseUrl}/order/with_items`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(payload),
@@ -429,7 +429,7 @@ export async function getReservations({
   if (datetime) {
     queryParams.append('datetime', datetime);
   }
-  const resp = await fetch(`${getBase()}/api/reservation?${queryParams.toString()}`);
+  const resp = await fetch(`${getBase()}/reservation?${queryParams.toString()}`);
   const reservations: Reservation[] = await resp.json();
   return reservations;
 }
@@ -438,7 +438,7 @@ export async function updateReservation(
   id: string,
   reservation: Partial<Reservation>,
 ): Promise<Reservation | null> {
-  const resp = await fetch(`${getBase()}/api/reservation/${id}`, {
+  const resp = await fetch(`${getBase()}/reservation/${id}`, {
     method: 'PUT',
     headers: {
       'Content-Type': 'application/json',
@@ -453,7 +453,7 @@ export async function updateReservation(
 }
 
 export async function removeReservation(id: string): Promise<boolean> {
-  const resp = await fetch(`${getBase()}/api/reservation/${id}`, {
+  const resp = await fetch(`${getBase()}/reservation/${id}`, {
     method: 'DELETE',
   });
   return resp.ok;
@@ -463,7 +463,7 @@ export async function removeReservation(id: string): Promise<boolean> {
  * Function to get all banquet tables
  */
 export async function getBanquetTables(): Promise<BanquetTable[]> {
-  const resp = await fetch(`${getBase()}/api/banquet/table`);
+  const resp = await fetch(`${getBase()}/banquet/table`);
   const tables: BanquetTable[] = await resp.json();
   return tables;
 }
@@ -473,7 +473,7 @@ export async function getBanquetTables(): Promise<BanquetTable[]> {
  */
 export async function getInventoryOrders(): Promise<InventoryOrder[]> {
   try {
-    const resp = await fetch(`${getBase()}/api/inventory_order/`);
+    const resp = await fetch(`${getBase()}/inventory_order/`);
     if (!resp.ok) {
       console.warn(`getInventoryOrders: ${resp.status} ${resp.statusText}`);
       return [];
@@ -493,7 +493,7 @@ export async function getInventoryOrders(): Promise<InventoryOrder[]> {
  */
 export async function getOrdersRaw(): Promise<Order[]> {
   try {
-    const resp = await fetch(`${getBase()}/api/order/`);
+    const resp = await fetch(`${getBase()}/order/`);
     if (!resp.ok) {
       console.warn(`getOrdersRaw: ${resp.status} ${resp.statusText}`);
       return [];
@@ -535,7 +535,7 @@ export async function enrichOrdersWithItems(orders: Order[]): Promise<Order[]> {
 }
 
 export async function createService(service: Service): Promise<Service | null> {
-  const resp = await fetch(`${getBase()}/api/service/`, {
+  const resp = await fetch(`${getBase()}/service/`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -558,7 +558,7 @@ export async function createItemIntake(intake: {
   serviceId?: string;
   seatId?: number | null;
 }): Promise<ItemIntake | null> {
-  const resp = await fetch(`${getBase()}/api/item_intake/`, {
+  const resp = await fetch(`${getBase()}/item_intake/`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(intake),
@@ -583,7 +583,7 @@ export async function createServiceReservation({
   timeSlot: string;
 }): Promise<Reservation | null> {
   const startTime = createDatetimeFromDateAndTime(date, timeSlot);
-  const resp = await fetch(`${getBase()}/api/reservation`, {
+  const resp = await fetch(`${getBase()}/reservation`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -616,7 +616,7 @@ export async function createVenueAccount({
   startTime: Date;
   endTime: Date;
 }): Promise<VenueAccount | { detail: string } | null> {
-  const resp = await fetch(`${getBase()}/api/venue_account/`, {
+  const resp = await fetch(`${getBase()}/venue_account/`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -634,7 +634,8 @@ export async function createVenueAccount({
 }
 
 export async function getDashboardData(): Promise<DashboardData | null> {
-  const resp = await fetch(`${getBase()}/api/dashboard`);
+  console.log(`${getBase()}/dashboard`)
+  const resp = await fetch(`${getBase()}/dashboard`);
   const data: DashboardData = await resp.json();
   if (!resp.ok) {
     return null;
@@ -646,7 +647,7 @@ export async function getDashboardData(): Promise<DashboardData | null> {
  * Function to redeem an order (mark all inventory orders as redeemed)
  */
 export async function redeemOrder(orderId: number): Promise<Order | null> {
-  const resp = await fetch(`${getBase()}/api/order/${orderId}/redeem`, {
+  const resp = await fetch(`${getBase()}/order/${orderId}/redeem`, {
     method: 'PUT',
     headers: {
       'Content-Type': 'application/json',

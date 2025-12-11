@@ -120,7 +120,6 @@ export default function ReservationSidebar({ service }: Props) {
               <SelectValue placeholder="Selecciona un horario (opcional)" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value=" ">(Todos)</SelectItem>
               {timeSlots.map((t) => (
                 <SelectItem key={t} value={t}>
                   {t}
