@@ -57,12 +57,18 @@ export async function getAvailablePrivateVenues( // TODO: implement real API
   startTime: Date,
   endTime: Date,
 ): Promise<PrivateVenue[]> {
-  const urlparams = new URLSearchParams();
-  urlparams.append('startTime', startTime.toISOString());
-  urlparams.append('endTime', endTime.toISOString());
-  const resp = await fetch(`${getBase()}/private_venue?${urlparams.toString()}`);
-  const venues: PrivateVenue[] = await resp.json();
-  return venues;
+  try {
+    const urlparams = new URLSearchParams();
+    urlparams.append('startTime', startTime.toISOString());
+    urlparams.append('endTime', endTime.toISOString());
+    const resp = await fetch(`${getBase()}/private_venue?${urlparams.toString()}`);
+    if (!resp.ok) return [];
+    const venues: PrivateVenue[] = await resp.json();
+    return venues;
+  } catch (error) {
+    console.error('Error fetching private venues:', error);
+    return [];
+  }
 }
 
 /**
@@ -107,9 +113,15 @@ export async function getSpiritType(typeId: string): Promise<SpiritType | null> 
 }
 
 export async function getAllSpiritTypes(): Promise<SpiritType[]> {
-  const resp = await fetch(`${getBase()}/spirit_type/`);
-  const types: SpiritType[] = await resp.json();
-  return types;
+  try {
+    const resp = await fetch(`${getBase()}/spirit_type/`);
+    if (!resp.ok) return [];
+    const types: SpiritType[] = await resp.json();
+    return types;
+  } catch (error) {
+    console.error('Error fetching spirit types:', error);
+    return [];
+  }
 }
 
 /**
@@ -119,17 +131,29 @@ export async function getAvailableTimeSlotsForService(
   serviceId: string,
   date: Date,
 ): Promise<string[]> {
-  const resp = await fetch(
-    `${getBase()}/service/${serviceId}/available_time_slots?date=${date.toISOString()}`,
-  );
-  const slots: string[] = await resp.json();
-  return slots;
+  try {
+    const resp = await fetch(
+      `${getBase()}/service/${serviceId}/available_time_slots?date=${date.toISOString()}`,
+    );
+    if (!resp.ok) return [];
+    const slots: string[] = await resp.json();
+    return slots;
+  } catch (error) {
+    console.error('Error fetching service time slots:', error);
+    return [];
+  }
 }
 
 export async function getTimeSlots(): Promise<string[]> {
-  const resp = await fetch(`${getBase()}/time-slots`);
-  const slots: string[] = await resp.json();
-  return slots;
+  try {
+    const resp = await fetch(`${getBase()}/time-slots`);
+    if (!resp.ok) return [];
+    const slots: string[] = await resp.json();
+    return slots;
+  } catch (error) {
+    console.error('Error fetching time slots:', error);
+    return [];
+  }
 }
 
 /**
@@ -139,11 +163,17 @@ export async function getAvailableTimeSlotsForBanquet(
   spiritId: string,
   date: Date,
 ): Promise<string[]> {
-  const resp = await fetch(
-    `${getBase()}/banquet/${spiritId}/available_time_slots?date=${date.toISOString()}`,
-  );
-  const slots: string[] = await resp.json();
-  return slots;
+  try {
+    const resp = await fetch(
+      `${getBase()}/banquet/${spiritId}/available_time_slots?date=${date.toISOString()}`,
+    );
+    if (!resp.ok) return [];
+    const slots: string[] = await resp.json();
+    return slots;
+  } catch (error) {
+    console.error('Error fetching banquet time slots:', error);
+    return [];
+  }
 }
 
 export async function createSpirit(
@@ -171,22 +201,28 @@ export async function createSpirit(
 }
 
 export async function getBanquetReservationsForDate(date: string) {
-  const resp = await fetch(`${getBase()}/reservation/banquet-by-date`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({ date }),
-  });
-  const reservations: {
-    id: string;
-    tableId: string;
-    seatNumber: number;
-    date: string; // ISO date
-    time: string; // HH:MM
-    accountId?: string;
-  }[] = await resp.json();
-  return reservations;
+  try {
+    const resp = await fetch(`${getBase()}/reservation/banquet-by-date`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ date }),
+    });
+    if (!resp.ok) return [];
+    const reservations: {
+      id: string;
+      tableId: string;
+      seatNumber: number;
+      date: string; // ISO date
+      time: string; // HH:MM
+      accountId?: string;
+    }[] = await resp.json();
+    return reservations;
+  } catch (error) {
+    console.error('Error fetching banquet reservations:', error);
+    return [];
+  }
 }
 
 export async function createBanquetReservation({
@@ -227,18 +263,24 @@ export async function getAvailableBanquetSeats(
   date: Date,
   time: string,
 ): Promise<BanquetTable[]> {
-  const datetime = createDatetimeFromDateAndTime(date, time);
-  const resp = await fetch(`${getBase()}/banquet/table/available/${spiritId}`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
-      datetime: datetime,
-    }),
-  });
-  const seats: BanquetTable[] = await resp.json();
-  return seats;
+  try {
+    const datetime = createDatetimeFromDateAndTime(date, time);
+    const resp = await fetch(`${getBase()}/banquet/table/available/${spiritId}`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        datetime: datetime,
+      }),
+    });
+    if (!resp.ok) return [];
+    const seats: BanquetTable[] = await resp.json();
+    return seats;
+  } catch (error) {
+    console.error('Error fetching available banquet seats:', error);
+    return [];
+  }
 }
 
 /**
@@ -305,12 +347,18 @@ export async function createDeposit(accountId: string, amount: number): Promise<
 }
 
 export async function getDepositsForAccount(accountId: string): Promise<Deposit[]> {
-  const resp = await fetch(`${getBase()}/deposit/account/${encodeURIComponent(accountId)}`);
-  if (!resp.ok) {
-    throw new Error('Failed to fetch deposits for account');
+  try {
+    const resp = await fetch(`${getBase()}/deposit/account/${encodeURIComponent(accountId)}`);
+    if (!resp.ok) {
+      console.warn('Failed to fetch deposits for account');
+      return [];
+    }
+    const deposits: Deposit[] = await resp.json();
+    return deposits;
+  } catch (error) {
+    console.error('Error fetching deposits:', error);
+    return [];
   }
-  const deposits: Deposit[] = await resp.json();
-  return deposits;
 }
 
 /**
@@ -443,26 +491,32 @@ export async function getReservations({
   timeSlot?: string;
   accountId?: string;
 }): Promise<Reservation[]> {
-  const datetime =
-    date && timeSlot
-      ? createDatetimeFromDateAndTime(new Date(date), timeSlot).toISOString()
-      : date
-        ? new Date(date).toISOString()
-        : undefined;
+  try {
+    const datetime =
+      date && timeSlot
+        ? createDatetimeFromDateAndTime(new Date(date), timeSlot).toISOString()
+        : date
+          ? new Date(date).toISOString()
+          : undefined;
 
-  const queryParams = new URLSearchParams();
-  if (serviceId) {
-    queryParams.append('serviceId', serviceId);
+    const queryParams = new URLSearchParams();
+    if (serviceId) {
+      queryParams.append('serviceId', serviceId);
+    }
+    if (accountId) {
+      queryParams.append('accountId', accountId);
+    }
+    if (datetime) {
+      queryParams.append('datetime', datetime);
+    }
+    const resp = await fetch(`${getBase()}/reservation?${queryParams.toString()}`);
+    if (!resp.ok) return [];
+    const reservations: Reservation[] = await resp.json();
+    return reservations;
+  } catch (error) {
+    console.error('Error fetching reservations:', error);
+    return [];
   }
-  if (accountId) {
-    queryParams.append('accountId', accountId);
-  }
-  if (datetime) {
-    queryParams.append('datetime', datetime);
-  }
-  const resp = await fetch(`${getBase()}/reservation?${queryParams.toString()}`);
-  const reservations: Reservation[] = await resp.json();
-  return reservations;
 }
 
 export async function updateReservation(
@@ -494,9 +548,15 @@ export async function removeReservation(id: string): Promise<boolean> {
  * Function to get all banquet tables
  */
 export async function getBanquetTables(): Promise<BanquetTable[]> {
-  const resp = await fetch(`${getBase()}/banquet/table`);
-  const tables: BanquetTable[] = await resp.json();
-  return tables;
+  try {
+    const resp = await fetch(`${getBase()}/banquet/table`);
+    if (!resp.ok) return [];
+    const tables: BanquetTable[] = await resp.json();
+    return tables;
+  } catch (error) {
+    console.error('Error fetching banquet tables:', error);
+    return [];
+  }
 }
 
 /**
