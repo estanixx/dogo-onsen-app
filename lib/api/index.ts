@@ -317,12 +317,18 @@ export async function getDepositsForAccount(accountId: string): Promise<Deposit[
  * Function to get a single item by its ID from the backend
  */
 export async function getItems(): Promise<Item[]> {
-  const resp = await fetch(`${getBase()}/item/`);
-  if (!resp.ok) {
-    throw new Error('Failed to fetch items');
+  try {
+    const resp = await fetch(`${getBase()}/item/`);
+    if (!resp.ok) {
+      console.warn(`Failed to fetch items: ${resp.status} ${resp.statusText}`);
+      return [];
+    }
+    const items: Item[] = await resp.json();
+    return items;
+  } catch (error) {
+    console.error('Error fetching items:', error);
+    return [];
   }
-  const items: Item[] = await resp.json();
-  return items;
 }
 
 /**
@@ -560,18 +566,24 @@ export async function enrichOrdersWithItems(orders: Order[]): Promise<Order[]> {
 }
 
 export async function createService(service: Service): Promise<Service | null> {
-  const resp = await fetch(`${getBase()}/service/`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify(service),
-  });
-  if (!resp.ok) {
+  try {
+    const resp = await fetch(`${getBase()}/service/`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(service),
+    });
+    if (!resp.ok) {
+      console.warn(`Failed to create service: ${resp.status} ${resp.statusText}`);
+      return null;
+    }
+    const createdService: Service = await resp.json();
+    return createdService;
+  } catch (error) {
+    console.error('Error creating service:', error);
     return null;
   }
-  const createdService: Service = await resp.json();
-  return createdService;
 }
 
 /**
@@ -583,17 +595,22 @@ export async function createItemIntake(intake: {
   serviceId?: string;
   seatId?: number | null;
 }): Promise<ItemIntake | null> {
-  const resp = await fetch(`${getBase()}/item_intake/`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(intake),
-  });
-  if (!resp.ok) {
-    console.warn('createItemIntake failed', resp.status, resp.statusText);
+  try {
+    const resp = await fetch(`${getBase()}/item_intake/`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(intake),
+    });
+    if (!resp.ok) {
+      console.warn('createItemIntake failed', resp.status, resp.statusText);
+      return null;
+    }
+    const created = await resp.json();
+    return created ?? null;
+  } catch (error) {
+    console.error('Error creating item intake:', error);
     return null;
   }
-  const created = await resp.json();
-  return created ?? null;
 }
 
 export async function createServiceReservation({
