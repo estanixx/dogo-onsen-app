@@ -39,16 +39,16 @@ jobs:
 
       - name: Build Application
         env:
-          NEXT_PUBLIC_BACKEND_URL: http://localhost:3000
-          NEXT_PUBLIC_BASE_URL: http://localhost:3000
+          NEXT_PUBLIC_BACKEND_URL: https://dogo-onsen-app.vercel.app/
+          NEXT_PUBLIC_BASE_URL: https://dogo-onsen-app.vercel.app/
           NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: ${{ secrets.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY }}
           CLERK_SECRET_KEY: ${{ secrets.CLERK_SECRET_KEY }}
         run: npm run build
 
       - name: Start Application
         env:
-          NEXT_PUBLIC_BACKEND_URL: http://localhost:3000
-          NEXT_PUBLIC_BASE_URL: http://localhost:3000
+          NEXT_PUBLIC_BACKEND_URL: https://dogo-onsen-app.vercel.app/
+          NEXT_PUBLIC_BASE_URL: https://dogo-onsen-app.vercel.app/
           NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: ${{ secrets.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY }}
           CLERK_SECRET_KEY: ${{ secrets.CLERK_SECRET_KEY }}
         run: |
@@ -66,7 +66,7 @@ jobs:
         env:
           K6_CLOUD_TOKEN: ${{ secrets.K6_CLOUD_TOKEN }}
           K6_CLOUD_PROJECT_ID: ${{ secrets.K6_CLOUD_PROJECT_ID }}
-          BASE_URL: http://localhost:3000
+          BASE_URL: https://dogo-onsen-app.vercel.app/
         with:
           path: tests/performance/load_test.js
           cloud-run-locally: true
