@@ -58,7 +58,7 @@ export default function TableItem({ table, selectedTime }: TableSelectorProps) {
                 positions[seat.seatNumber],
                 'data-[state=on]:bg-primary data-[state=on]:text-black',
               )}
-              disabled={!isAvailable || !selectedTime || isReserved }
+              disabled={!isAvailable || !selectedTime || isReserved}
             >
               {seat.seatNumber}
             </ToggleGroupItem>

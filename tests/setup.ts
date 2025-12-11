@@ -11,9 +11,18 @@ if (_origFetch) {
     try {
       if (typeof input === 'string' && input.startsWith('/')) {
         input = `${process.env.TEST_BASE_URL ?? 'http://localhost:3000'}${input}`;
-      } else if (input && typeof input === 'object' && input.url && typeof input.url === 'string' && input.url.startsWith('/')) {
+      } else if (
+        input &&
+        typeof input === 'object' &&
+        input.url &&
+        typeof input.url === 'string' &&
+        input.url.startsWith('/')
+      ) {
         // If a Request-like object is passed, clone it with an absolute URL
-        const cloned = new Request(`${process.env.TEST_BASE_URL ?? 'http://localhost:3000'}${input.url}`, input);
+        const cloned = new Request(
+          `${process.env.TEST_BASE_URL ?? 'http://localhost:3000'}${input.url}`,
+          input,
+        );
         input = cloned;
       }
     } catch (e) {
@@ -23,7 +32,12 @@ if (_origFetch) {
     try {
       const urlStr = typeof input === 'string' ? input : input?.url;
       if (typeof urlStr === 'string' && urlStr.includes('/api/employees/admin/employees')) {
-        return Promise.resolve(new Response(JSON.stringify([]), { status: 200, headers: { 'Content-Type': 'application/json' } }));
+        return Promise.resolve(
+          new Response(JSON.stringify([]), {
+            status: 200,
+            headers: { 'Content-Type': 'application/json' },
+          }),
+        );
       }
     } catch (e) {
       // ignore

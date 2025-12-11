@@ -17,7 +17,7 @@ import {
 import { createDatetimeFromDateAndTime, wait } from '../utils';
 
 const getBase = () => {
-  return (process.env.NEXT_PUBLIC_BACKEND_URL ?? 'http://localhost:8004');
+  return process.env.NEXT_PUBLIC_BACKEND_URL ?? 'http://localhost:8004';
 };
 
 /**
@@ -634,7 +634,6 @@ export async function createVenueAccount({
 }
 
 export async function getDashboardData(): Promise<DashboardData | null> {
-  console.log(`${getBase()}/dashboard`)
   const resp = await fetch(`${getBase()}/dashboard`);
   const data: DashboardData = await resp.json();
   if (!resp.ok) {

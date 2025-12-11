@@ -74,7 +74,7 @@ export default function ServiceBookConfirm({ service, open, setOpen, account }: 
       toast.error(`Error al confirmar la reservación: ${service.name}`, { duration: 4000 });
     } finally {
       setLoading(false);
-      setDate(new Date());
+      setDate(new Date(new Date().setHours(5, 0, 0, 0)));
       setTime(null);
       setAvailableTimeSlots(null);
     }

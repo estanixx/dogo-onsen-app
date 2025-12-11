@@ -17,11 +17,11 @@ const isAdminRoute = createRouteMatcher(['/employee/admin(.*)']);
  */
 function addObservabilityHeaders(response: NextResponse): void {
   const current = trace.getActiveSpan();
-  
+
   if (current) {
     response.headers.set(
       'server-timing',
-      `traceparent;desc="00-${current.spanContext().traceId}-${current.spanContext().spanId}-01"`
+      `traceparent;desc="00-${current.spanContext().traceId}-${current.spanContext().spanId}-01"`,
     );
   }
 }
@@ -32,7 +32,7 @@ function addObservabilityHeaders(response: NextResponse): void {
 async function handleAuthentication(
   auth: any,
   request: NextRequest,
-  pathname: string
+  pathname: string,
 ): Promise<NextResponse | null> {
   const authState = await auth();
 
@@ -62,10 +62,7 @@ async function handleAuthentication(
 /**
  * Handle device configuration logic for rooms and employees
  */
-function handleDeviceConfiguration(
-  request: NextRequest,
-  pathname: string
-): NextResponse | null {
+function handleDeviceConfiguration(request: NextRequest, pathname: string): NextResponse | null {
   if (PUBLIC_PATHS.includes(pathname)) {
     return null;
   }

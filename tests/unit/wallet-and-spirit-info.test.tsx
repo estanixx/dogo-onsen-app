@@ -8,7 +8,7 @@ vi.mock('next/image', () => ({
   default: (props: any) => React.createElement('img', props),
 }));
 
-import { SpiritInfo } from '@/components/room/shared/spirit-info';;
+import { SpiritInfo } from '@/components/room/shared/spirit-info';
 
 describe('SpiritInfo', () => {
   it('shows spirit name, type and balance', () => {

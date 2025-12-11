@@ -46,22 +46,24 @@ test.describe('RNF-003: Tiempo de carga UI', () => {
     // Medir tiempo de respuesta al hacer click en un botón
     // RNF-003 requiere feedback visual < 800ms, no navegación completa
     const deviceButton = page.locator('text=Habitaciones').first();
-    
+
     // Verificar que el botón responde al click (feedback visual)
     const startTime = Date.now();
-    
+
     // El click debe registrarse y comenzar la navegación en < 800ms
     await Promise.race([
       deviceButton.click(),
-      new Promise((_, reject) => setTimeout(() => reject(new Error('Click timeout')), MAX_FEEDBACK_TIME))
+      new Promise((_, reject) =>
+        setTimeout(() => reject(new Error('Click timeout')), MAX_FEEDBACK_TIME),
+      ),
     ]);
 
     const clickResponseTime = Date.now() - startTime;
-    
+
     // El click debe procesarse inmediatamente (< 800ms)
     // La navegación completa puede tomar más tiempo
     expect(clickResponseTime).toBeLessThan(MAX_FEEDBACK_TIME);
-    
+
     // Esperar a que comience la navegación (URL cambia)
     await page.waitForURL('**/room/**', { timeout: 5000 });
   });
@@ -168,7 +170,7 @@ test.describe('RNF-007: Usabilidad - Flujos simples y rápidos', () => {
     // Obtener el elemento clickeable padre (el card container)
     // Subir al elemento padre que tiene el área clickeable completa
     const roomCard = page.locator('div:has(> div:has-text("Habitaciones"))').first();
-    
+
     // Verificar que el área clickeable tiene tamaño adecuado
     const roomBoundingBox = await roomCard.boundingBox();
     expect(roomBoundingBox).not.toBeNull();
@@ -211,13 +213,17 @@ test.describe('Accesibilidad básica', () => {
 
     // Algún elemento debe tener focus (excluir elementos de Next.js DevTools)
     // En desarrollo, Next.js agrega un portal y botón de DevTools que pueden capturar focus
-    const focusedElement = page.locator(':focus:not(nextjs-portal):not([data-nextjs-dev-tools-button])');
+    const focusedElement = page.locator(
+      ':focus:not(nextjs-portal):not([data-nextjs-dev-tools-button])',
+    );
     const focusCount = await focusedElement.count();
-    
+
     // Debe haber al menos un elemento con focus (puede ser 0 si DevTools captura el focus)
     // O verificar que algún elemento de la app tiene focus
-    const appHasFocus = focusCount > 0 || await page.locator('main :focus').count() > 0;
-    expect(appHasFocus || await page.locator('[data-nextjs-dev-tools-button]:focus').count() > 0).toBe(true);
+    const appHasFocus = focusCount > 0 || (await page.locator('main :focus').count()) > 0;
+    expect(
+      appHasFocus || (await page.locator('[data-nextjs-dev-tools-button]:focus').count()) > 0,
+    ).toBe(true);
   });
 
   test('elementos interactivos tienen labels accesibles', async ({ page }) => {

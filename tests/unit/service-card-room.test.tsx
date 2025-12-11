@@ -2,7 +2,10 @@ import { fireEvent, render, screen } from '@testing-library/react';
 import React from 'react';
 import { describe, expect, it, vi } from 'vitest';
 
-vi.mock('next/image', () => ({ __esModule: true, default: (props: any) => React.createElement('img', { ...props, alt: props.alt }) }));
+vi.mock('next/image', () => ({
+  __esModule: true,
+  default: (props: any) => React.createElement('img', { ...props, alt: props.alt }),
+}));
 
 import { ServiceCard } from '@/components/room/service/service-card';
 import { Service } from '@/lib/types';

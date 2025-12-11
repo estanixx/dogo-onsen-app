@@ -28,9 +28,7 @@ import { InventoryTable } from '@/components/employee/inventory/inventory-table'
 
 describe('InventoryTable', () => {
   it('shows loading then renders items', async () => {
-    mockGetItems.mockResolvedValueOnce([
-      { id: '1', name: 'Agua', quantity: 20, unit: 'u' },
-    ]);
+    mockGetItems.mockResolvedValueOnce([{ id: '1', name: 'Agua', quantity: 20, unit: 'u' }]);
 
     render(<InventoryTable />);
 
@@ -59,9 +57,7 @@ describe('InventoryTable', () => {
   });
 
   it('marks low inventory items', async () => {
-    mockGetItems.mockResolvedValueOnce([
-      { id: '1', name: 'Agua', quantity: 3, unit: 'u' },
-    ]);
+    mockGetItems.mockResolvedValueOnce([{ id: '1', name: 'Agua', quantity: 3, unit: 'u' }]);
 
     render(<InventoryTable />);
     await waitFor(() => expect(mockGetItems).toHaveBeenCalled());

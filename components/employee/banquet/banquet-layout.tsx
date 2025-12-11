@@ -27,7 +27,6 @@ interface BanquetLayoutProps {
 }
 
 export default function BanquetLayout({ account, venueId }: BanquetLayoutProps) {
-  console.log(account);
   const [tables, setTables] = useState<BanquetTable[]>([]);
   const [selectedSeat, setSelectedSeat] = useState<number | null>(null);
   const [date, setDate] = useState<Date | null>(null);
