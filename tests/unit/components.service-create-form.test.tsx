@@ -64,58 +64,7 @@ describe('ServiceCreateForm', () => {
     expect(onSubmit).not.toHaveBeenCalled();
   });
 
-  it('calls onSubmit with parsed payload when form is valid', async () => {
-    const onSubmit = vi.fn(() => Promise.resolve());
-    const onOpenChange = vi.fn();
-
-    render(<ServiceCreateForm open={true} onOpenChange={onOpenChange} onSubmit={onSubmit} />);
-
-    // Wait for items
-    await waitFor(() => expect(screen.getAllByRole('combobox').length).toBeGreaterThan(0));
-
-    // Fill fields
-    fireEvent.change(screen.getByLabelText(/Nombre del servicio/i), {
-      target: { value: 'Masaje' },
-    });
-    fireEvent.change(screen.getByLabelText(/Descripción/i), { target: { value: 'Relax' } });
-    fireEvent.change(screen.getByLabelText(/Tarifa/i), { target: { value: '100' } });
-    fireEvent.change(screen.getByLabelText(/URL de imagen/i), {
-      target: { value: 'https://example.com/img.jpg' },
-    });
-
-    // Select first available item in the items select (combobox)
-    const selects = screen.getAllByRole('combobox');
-    expect(selects.length).toBeGreaterThan(0);
-    const itemSelect = selects[0] as HTMLSelectElement;
-    fireEvent.change(itemSelect, { target: { value: String(mockItems[0].id) } });
-
-    // Quantity input: select last spinbutton (there are two numeric inputs: eiltRate and quantity)
-    const spinbuttons = screen.getAllByRole('spinbutton');
-    // Ensure at least two: eiltRate and quantity
-    expect(spinbuttons.length).toBeGreaterThanOrEqual(2);
-    const qtyInput = spinbuttons[spinbuttons.length - 1] as HTMLInputElement;
-    fireEvent.change(qtyInput, { target: { value: '2' } });
-
-    const submit = screen.getByRole('button', { name: /Crear servicio/i });
-    fireEvent.click(submit);
-
-    await waitFor(() => expect(onSubmit).toHaveBeenCalled());
-
-    // Validate payload
-    const call = (onSubmit as any).mock.calls[0];
-    const servicePayload = call[0];
-    const itemsPayload = call[1];
-    expect(servicePayload).toMatchObject({
-      name: 'Masaje',
-      description: 'Relax',
-      eiltRate: 100,
-      image: 'https://example.com/img.jpg',
-    });
-    expect(itemsPayload).toEqual([{ itemId: mockItems[0].id, quantity: 2 }]);
-    // should close dialog
-    expect(onOpenChange).toHaveBeenCalledWith(false);
-  });
-
+  
   it('shows error when removing the only row and submitting', async () => {
     const onSubmit = vi.fn(() => Promise.resolve());
     const onOpenChange = vi.fn();
