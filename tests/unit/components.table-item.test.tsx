@@ -62,10 +62,7 @@ describe('TableItem', () => {
 
   it('renders the table id and applies disabled/grayscale when table.state is false', () => {
     const { container } = render(
-      <TableItem
-        table={{ ...baseTable, state: false }}
-        selectedTime={null}
-      />,
+      <TableItem table={{ ...baseTable, state: false }} selectedTime={null} />,
     );
 
     // table id should appear

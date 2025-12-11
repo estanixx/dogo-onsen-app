@@ -19,7 +19,6 @@ vi.mock('@/lib/api', () => ({
 
 vi.mock('sonner', () => ({ toast: { error: vi.fn() } }));
 
-
 describe('ServiceCreateForm', () => {
   beforeEach(() => {
     vi.clearAllMocks();
@@ -49,15 +48,19 @@ describe('ServiceCreateForm', () => {
     await waitFor(() => expect(screen.getAllByRole('combobox').length).toBeGreaterThan(0));
 
     // Fill other fields but do not select item
-    fireEvent.change(screen.getByLabelText(/Nombre del servicio/i), { target: { value: 'Masaje' } });
+    fireEvent.change(screen.getByLabelText(/Nombre del servicio/i), {
+      target: { value: 'Masaje' },
+    });
     fireEvent.change(screen.getByLabelText(/Descripción/i), { target: { value: 'Relax' } });
     fireEvent.change(screen.getByLabelText(/Tarifa/i), { target: { value: '100' } });
-    fireEvent.change(screen.getByLabelText(/URL de imagen/i), { target: { value: 'https://example.com/img.jpg' } });
+    fireEvent.change(screen.getByLabelText(/URL de imagen/i), {
+      target: { value: 'https://example.com/img.jpg' },
+    });
 
     const submit = screen.getByRole('button', { name: /Crear servicio/i });
     fireEvent.click(submit);
 
-    await waitFor(() => expect((toast.error as any)).toHaveBeenCalled());
+    await waitFor(() => expect(toast.error as any).toHaveBeenCalled());
     expect(onSubmit).not.toHaveBeenCalled();
   });
 
@@ -71,10 +74,14 @@ describe('ServiceCreateForm', () => {
     await waitFor(() => expect(screen.getAllByRole('combobox').length).toBeGreaterThan(0));
 
     // Fill fields
-    fireEvent.change(screen.getByLabelText(/Nombre del servicio/i), { target: { value: 'Masaje' } });
+    fireEvent.change(screen.getByLabelText(/Nombre del servicio/i), {
+      target: { value: 'Masaje' },
+    });
     fireEvent.change(screen.getByLabelText(/Descripción/i), { target: { value: 'Relax' } });
     fireEvent.change(screen.getByLabelText(/Tarifa/i), { target: { value: '100' } });
-    fireEvent.change(screen.getByLabelText(/URL de imagen/i), { target: { value: 'https://example.com/img.jpg' } });
+    fireEvent.change(screen.getByLabelText(/URL de imagen/i), {
+      target: { value: 'https://example.com/img.jpg' },
+    });
 
     // Select first available item in the items select (combobox)
     const selects = screen.getAllByRole('combobox');
@@ -98,7 +105,12 @@ describe('ServiceCreateForm', () => {
     const call = (onSubmit as any).mock.calls[0];
     const servicePayload = call[0];
     const itemsPayload = call[1];
-    expect(servicePayload).toMatchObject({ name: 'Masaje', description: 'Relax', eiltRate: 100, image: 'https://example.com/img.jpg' });
+    expect(servicePayload).toMatchObject({
+      name: 'Masaje',
+      description: 'Relax',
+      eiltRate: 100,
+      image: 'https://example.com/img.jpg',
+    });
     expect(itemsPayload).toEqual([{ itemId: mockItems[0].id, quantity: 2 }]);
     // should close dialog
     expect(onOpenChange).toHaveBeenCalledWith(false);
@@ -118,14 +130,18 @@ describe('ServiceCreateForm', () => {
     fireEvent.click(removeButtons[0]);
 
     // Fill other fields minimally
-    fireEvent.change(screen.getByLabelText(/Nombre del servicio/i), { target: { value: 'Masaje' } });
+    fireEvent.change(screen.getByLabelText(/Nombre del servicio/i), {
+      target: { value: 'Masaje' },
+    });
     fireEvent.change(screen.getByLabelText(/Descripción/i), { target: { value: 'Relax' } });
     fireEvent.change(screen.getByLabelText(/Tarifa/i), { target: { value: '100' } });
-    fireEvent.change(screen.getByLabelText(/URL de imagen/i), { target: { value: 'https://example.com/img.jpg' } });
+    fireEvent.change(screen.getByLabelText(/URL de imagen/i), {
+      target: { value: 'https://example.com/img.jpg' },
+    });
 
     fireEvent.click(screen.getByRole('button', { name: /Crear servicio/i }));
 
-    await waitFor(() => expect((toast.error as any)).toHaveBeenCalled());
+    await waitFor(() => expect(toast.error as any).toHaveBeenCalled());
     expect(onSubmit).not.toHaveBeenCalled();
   });
 

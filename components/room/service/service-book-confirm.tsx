@@ -56,11 +56,25 @@ export default function ServiceBookConfirm({ service, open, setOpen, account }: 
       setCheckingItems(true);
       try {
         const availability = await verifyServiceItemAvailability(service.id);
+        
         if (availability) {
           setItemAvailability(availability);
+        } else {
+          // Default to available if we can't check (graceful fallback)
+          setItemAvailability({
+            isAvailable: true,
+            insufficientItems: [],
+            message: 'No se pudo verificar disponibilidad de items',
+          });
         }
       } catch (error) {
-        console.error('Error checking item availability:', error);
+        console.error('[SERVICE-BOOK-CONFIRM] Exception caught:', error);
+        // Graceful fallback on error
+        setItemAvailability({
+          isAvailable: true,
+          insufficientItems: [],
+          message: 'Error verificando disponibilidad',
+        });
       } finally {
         setCheckingItems(false);
       }
@@ -105,7 +119,7 @@ export default function ServiceBookConfirm({ service, open, setOpen, account }: 
       toast.error(`Error al confirmar la reservación: ${service.name}`, { duration: 4000 });
     } finally {
       setLoading(false);
-      setDate(new Date());
+      setDate(new Date(new Date().setHours(5, 0, 0, 0)));
       setTime(null);
       setAvailableTimeSlots(null);
     }
@@ -151,7 +165,6 @@ export default function ServiceBookConfirm({ service, open, setOpen, account }: 
                   }`}>
                     {getServiceAvailabilityMessage(
                       itemAvailability.isAvailable,
-                      itemAvailability.insufficientItems,
                     )}
                   </P>
                 )}

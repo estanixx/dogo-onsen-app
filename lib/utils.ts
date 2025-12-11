@@ -61,24 +61,11 @@ export function createDatetimeFromDateAndTime(date: Date, timeString: string): D
  */
 export function getServiceAvailabilityMessage(
   isAvailable: boolean,
-  insufficientItems: Array<{
-    itemName: string;
-    requiredQuantity: number;
-    availableQuantity: number;
-  }>,
 ): string {
   if (isAvailable) {
-    return 'Todos los items están disponibles';
+    return 'SERVICIO DISPONIBLE';
   }
 
-  if (insufficientItems.length === 0) {
-    return 'No hay items disponibles para este servicio';
-  }
-
-  const itemList = insufficientItems
-    .map((item) => `${item.itemName} (necesita: ${item.requiredQuantity}, disponible: ${item.availableQuantity})`)
-    .join(', ');
-
-  return `Items insuficientes: ${itemList}`;
+  return 'SERVICIO NO DISPONIBLE';
 }
 

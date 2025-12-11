@@ -5,9 +5,22 @@ import { describe, expect, it, vi } from 'vitest';
 // Mock getAllSpirits and useSpirit context
 let _fakeSpirits: any[] = [];
 vi.mock('@/lib/api', () => ({ getAllSpirits: vi.fn(async () => _fakeSpirits) }));
-vi.mock('@/context/spirit-context', () => ({ useSpirit: () => ({ spirits: _fakeSpirits, setSpirits: (s: any) => { _fakeSpirits = s; } }) }));
-vi.mock('@/components/shared/spirit-card', () => ({ __esModule: true, default: ({ spirit }: any) => React.createElement('div', { 'data-testid': `spirit-${spirit?.id}` }, `spirit-${spirit?.id}`) }));
-vi.mock('@/components/shared/loading', () => ({ LoadingBox: ({ children }: any) => React.createElement('div', null, children) }));
+vi.mock('@/context/spirit-context', () => ({
+  useSpirit: () => ({
+    spirits: _fakeSpirits,
+    setSpirits: (s: any) => {
+      _fakeSpirits = s;
+    },
+  }),
+}));
+vi.mock('@/components/shared/spirit-card', () => ({
+  __esModule: true,
+  default: ({ spirit }: any) =>
+    React.createElement('div', { 'data-testid': `spirit-${spirit?.id}` }, `spirit-${spirit?.id}`),
+}));
+vi.mock('@/components/shared/loading', () => ({
+  LoadingBox: ({ children }: any) => React.createElement('div', null, children),
+}));
 
 import SpiritGrid from '@/components/employee/reception/spirit-grid';
 import { getAllSpirits } from '@/lib/api';

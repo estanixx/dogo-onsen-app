@@ -93,7 +93,7 @@ export function ServiceDialog({ service, account }: ServiceDialogProps) {
       {isBanquet ? (
         <Dialog open={confirmDialogOpen} onOpenChange={setConfirmDialogOpen}>
           <DialogContent className="max-w-none sm:max-w-[90vw] h-[90vh] overflow-hidden bg-[var(--background)] text-white border border-[var(--gold)]/30 shadow-xl rounded-2xl">
-            <ScrollArea className="h-full max-h-[90vh]">
+            <ScrollArea className="h-full max-h-[80vh]">
               <VisuallyHidden>
                 <DialogTitle>Banquete</DialogTitle>
               </VisuallyHidden>

@@ -29,7 +29,6 @@ interface BanquetLayoutProps {
 }
 
 export default function BanquetLayout({ account, venueId }: BanquetLayoutProps) {
-  console.log(account);
   const [tables, setTables] = useState<BanquetTable[]>([]);
   const [selectedSeat, setSelectedSeat] = useState<number | null>(null);
   const [date, setDate] = useState<Date | null>(null);
@@ -68,14 +67,13 @@ export default function BanquetLayout({ account, venueId }: BanquetLayoutProps) 
     const checkItems = async () => {
       setCheckingItems(true);
       try {
-        // Assuming there's a banquet service ID or we check a default banquet items service
-        // You may need to adjust this to match your actual banquet service ID
-        const availability = await verifyServiceItemAvailability('banquet');
+        // Check availability for the "banquete" service
+        const availability = await verifyServiceItemAvailability('banquete');
         if (availability) {
           setItemAvailability(availability);
         }
       } catch (error) {
-        console.error('Error checking banquet item availability:', error);
+        console.error('[BANQUET-LAYOUT] Error checking banquet item availability:', error);
       } finally {
         setCheckingItems(false);
       }
@@ -235,7 +233,6 @@ export default function BanquetLayout({ account, venueId }: BanquetLayoutProps) 
               }`}>
                 {getServiceAvailabilityMessage(
                   itemAvailability.isAvailable,
-                  itemAvailability.insufficientItems,
                 )}
               </P>
             )}

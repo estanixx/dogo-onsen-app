@@ -129,6 +129,7 @@ End-to-end tests live under `tests/e2e/` and use Playwright.
   - High contrast text readability
 
 Run E2E tests:
+
 ```bash
 npx playwright test
 ```

@@ -3,14 +3,42 @@ import React from 'react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 // Mock UI primitives to keep tests simple
-vi.mock('@/components/ui/calendar', () => ({ Calendar: ({ onSelect }: any) => React.createElement('div', { 'data-testid': 'mock-calendar', onClick: () => onSelect(new Date('2025-01-01')) }) }));
-vi.mock('@/components/ui/popover', () => ({ Popover: ({ children }: any) => React.createElement('div', null, children), PopoverTrigger: ({ children }: any) => React.createElement('div', null, children), PopoverContent: ({ children }: any) => React.createElement('div', null, children) }));
-vi.mock('@/components/ui/select', () => ({ Select: ({ children }: any) => React.createElement('div', null, children), SelectTrigger: ({ children }: any) => React.createElement('div', null, children), SelectContent: ({ children }: any) => React.createElement('div', null, children), SelectItem: ({ children }: any) => React.createElement('div', null, children), SelectValue: ({ children }: any) => React.createElement('div', null, children) }));
+vi.mock('@/components/ui/calendar', () => ({
+  Calendar: ({ onSelect }: any) =>
+    React.createElement('div', {
+      'data-testid': 'mock-calendar',
+      onClick: () => onSelect(new Date('2025-01-01')),
+    }),
+}));
+vi.mock('@/components/ui/popover', () => ({
+  Popover: ({ children }: any) => React.createElement('div', null, children),
+  PopoverTrigger: ({ children }: any) => React.createElement('div', null, children),
+  PopoverContent: ({ children }: any) => React.createElement('div', null, children),
+}));
+vi.mock('@/components/ui/select', () => ({
+  Select: ({ children }: any) => React.createElement('div', null, children),
+  SelectTrigger: ({ children }: any) => React.createElement('div', null, children),
+  SelectContent: ({ children }: any) => React.createElement('div', null, children),
+  SelectItem: ({ children }: any) => React.createElement('div', null, children),
+  SelectValue: ({ children }: any) => React.createElement('div', null, children),
+}));
 
 // Mock LoadingBox and ScrollArea and ReservationCard
-vi.mock('@/components/shared/loading', () => ({ LoadingBox: ({ children }: any) => React.createElement('div', null, children) }));
-vi.mock('@radix-ui/react-scroll-area', () => ({ ScrollArea: ({ children }: any) => React.createElement('div', null, children) }));
-vi.mock('@/components/employee/service/reservation-card', () => ({ __esModule: true, default: ({ reservation }: any) => React.createElement('div', { 'data-testid': `reservation-${reservation.id}` }, `reservation-${reservation.id}`) }));
+vi.mock('@/components/shared/loading', () => ({
+  LoadingBox: ({ children }: any) => React.createElement('div', null, children),
+}));
+vi.mock('@radix-ui/react-scroll-area', () => ({
+  ScrollArea: ({ children }: any) => React.createElement('div', null, children),
+}));
+vi.mock('@/components/employee/service/reservation-card', () => ({
+  __esModule: true,
+  default: ({ reservation }: any) =>
+    React.createElement(
+      'div',
+      { 'data-testid': `reservation-${reservation.id}` },
+      `reservation-${reservation.id}`,
+    ),
+}));
 
 // Mock sidebar hook so we can assert setOpen usage
 vi.mock('@/components/ui/sidebar', () => ({ useSidebar: () => ({ setOpen: vi.fn() }) }));
@@ -47,7 +75,9 @@ describe('ReservationSidebar', () => {
 
   it('renders reservations returned by API', async () => {
     // replace getReservations to return one reservation
-    getReservations.mockImplementationOnce(async () => [{ id: 'r1', name: 'Test', timeSlot: '09:00 AM' }]);
+    getReservations.mockImplementationOnce(async () => [
+      { id: 'r1', name: 'Test', timeSlot: '09:00 AM' },
+    ]);
     const service = { id: 'svc2', name: 'SVC2' } as unknown as Service;
     render(<ReservationSidebar service={service} />);
 

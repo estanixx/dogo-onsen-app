@@ -3,14 +3,22 @@ import React from 'react';
 import { describe, expect, it, vi } from 'vitest';
 
 // Mock next/image to a simple img element
-vi.mock('next/image', () => ({ __esModule: true, default: (props: any) => React.createElement('img', { ...props, alt: props.alt }) }));
+vi.mock('next/image', () => ({
+  __esModule: true,
+  default: (props: any) => React.createElement('img', { ...props, alt: props.alt }),
+}));
 
 import { ServiceCard } from '@/components/employee/service/service-card';
 import { Service } from '@/lib/types';
 
 describe('ServiceCard', () => {
   it('renders service name and rate and calls onSelect when clicked', () => {
-    const service = { id: 's1', name: 'My Service', eiltRate: 42, image: undefined } as unknown as Service;
+    const service = {
+      id: 's1',
+      name: 'My Service',
+      eiltRate: 42,
+      image: undefined,
+    } as unknown as Service;
     const onSelect = vi.fn();
 
     render(<ServiceCard service={service} onSelect={onSelect} />);

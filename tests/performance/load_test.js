@@ -4,7 +4,7 @@ import { randomString } from 'https://jslib.k6.io/k6-utils/1.2.0/index.js';
 
 /**
  * Performance Tests para Dogo Onsen Frontend API Routes
- * 
+ *
  * Requisitos No Funcionales cubiertos:
  * - RNF-001: Latencia en Lecturas p95 ≤ 300 ms
  * - RNF-002: Latencia en Escrituras ligeras p95 ≤ 400 ms

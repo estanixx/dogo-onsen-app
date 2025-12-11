@@ -17,7 +17,7 @@ import {
 import { createDatetimeFromDateAndTime, wait } from '../utils';
 
 const getBase = () => {
-  return (process.env.NEXT_PUBLIC_BACKEND_URL ?? 'http://localhost:8004');
+  return process.env.NEXT_PUBLIC_BACKEND_URL ?? 'http://localhost:8004';
 };
 
 /**
@@ -634,7 +634,6 @@ export async function createVenueAccount({
 }
 
 export async function getDashboardData(): Promise<DashboardData | null> {
-  console.log(`${getBase()}/dashboard`);
   const resp = await fetch(`${getBase()}/dashboard`);
   const data: DashboardData = await resp.json();
   if (!resp.ok) {
@@ -678,22 +677,26 @@ export async function verifyServiceItemAvailability(
   message: string;
 } | null> {
   try {
-    const resp = await fetch(`${getBase()}/api/service/${serviceId}/check-availability`, {
+    const base = getBase();
+    const url = `${base}/service/${serviceId}/check-availability`;
+    
+    const resp = await fetch(url, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
       },
     });
-
+    
     if (!resp.ok) {
-      console.warn(`verifyServiceItemAvailability: ${resp.status} ${resp.statusText}`);
+      const errorText = await resp.text();
+      console.error(`[API] Error checking availability: ${resp.status}`);
       return null;
     }
 
     const result = await resp.json();
     return result;
   } catch (error) {
-    console.error('Error verifying service item availability:', error);
+    console.error('[API] Exception checking availability:', error);
     return null;
   }
 }

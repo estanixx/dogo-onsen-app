@@ -77,17 +77,13 @@ describe('NewOrderModal', () => {
   });
 
   it('disables submit with invalid quantity and calls API on success', async () => {
-    mockGetItems.mockResolvedValue([
-      { id: '1', name: 'Agua', unit: 'u' },
-    ]);
+    mockGetItems.mockResolvedValue([{ id: '1', name: 'Agua', unit: 'u' }]);
     mockCreateOrder.mockResolvedValue({ id: 'order1' });
 
     const handleOpenChange = vi.fn();
     const handleCreated = vi.fn();
 
-    render(
-      <NewOrderModal open onOpenChange={handleOpenChange} onOrderCreated={handleCreated} />,
-    );
+    render(<NewOrderModal open onOpenChange={handleOpenChange} onOrderCreated={handleCreated} />);
     await waitFor(() => expect(mockGetItems).toHaveBeenCalled());
 
     // Set invalid quantity to disable
