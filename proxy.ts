@@ -8,7 +8,7 @@ type DeviceConfig = {
   roomId?: string;
 };
 
-const PUBLIC_PATHS = ['/', '/room/config', '/sign-in', '/sign-up'];
+const PUBLIC_PATHS = ['/room/config', '/sign-in', '/sign-up'];
 const isEmployeeRoute = createRouteMatcher(['/employee(.*)']);
 const isAdminRoute = createRouteMatcher(['/employee/admin(.*)']);
 
@@ -69,10 +69,26 @@ function handleDeviceConfiguration(request: NextRequest, pathname: string): Next
 
   const deviceConfig = readDeviceConfig(request);
 
+  // If no device config cookie is present, send user to selector (home)
   if (!deviceConfig) {
     return NextResponse.redirect(new URL('/', request.url));
   }
 
+  // If user lands on the homepage and a device is configured, redirect
+  if (pathname === '/') {
+    if (deviceConfig.type === 'employee') {
+      return NextResponse.redirect(new URL('/employee', request.url));
+    }
+
+    if (deviceConfig.type === 'room') {
+      if (!deviceConfig.roomId) {
+        return NextResponse.redirect(new URL('/room/config', request.url));
+      }
+      return NextResponse.redirect(new URL(`/room/${deviceConfig.roomId}`, request.url));
+    }
+  }
+
+  // Existing protections: prevent room devices from accessing employee routes
   if (deviceConfig.type === 'room') {
     if (!deviceConfig.roomId && pathname !== '/room/config') {
       return NextResponse.redirect(new URL('/room/config', request.url));
