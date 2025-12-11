@@ -10,11 +10,13 @@ import { P } from '../shared/typography';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { EmployeeLogin } from '../employee/auth/employee-login';
+import { useUser } from '@clerk/nextjs';
 
 export default function Navbar() {
   const pathname = usePathname();
   const [menuOpen, setMenuOpen] = useState(false);
   const isMobile = useIsMobile();
+  const { user, isLoaded } = useUser();
 
   const links = [
     { name: 'Dashboard', href: '/employee' },
@@ -22,7 +24,9 @@ export default function Navbar() {
     { name: 'Banquete', href: '/employee/banquet' },
     { name: 'Inventario', href: '/employee/inventory' },
     { name: 'Servicios', href: '/employee/services' },
-    { name: 'Admin', href: '/employee/admin' },
+    ...(user && (user.publicMetadata as Record<string, unknown>).role === 'admin'
+      ? [{ name: 'Admin', href: '/employee/admin' }]
+      : []),
   ];
 
   return (

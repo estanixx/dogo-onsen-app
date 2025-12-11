@@ -13,7 +13,6 @@ export async function POST(request: NextRequest) {
       },
       body: JSON.stringify(body),
     });
-
     if (!response.ok) {
       let errorMessage = 'Admin login failed';
       try {
@@ -27,7 +26,6 @@ export async function POST(request: NextRequest) {
     }
 
     const data = await response.json();
-
     // Set the token in an HTTP-only cookie
     const cookieResponse = NextResponse.json(data);
     cookieResponse.cookies.set({

@@ -1,8 +1,8 @@
 'use client';
 
+import { useAdmin } from '@/context/admin-context';
 import { useUser } from '@clerk/nextjs';
 import { useRouter } from 'next/navigation';
-import { useAdmin } from '@/context/admin-context';
 import { useState } from 'react';
 import { DeviceSelector } from './device-selector';
 
@@ -19,13 +19,19 @@ export function DeviceConfigurator({ configureDevice }: DeviceConfiguratorProps)
   const handleSelectDevice = async (type: 'employee' | 'room') => {
     setIsProcessing(true);
 
+    // Normal flow
+    try {
+      await configureDevice(type);
+    } finally {
+      setIsProcessing(false);
+    }
+
     // If employee device selected and user is admin, handle admin login
     if (type === 'employee' && isLoaded && user) {
       const metadata =
         typeof user.publicMetadata === 'object' && user.publicMetadata !== null
           ? user.publicMetadata
           : {};
-
       if ((metadata as Record<string, unknown>).role === 'admin') {
         try {
           // Login as admin and get token
@@ -40,13 +46,6 @@ export function DeviceConfigurator({ configureDevice }: DeviceConfiguratorProps)
           return;
         }
       }
-    }
-
-    // Normal flow
-    try {
-      await configureDevice(type);
-    } finally {
-      setIsProcessing(false);
     }
   };
 

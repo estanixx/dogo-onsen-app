@@ -46,7 +46,6 @@ export function AdminProvider({ children }: { children: React.ReactNode }) {
         body: JSON.stringify({ clerk_id: clerkId }),
         credentials: 'include',
       });
-
       if (!response.ok) {
         let errorMessage = 'Failed to login as admin';
         try {

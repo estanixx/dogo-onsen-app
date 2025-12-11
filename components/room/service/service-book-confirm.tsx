@@ -89,7 +89,6 @@ export default function ServiceBookConfirm({ service, open, setOpen, account }: 
 
   React.useEffect(() => {
     setAvailableTimeSlots(null);
-    console.log(date);
     getAvailableTimeSlotsForService(service.id, date).then((slots) => {
       setAvailableTimeSlots(slots);
     });

@@ -29,7 +29,6 @@ export async function getAvailableServices(query?: string): Promise<Service[]> {
     const queryParam = query ? `?q=${encodeURIComponent(query)}` : '';
     // Use an absolute URL so this works both in browser and on the server.
     const base = getBase();
-    console.log(`Fetching services from: ${base}/service${queryParam}`);
     const resp = await fetch(`${base}/service${queryParam}`);
 
     if (!resp.ok) {
@@ -303,7 +302,6 @@ export async function getAvailableBanquetSeats(
 export async function getAllSpirits(): Promise<Spirit[]> {
   try {
     const base = getBase();
-    console.log(`Fetching spirits from: ${base}/spirit/`);
     const resp = await fetch(`${base}/spirit/`);
 
     if (!resp.ok) {
