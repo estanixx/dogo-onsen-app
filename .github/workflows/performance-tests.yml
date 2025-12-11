@@ -83,3 +83,4 @@ jobs:
           BASE_URL: http://localhost:3000
         with:
           path: tests/performance/load_test.js
+          cloud-run-locally: true
