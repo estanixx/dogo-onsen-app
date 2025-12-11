@@ -32,9 +32,7 @@ export default function FrontendObservability() {
       });
     } catch (e) {
       console.error('Failed to initialize Faro telemetry:', e);
-      return;
     }
-    return;
   }, []);
 
   return <></>;

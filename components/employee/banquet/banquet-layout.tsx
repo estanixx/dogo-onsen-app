@@ -38,7 +38,11 @@ export default function BanquetLayout({ account, venueId }: BanquetLayoutProps) 
   const [submitting, setSubmitting] = useState(false);
   const [itemAvailability, setItemAvailability] = useState<{
     isAvailable: boolean;
-    insufficientItems: Array<{ itemName: string; requiredQuantity: number; availableQuantity: number }>;
+    insufficientItems: Array<{
+      itemName: string;
+      requiredQuantity: number;
+      availableQuantity: number;
+    }>;
     message: string;
   } | null>(null);
   const [checkingItems, setCheckingItems] = useState(false);
@@ -105,7 +109,8 @@ export default function BanquetLayout({ account, venueId }: BanquetLayoutProps) 
     fetchSlots();
   }, [date]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  const canConfirm = !!selectedSeat && !!date && !!time && !submitting && itemAvailability?.isAvailable;
+  const canConfirm =
+    !!selectedSeat && !!date && !!time && !submitting && itemAvailability?.isAvailable;
 
   const onDateSelect = (selectedDate: Date | undefined) => {
     if (selectedDate) {
@@ -226,14 +231,12 @@ export default function BanquetLayout({ account, venueId }: BanquetLayoutProps) 
               </P>
             )}
             {itemAvailability && (
-              <P className={`text-xs ${
-                itemAvailability.isAvailable
-                  ? 'text-green-400'
-                  : 'text-destructive'
-              }`}>
-                {getServiceAvailabilityMessage(
-                  itemAvailability.isAvailable,
-                )}
+              <P
+                className={`text-xs ${
+                  itemAvailability.isAvailable ? 'text-green-400' : 'text-destructive'
+                }`}
+              >
+                {getServiceAvailabilityMessage(itemAvailability.isAvailable)}
               </P>
             )}
           </div>

@@ -41,7 +41,11 @@ export default function ServiceBookConfirm({ service, open, setOpen, account }: 
   const [loading, setLoading] = React.useState(false);
   const [itemAvailability, setItemAvailability] = React.useState<{
     isAvailable: boolean;
-    insufficientItems: Array<{ itemName: string; requiredQuantity: number; availableQuantity: number }>;
+    insufficientItems: Array<{
+      itemName: string;
+      requiredQuantity: number;
+      availableQuantity: number;
+    }>;
     message: string;
   } | null>(null);
   const [checkingItems, setCheckingItems] = React.useState(false);
@@ -51,12 +55,12 @@ export default function ServiceBookConfirm({ service, open, setOpen, account }: 
     if (!open) {
       return;
     }
-    
+
     const checkItems = async () => {
       setCheckingItems(true);
       try {
         const availability = await verifyServiceItemAvailability(service.id);
-        
+
         if (availability) {
           setItemAvailability(availability);
         } else {
@@ -79,12 +83,13 @@ export default function ServiceBookConfirm({ service, open, setOpen, account }: 
         setCheckingItems(false);
       }
     };
-    
+
     checkItems();
   }, [service.id, open]);
 
   React.useEffect(() => {
     setAvailableTimeSlots(null);
+    console.log(date);
     getAvailableTimeSlotsForService(service.id, date).then((slots) => {
       setAvailableTimeSlots(slots);
     });
@@ -158,14 +163,12 @@ export default function ServiceBookConfirm({ service, open, setOpen, account }: 
                   </P>
                 )}
                 {itemAvailability && (
-                  <P className={`text-xs mt-2 ${
-                    itemAvailability.isAvailable
-                      ? 'text-green-400'
-                      : 'text-destructive'
-                  }`}>
-                    {getServiceAvailabilityMessage(
-                      itemAvailability.isAvailable,
-                    )}
+                  <P
+                    className={`text-xs mt-2 ${
+                      itemAvailability.isAvailable ? 'text-green-400' : 'text-destructive'
+                    }`}
+                  >
+                    {getServiceAvailabilityMessage(itemAvailability.isAvailable)}
                   </P>
                 )}
               </div>

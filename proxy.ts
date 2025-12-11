@@ -71,6 +71,9 @@ function handleDeviceConfiguration(request: NextRequest, pathname: string): Next
 
   // If no device config cookie is present, send user to selector (home)
   if (!deviceConfig) {
+    if (pathname === '/') {
+      return null;
+    }
     return NextResponse.redirect(new URL('/', request.url));
   }
 

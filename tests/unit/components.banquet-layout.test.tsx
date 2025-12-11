@@ -135,5 +135,4 @@ describe('BanquetLayout', () => {
     const button = screen.queryByRole('button', { name: /Confirmar reserva/i });
     expect(button).toBeNull();
   });
-
 });

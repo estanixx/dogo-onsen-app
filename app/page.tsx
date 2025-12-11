@@ -11,7 +11,6 @@ import { redirect } from 'next/navigation';
 export default function Home() {
   async function configureDevice(type: 'employee' | 'room') {
     'use server';
-
     // Save configuration in cookies (for middleware)
     const cookieStore = await cookies();
     cookieStore.set({
