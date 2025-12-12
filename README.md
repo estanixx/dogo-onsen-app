@@ -1,6 +1,6 @@
 # Dogo Onsen App
 
-Small Next.js (App Router) project that demonstrates UI for rooms, services, reservations, and shared components.
+Next.js (App Router) project that demonstrates UI for rooms, services, reservations, and shared components.
 
 ## Quick start
 
