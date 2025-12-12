@@ -1,9 +1,9 @@
 'use client';
 
 import { useAdmin } from '@/context/admin-context';
-import { useUser } from '@clerk/nextjs';
+import { useClerk, useUser } from '@clerk/nextjs';
 import { useRouter } from 'next/navigation';
-import { useState } from 'react';
+import { useEffect } from 'react';
 import { DeviceSelector } from './device-selector';
 
 interface DeviceConfiguratorProps {
@@ -11,44 +11,46 @@ interface DeviceConfiguratorProps {
 }
 
 export function DeviceConfigurator({ configureDevice }: DeviceConfiguratorProps) {
-  const { user, isLoaded } = useUser();
+  const { user, isLoaded, isSignedIn } = useUser();
+  const clerk = useClerk();
   const { loginAsAdmin } = useAdmin();
   const router = useRouter();
-  const [, setIsProcessing] = useState(false);
 
   const handleSelectDevice = async (type: 'employee' | 'room') => {
-    setIsProcessing(true);
-
     // If employee device selected and user is admin, handle admin login
-    console.log('Selected device type:', type);
-    console.log('User loaded:', isLoaded);
-    console.log('User info:', user);
-    await configureDevice(type);
-    if (type === 'employee' && isLoaded && user) {
-      const metadata =
-        typeof user.publicMetadata === 'object' && user.publicMetadata !== null
-          ? user.publicMetadata
-          : {};
-      if ((metadata as Record<string, unknown>).role === 'admin') {
-        try {
-          // Login as admin and get token
-          await loginAsAdmin(user.id);
-          // Redirect to admin dashboard
-          setIsProcessing(false);
-          router.push('/employee');
-        } catch (error) {
-          console.error('Admin login failed:', error);
-          alert(`Admin login failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
-          setIsProcessing(false);
-          return;
-        }
-      }
+
+    if (type === 'employee') {
+      clerk.openSignIn();
     } else if (type === 'room') {
-      // For room devices, redirect to room config
-      setIsProcessing(false);
+      await configureDevice(type);
       router.push('/room/config');
     }
   };
+
+  // In case the user has signed in, register as employee and go ahead.
+  useEffect(() => {
+    const registerEmployeeDevice = async () => {
+      if (isSignedIn && isLoaded && user) {
+        const metadata =
+          typeof user.publicMetadata === 'object' && user.publicMetadata !== null
+            ? user.publicMetadata
+            : {};
+        if ((metadata as Record<string, unknown>).role === 'admin') {
+          try {
+            await loginAsAdmin(user.id);
+            await configureDevice('employee');
+            router.push('/employee/admin');
+          } catch (error) {
+            console.error('Admin login failed:', error);
+            alert(
+              `Admin login failed: ${error instanceof Error ? error.message : 'Unknown error'}`,
+            );
+          }
+        }
+      }
+    };
+    registerEmployeeDevice();
+  }, [isSignedIn, isLoaded, user, loginAsAdmin, configureDevice, router]);
 
   return <DeviceSelector onSelect={handleSelectDevice} />;
 }

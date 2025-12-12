@@ -5,7 +5,7 @@ const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:800
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-
+    
     const response = await fetch(`${BACKEND_URL}/employee/admin/login`, {
       method: 'POST',
       headers: {
@@ -37,7 +37,7 @@ export async function POST(request: NextRequest) {
       secure: process.env.NODE_ENV === 'production',
       maxAge: 60 * 60 * 24, // 24 hours
     });
-
+    
     return cookieResponse;
   } catch (error) {
     console.error('Admin login error:', error);

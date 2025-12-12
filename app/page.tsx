@@ -2,6 +2,7 @@ import { DeviceConfigurator } from '@/components/device/device-configurator';
 import { SyncDeviceConfig } from '@/components/device/device-config';
 import { DogoPage, DogoHeader, DogoSection } from '@/components/shared/dogo-ui';
 import { cookies } from 'next/headers';
+import { redirect } from 'next/navigation';
 
 /**
  * Homepage component for device type selection
@@ -21,7 +22,6 @@ export default function Home() {
       secure: process.env.NODE_ENV === 'production',
       maxAge: 60 * 60 * 24 * 30, // 30 days
     });
-    console.log(`Device configured as: ${type}`);
   }
 
   return (
