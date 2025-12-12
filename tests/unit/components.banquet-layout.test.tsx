@@ -117,6 +117,7 @@ vi.mock('@/lib/api', () => ({
   getAvailableBanquetSeats: (spiritId: any, date: any, time: any) =>
     mockGetSeats(spiritId, date, time),
   createBanquetReservation: (payload: any) => mockCreate(payload),
+  verifyServiceItemAvailability: vi.fn(async () => ({ isAvailable: true })),
 }));
 
 import BanquetLayout from '@/components/employee/banquet/banquet-layout';

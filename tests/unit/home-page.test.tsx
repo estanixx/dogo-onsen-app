@@ -11,7 +11,12 @@ vi.mock('next/navigation', () => ({
 
 // Mock Clerk
 vi.mock('@clerk/nextjs', () => ({
-  useUser: () => ({ user: { id: 'u1', publicMetadata: { role: 'employee' } }, isLoaded: true }),
+  useUser: () => ({
+    user: { id: 'u1', publicMetadata: { role: 'employee' } },
+    isLoaded: true,
+    isSignedIn: true,
+  }),
+  useClerk: () => ({ openSignIn: vi.fn() }),
 }));
 
 // Mock admin context
@@ -93,6 +98,7 @@ describe('RF-001: Configuración de dispositivo', () => {
         useUser: () => ({
           user: { id: 'admin1', publicMetadata: { role: 'admin' } },
           isLoaded: true,
+          isSignedIn: true,
         }),
       }));
 

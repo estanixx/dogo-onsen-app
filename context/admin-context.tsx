@@ -28,11 +28,16 @@ export function AdminProvider({ children }: { children: React.ReactNode }) {
     if (!isLoaded || !user) {
       return false;
     }
+
     const metadata =
       typeof user.publicMetadata === 'object' && user.publicMetadata !== null
         ? user.publicMetadata
         : {};
-    return (metadata as Record<string, unknown>).role === 'admin';
+
+    const role = (metadata as Record<string, unknown>).role;
+    const isAdminUser = role === 'admin';
+
+    return isAdminUser;
   }, [isLoaded, user]);
 
   const loginAsAdmin = useCallback(async (clerkId: string) => {
@@ -46,21 +51,21 @@ export function AdminProvider({ children }: { children: React.ReactNode }) {
         body: JSON.stringify({ clerk_id: clerkId }),
         credentials: 'include',
       });
+
       if (!response.ok) {
         let errorMessage = 'Failed to login as admin';
         try {
           const errorData = await response.json();
           errorMessage = errorData.error || errorMessage;
         } catch {
-          // Ignore JSON parse error
+          console.error('[AdminContext] Login failed, could not parse error response');
         }
         throw new Error(errorMessage);
       }
-
       // Token is automatically set in HttpOnly cookie by the API route
       // No need to manually handle it
     } catch (error) {
-      console.error('Admin login error:', error);
+      console.error('[AdminContext] Admin login error:', error);
       throw error;
     } finally {
       setIsLoadingAdmin(false);
@@ -71,6 +76,8 @@ export function AdminProvider({ children }: { children: React.ReactNode }) {
     // Clear admin token cookie
     if (typeof document !== 'undefined') {
       document.cookie = 'dogo-admin-token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC;';
+    } else {
+      console.warn('[AdminContext] Cannot clear cookie: document is undefined (SSR)');
     }
   }, []);
 

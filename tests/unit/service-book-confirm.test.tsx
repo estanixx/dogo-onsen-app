@@ -1,6 +1,6 @@
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import React from 'react';
-import { act } from 'react-dom/test-utils';
+import { act } from 'react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 // Mock Calendar, TimeSlotSelector, Dialog, and ScrollArea to avoid complex portal behavior
@@ -38,6 +38,7 @@ vi.mock('@/components/ui/scroll-area', () => ({
 vi.mock('@/lib/api', () => ({
   getAvailableTimeSlotsForService: vi.fn(async () => ['09:00 AM']),
   createServiceReservation: vi.fn(async () => ({ id: 'r1' })),
+  verifyServiceItemAvailability: vi.fn(async () => ({ isAvailable: true })),
 }));
 vi.mock('sonner', () => ({ toast: { success: vi.fn(), error: vi.fn() } }));
 vi.mock('next/navigation', () => ({ useRouter: () => ({ refresh: vi.fn() }) }));

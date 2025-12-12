@@ -4,7 +4,12 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 
 // Mock Clerk useUser (setup.ts also provides a default mock)
 vi.mock('@clerk/nextjs', () => ({
-  useUser: () => ({ user: { id: 'u1', publicMetadata: { role: 'admin' } }, isLoaded: true }),
+  useUser: () => ({
+    user: { id: 'u1', publicMetadata: { role: 'admin' } },
+    isLoaded: true,
+    isSignedIn: true,
+  }),
+  useClerk: () => ({ openSignIn: vi.fn() }),
 }));
 
 // Mock admin context
